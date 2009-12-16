@@ -50,403 +50,384 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
 import org.apache.log4j.Logger;
-
 import org.fcrepo.server.jaas.auth.UserPrincipal;
 import org.fcrepo.server.jaas.util.Base64;
 
-public class LdapModule implements LoginModule
-{
-	private static final Logger log = Logger.getLogger(LdapModule.class);
+public class LdapModule
+        implements LoginModule {
 
-	private Subject subject = null;
-	private CallbackHandler handler = null;
-	// private Map<String, ?> sharedState = null;
-	private Map<String, ?> options = null;
+    private static final Logger log = Logger.getLogger(LdapModule.class);
 
-	private String username = null;
-	private UserPrincipal principal = null;
-	private Map<String, Set<String>> attributes = null;
+    private Subject subject = null;
 
-	private boolean debug = false;
+    private CallbackHandler handler = null;
 
-	private boolean successLogin = false;
+    // private Map<String, ?> sharedState = null;
+    private Map<String, ?> options = null;
 
-	public void initialize(Subject subject, CallbackHandler handler, Map<String, ?> sharedState, Map<String, ?> options)
-	{
-		this.subject = subject;
-		this.handler = handler;
-		// this.sharedState = sharedState;
-		this.options = options;
+    private String username = null;
 
-		String debugOption = (String) this.options.get("debug");
-		if (debugOption != null && "true".equalsIgnoreCase(debugOption))
-			debug = true;
+    private UserPrincipal principal = null;
 
-		attributes = new HashMap<String, Set<String>>();
+    private Map<String, Set<String>> attributes = null;
 
-		if (debug)
-			log.debug("login module initialised: " + this.getClass().getName());
-	}
+    private boolean debug = false;
 
-	public boolean login() throws LoginException
-	{
-		if (debug)
-			log.debug(this.getClass().getName() + " login called.");
+    private boolean successLogin = false;
 
-		// The only 2 callback types that are supported.
-		Callback[] callbacks = new Callback[2];
-		callbacks[0] = new NameCallback("username");
-		callbacks[1] = new PasswordCallback("password", false);
+    public void initialize(Subject subject,
+                           CallbackHandler handler,
+                           Map<String, ?> sharedState,
+                           Map<String, ?> options) {
+        this.subject = subject;
+        this.handler = handler;
+        // this.sharedState = sharedState;
+        this.options = options;
 
-		String password = null;
-		try
-		{
-			// sets the username and password from the callback handler
-			handler.handle(callbacks);
-			username = ((NameCallback) callbacks[0]).getName();
-			char[] passwordCharArray = ((PasswordCallback) callbacks[1]).getPassword();
-			password = new String(passwordCharArray);
-		}
-		catch (IOException ioe)
-		{
-			ioe.printStackTrace();
-			throw new LoginException("IOException occured: " + ioe.getMessage());
-		}
-		catch (UnsupportedCallbackException ucbe)
-		{
-			ucbe.printStackTrace();
-			throw new LoginException("UnsupportedCallbackException encountered: " + ucbe.getMessage());
-		}
+        String debugOption = (String) this.options.get("debug");
+        if (debugOption != null && "true".equalsIgnoreCase(debugOption)) {
+            debug = true;
+        }
 
-		successLogin = authenticate(username, password);
+        attributes = new HashMap<String, Set<String>>();
 
-		return successLogin;
-	}
+        if (debug) {
+            log.debug("login module initialised: " + this.getClass().getName());
+        }
+    }
 
-	public boolean commit() throws LoginException
-	{
-		if (!successLogin)
-			return false;
+    public boolean login() throws LoginException {
+        if (debug) {
+            log.debug(this.getClass().getName() + " login called.");
+        }
 
-		try
-		{
-			subject.getPrincipals().add(principal);
-			subject.getPublicCredentials().add(attributes);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			return false;
-		}
+        // The only 2 callback types that are supported.
+        Callback[] callbacks = new Callback[2];
+        callbacks[0] = new NameCallback("username");
+        callbacks[1] = new PasswordCallback("password", false);
 
-		return true;
-	}
+        String password = null;
+        try {
+            // sets the username and password from the callback handler
+            handler.handle(callbacks);
+            username = ((NameCallback) callbacks[0]).getName();
+            char[] passwordCharArray =
+                    ((PasswordCallback) callbacks[1]).getPassword();
+            password = new String(passwordCharArray);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            throw new LoginException("IOException occured: " + ioe.getMessage());
+        } catch (UnsupportedCallbackException ucbe) {
+            ucbe.printStackTrace();
+            throw new LoginException("UnsupportedCallbackException encountered: "
+                    + ucbe.getMessage());
+        }
 
-	public boolean abort() throws LoginException
-	{
-		try
-		{
-			clear();
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			return false;
-		}
+        successLogin = authenticate(username, password);
 
-		return true;
-	}
+        return successLogin;
+    }
 
-	public boolean logout() throws LoginException
-	{
-		try
-		{
-			clear();
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			return false;
-		}
+    public boolean commit() throws LoginException {
+        if (!successLogin) {
+            return false;
+        }
 
-		return true;
-	}
+        try {
+            subject.getPrincipals().add(principal);
+            subject.getPublicCredentials().add(attributes);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return false;
+        }
 
-	private void clear()
-	{
-		subject.getPrincipals().clear();
-		subject.getPublicCredentials().clear();
-		subject.getPrivateCredentials().clear();
-		principal = null;
-		username = null;
-	}
+        return true;
+    }
 
-	private boolean authenticate(String username, String password)
-	{
-		try
-		{
-			// required attributes
-			String hostUrl = getOption("host.url", true);
-			String authType = getOption("auth.type", true);
-			String bindMode = getOption("bind.mode", true);
+    public boolean abort() throws LoginException {
+        try {
+            clear();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return false;
+        }
 
-			// retrieve the attributes to fetch from ldap
-			String[] attrList = null;
-			String attrsFetch = getOption("attrs.fetch", false);
-			if (attrsFetch != null && !"".equals(attrsFetch))
-			{
-				attrList = attrsFetch.split(" *, *");
-			}
-			else if (attrList == null || attrList.length == 0)
-			{
-				attrList = new String[] { "cn", "sn", "mail", "displayName" };
-			}
+        return true;
+    }
 
-			Hashtable<String, String> env = new Hashtable<String, String>();
-			env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-			env.put(Context.SECURITY_AUTHENTICATION, authType);
-			env.put(Context.PROVIDER_URL, hostUrl);
+    public boolean logout() throws LoginException {
+        try {
+            clear();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return false;
+        }
 
-			if ("bind".equals(bindMode))
-			{
-				if (debug)
-					log.debug("authenticating with mode: " + bindMode);
+        return true;
+    }
 
-				return bind(username, password, env, attrList);
-			}
-			else if ("bind-search-compare".equals(bindMode))
-			{
-				if (debug)
-					log.debug("authenticating with mode: " + bindMode);
+    private void clear() {
+        subject.getPrincipals().clear();
+        subject.getPublicCredentials().clear();
+        subject.getPrivateCredentials().clear();
+        principal = null;
+        username = null;
+    }
 
-				return bindSearchX(username, password, env, attrList, false);
-			}
-			else if ("bind-search-bind".equals(bindMode))
-			{
-				if (debug)
-					log.debug("authenticating with mode: " + bindMode);
+    private boolean authenticate(String username, String password) {
+        try {
+            // required attributes
+            String hostUrl = getOption("host.url", true);
+            String authType = getOption("auth.type", true);
+            String bindMode = getOption("bind.mode", true);
 
-				return bindSearchX(username, password, env, attrList, true);
-			}
-		}
-		catch (NamingException ne)
-		{
-			log.error(ne.getMessage());
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage());
-		}
+            // retrieve the attributes to fetch from ldap
+            String[] attrList = null;
+            String attrsFetch = getOption("attrs.fetch", false);
+            if (attrsFetch != null && !"".equals(attrsFetch)) {
+                attrList = attrsFetch.split(" *, *");
+            } else if (attrList == null || attrList.length == 0) {
+                attrList = new String[] {"cn", "sn", "mail", "displayName"};
+            }
 
-		return false;
-	}
+            Hashtable<String, String> env = new Hashtable<String, String>();
+            env.put(Context.INITIAL_CONTEXT_FACTORY,
+                    "com.sun.jndi.ldap.LdapCtxFactory");
+            env.put(Context.SECURITY_AUTHENTICATION, authType);
+            env.put(Context.PROVIDER_URL, hostUrl);
 
-	private boolean bind(String username, String password, Hashtable<String, String> env, String[] attrList)
-			throws Exception
-	{
-		String bindFilter = getOption("bind.filter", true);
-		String dn = MessageFormat.format(bindFilter, username);
-		if (debug)
-			log.debug("authenticating user: " + dn);
+            if ("bind".equals(bindMode)) {
+                if (debug) {
+                    log.debug("authenticating with mode: " + bindMode);
+                }
 
-		env.put(Context.SECURITY_PRINCIPAL, dn);
-		env.put(Context.SECURITY_CREDENTIALS, password);
+                return bind(username, password, env, attrList);
+            } else if ("bind-search-compare".equals(bindMode)) {
+                if (debug) {
+                    log.debug("authenticating with mode: " + bindMode);
+                }
 
-		DirContext ctx = new InitialDirContext(env);
-		// we've successfully bound at this point. Auth is good.
-		// we instantiate the principal.
-		Attributes attributes = ctx.getAttributes(dn, attrList);
+                return bindSearchX(username, password, env, attrList, false);
+            } else if ("bind-search-bind".equals(bindMode)) {
+                if (debug) {
+                    log.debug("authenticating with mode: " + bindMode);
+                }
 
-		makePrincipal(username, attributes);
+                return bindSearchX(username, password, env, attrList, true);
+            }
+        } catch (NamingException ne) {
+            log.error(ne.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
 
-		return true;
-	}
+        return false;
+    }
 
-	private boolean bindSearchX(String username, String password, Hashtable<String, String> env, String[] attrList,
-			boolean bind) throws Exception
-	{
-		String bindUser = getOption("bind.user", true);
-		String bindPass = getOption("bind.pass", true);
-		String searchBase = getOption("search.base", true);
-		String searchFilter = getOption("search.filter", true);
+    private boolean bind(String username,
+                         String password,
+                         Hashtable<String, String> env,
+                         String[] attrList) throws Exception {
+        String bindFilter = getOption("bind.filter", true);
+        String dn = MessageFormat.format(bindFilter, username);
+        if (debug) {
+            log.debug("authenticating user: " + dn);
+        }
 
-		env.put(Context.SECURITY_PRINCIPAL, bindUser);
-		env.put(Context.SECURITY_CREDENTIALS, bindPass);
+        env.put(Context.SECURITY_PRINCIPAL, dn);
+        env.put(Context.SECURITY_CREDENTIALS, password);
 
-		DirContext ctx = null;
-		try
-		{
-			ctx = new InitialDirContext(env);
-		}
-		catch (NamingException ne)
-		{
-			log.error("Failed to bind as bindUser: " + bindUser);
-			throw ne;
-		}
+        DirContext ctx = new InitialDirContext(env);
+        // we've successfully bound at this point. Auth is good.
+        // we instantiate the principal.
+        Attributes attributes = ctx.getAttributes(dn, attrList);
 
-		// ensure we have the userPassword attribute at a minimum
-		String[] attributeList = null;
-		if (attrList == null)
-		{
-			attributeList = new String[] { "userPassword" };
-		}
-		else if (!Arrays.asList(attrList).contains("userPassword"))
-		{
-			attributeList = new String[attrList.length + 1];
-			for (int x = 0; x < attrList.length; x++)
-				attributeList[x] = attrList[x];
-			attributeList[attrList.length] = "userPassword";
-		}
+        makePrincipal(username, attributes);
 
-		SearchControls sc = new SearchControls();
-		sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
-		sc.setReturningAttributes(attributeList);
-		sc.setDerefLinkFlag(true);
-		sc.setReturningObjFlag(false);
-		sc.setTimeLimit(5000);
+        return true;
+    }
 
-		String filter = MessageFormat.format(searchFilter, username);
-		NamingEnumeration<SearchResult> results = ctx.search(searchBase, filter, sc);
-		if (!results.hasMore())
-		{
-			log.warn("no valid user found.");
-			return false;
-		}
+    private boolean bindSearchX(String username,
+                                String password,
+                                Hashtable<String, String> env,
+                                String[] attrList,
+                                boolean bind) throws Exception {
+        String bindUser = getOption("bind.user", true);
+        String bindPass = getOption("bind.pass", true);
+        String searchBase = getOption("search.base", true);
+        String searchFilter = getOption("search.filter", true);
 
-		SearchResult result = results.next();
-		if (debug)
-			log.debug("authenticating user: " + result.getNameInNamespace());
+        env.put(Context.SECURITY_PRINCIPAL, bindUser);
+        env.put(Context.SECURITY_CREDENTIALS, bindPass);
 
-		if (bind)
-		{
-			// setup user context for binding
-			Hashtable<String, String> userEnv = new Hashtable<String, String>();
-			userEnv.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-			userEnv.put(Context.SECURITY_AUTHENTICATION, getOption("auth.type", true));
-			userEnv.put(Context.PROVIDER_URL, getOption("host.url", true));
-			userEnv.put(Context.SECURITY_PRINCIPAL, result.getNameInNamespace());
-			userEnv.put(Context.SECURITY_CREDENTIALS, password);
+        DirContext ctx = null;
+        try {
+            ctx = new InitialDirContext(env);
+        } catch (NamingException ne) {
+            log.error("Failed to bind as bindUser: " + bindUser);
+            throw ne;
+        }
 
-			try
-			{
-				new InitialDirContext(userEnv);
-			}
-			catch (NamingException ne)
-			{
-				log.error("failed to authenticate user: " + result.getNameInNamespace());
-				throw ne;
-			}
-		}
-		else
-		{
-			// get userPassword attribute
-			Attribute up = result.getAttributes().get("userPassword");
-			if (up == null)
-			{
-				log.error("unable to read userPassword attribute for: " + result.getNameInNamespace());
-				return false;
-			}
+        // ensure we have the userPassword attribute at a minimum
+        String[] attributeList = null;
+        if (attrList == null) {
+            attributeList = new String[] {"userPassword"};
+        } else if (!Arrays.asList(attrList).contains("userPassword")) {
+            attributeList = new String[attrList.length + 1];
+            for (int x = 0; x < attrList.length; x++) {
+                attributeList[x] = attrList[x];
+            }
+            attributeList[attrList.length] = "userPassword";
+        }
 
-			byte[] userPasswordBytes = (byte[]) up.get();
-			String userPassword = new String(userPasswordBytes);
+        SearchControls sc = new SearchControls();
+        sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        sc.setReturningAttributes(attributeList);
+        sc.setDerefLinkFlag(true);
+        sc.setReturningObjFlag(false);
+        sc.setTimeLimit(5000);
 
-			// compare passwords - also handles encodings
-			if (!passwordsMatch(password, userPassword))
-				return false;
-		}
+        String filter = MessageFormat.format(searchFilter, username);
+        NamingEnumeration<SearchResult> results =
+                ctx.search(searchBase, filter, sc);
+        if (!results.hasMore()) {
+            log.warn("no valid user found.");
+            return false;
+        }
 
-		Attributes attributes = result.getAttributes();
-		makePrincipal(username, attributes);
+        SearchResult result = results.next();
+        if (debug) {
+            log.debug("authenticating user: " + result.getNameInNamespace());
+        }
 
-		return true;
-	}
+        if (bind) {
+            // setup user context for binding
+            Hashtable<String, String> userEnv = new Hashtable<String, String>();
+            userEnv.put(Context.INITIAL_CONTEXT_FACTORY,
+                        "com.sun.jndi.ldap.LdapCtxFactory");
+            userEnv.put(Context.SECURITY_AUTHENTICATION, getOption("auth.type",
+                                                                   true));
+            userEnv.put(Context.PROVIDER_URL, getOption("host.url", true));
+            userEnv
+                    .put(Context.SECURITY_PRINCIPAL, result
+                            .getNameInNamespace());
+            userEnv.put(Context.SECURITY_CREDENTIALS, password);
 
-	private void makePrincipal(String username, Attributes ldapAttributes) throws NamingException
-	{
-		principal = new UserPrincipal(username);
-		NamingEnumeration<? extends Attribute> attributeList = ldapAttributes.getAll();
-		while (attributeList.hasMore())
-		{
-			Attribute attribute = attributeList.next();
-			NamingEnumeration<?> values = attribute.getAll();
-			while (values.hasMore())
-			{
-				Object value = values.next();
-				if (value instanceof String)
-				{
-					Set<String> aValues = attributes.get(attribute.getID());
-					if (aValues == null)
-					{
-						aValues = new HashSet<String>();
-						attributes.put(attribute.getID(), aValues);
-					}
-					aValues.add((String) value);
+            try {
+                new InitialDirContext(userEnv);
+            } catch (NamingException ne) {
+                log.error("failed to authenticate user: "
+                        + result.getNameInNamespace());
+                throw ne;
+            }
+        } else {
+            // get userPassword attribute
+            Attribute up = result.getAttributes().get("userPassword");
+            if (up == null) {
+                log.error("unable to read userPassword attribute for: "
+                        + result.getNameInNamespace());
+                return false;
+            }
 
-					if (debug)
-						log.debug("added to principal: " + attribute.getID() + "/" + value);
-				}
-			}
-		}
-	}
+            byte[] userPasswordBytes = (byte[]) up.get();
+            String userPassword = new String(userPasswordBytes);
 
-	/**
-	 * Method to compare two passwords. The method attempts to encode the user password based on the
-	 * ldap password encoding extracted from the storage format (e.g. {SHA}g0bbl3d3g00ka12@#19/=).
-	 * 
-	 * @param userPassword the password that the user entered
-	 * @param ldapPassword the password from the ldap directory
-	 * @return true if userPassword equals ldapPassword with respect to encoding
-	 */
-	private static boolean passwordsMatch(String userPassword, String ldapPassword)
-	{
-		final String LDAP_PASSWORD_REGEX = "\\{(.+)\\}(.+)";
-		Pattern p = Pattern.compile(LDAP_PASSWORD_REGEX);
-		Matcher m = p.matcher(ldapPassword);
+            // compare passwords - also handles encodings
+            if (!passwordsMatch(password, userPassword)) {
+                return false;
+            }
+        }
 
-		boolean match = false;
-		if (m.find() && m.groupCount() == 2)
-		{
-			// if password is encoded in the LDAP, encode the password before
-			// compare
-			String encoding = m.group(1);
-			String password = m.group(2);
-			if (log.isDebugEnabled())
-				log.debug("Encoding: " + encoding + ", Password: " + password);
+        Attributes attributes = result.getAttributes();
+        makePrincipal(username, attributes);
 
-			MessageDigest digest = null;
-			try
-			{
-				digest = MessageDigest.getInstance(encoding.toUpperCase());
-			}
-			catch (NoSuchAlgorithmException e)
-			{
-				log.error("Unsupported Algorithm used: " + encoding);
-				log.error(e.getMessage());
-				return false;
-			}
+        return true;
+    }
 
-			byte[] resultBytes = digest.digest(userPassword.getBytes());
-			byte[] result = Base64.encodeBytesToBytes(resultBytes);
+    private void makePrincipal(String username, Attributes ldapAttributes)
+            throws NamingException {
+        principal = new UserPrincipal(username);
+        NamingEnumeration<? extends Attribute> attributeList =
+                ldapAttributes.getAll();
+        while (attributeList.hasMore()) {
+            Attribute attribute = attributeList.next();
+            NamingEnumeration<?> values = attribute.getAll();
+            while (values.hasMore()) {
+                Object value = values.next();
+                if (value instanceof String) {
+                    Set<String> aValues = attributes.get(attribute.getID());
+                    if (aValues == null) {
+                        aValues = new HashSet<String>();
+                        attributes.put(attribute.getID(), aValues);
+                    }
+                    aValues.add((String) value);
 
-			String pwd = new String(password);
-			String ldp = new String(result);
-			match = (pwd.equals(ldp));
-		}
-		else
-		{
-			// if passwords are not encoded, just do raw compare
-			match = userPassword.equals(ldapPassword);
-		}
+                    if (debug) {
+                        log.debug("added to principal: " + attribute.getID()
+                                + "/" + value);
+                    }
+                }
+            }
+        }
+    }
 
-		return match;
-	}
+    /**
+     * Method to compare two passwords. The method attempts to encode the user
+     * password based on the ldap password encoding extracted from the storage
+     * format (e.g. {SHA}g0bbl3d3g00ka12@#19/=).
+     * 
+     * @param userPassword
+     *        the password that the user entered
+     * @param ldapPassword
+     *        the password from the ldap directory
+     * @return true if userPassword equals ldapPassword with respect to encoding
+     */
+    private static boolean passwordsMatch(String userPassword,
+                                          String ldapPassword) {
+        final String LDAP_PASSWORD_REGEX = "\\{(.+)\\}(.+)";
+        Pattern p = Pattern.compile(LDAP_PASSWORD_REGEX);
+        Matcher m = p.matcher(ldapPassword);
 
-	private String getOption(String key, boolean required) throws Exception
-	{
-		String value = (String) options.get(key);
-		if (required && (value == null || "".equals(value)))
-			throw new Exception("Missing required option in JAAS Config file: " + key);
+        boolean match = false;
+        if (m.find() && m.groupCount() == 2) {
+            // if password is encoded in the LDAP, encode the password before
+            // compare
+            String encoding = m.group(1);
+            String password = m.group(2);
+            if (log.isDebugEnabled()) {
+                log.debug("Encoding: " + encoding + ", Password: " + password);
+            }
 
-		return value;
-	}
+            MessageDigest digest = null;
+            try {
+                digest = MessageDigest.getInstance(encoding.toUpperCase());
+            } catch (NoSuchAlgorithmException e) {
+                log.error("Unsupported Algorithm used: " + encoding);
+                log.error(e.getMessage());
+                return false;
+            }
+
+            byte[] resultBytes = digest.digest(userPassword.getBytes());
+            byte[] result = Base64.encodeBytesToBytes(resultBytes);
+
+            String pwd = new String(password);
+            String ldp = new String(result);
+            match = pwd.equals(ldp);
+        } else {
+            // if passwords are not encoded, just do raw compare
+            match = userPassword.equals(ldapPassword);
+        }
+
+        return match;
+    }
+
+    private String getOption(String key, boolean required) throws Exception {
+        String value = (String) options.get(key);
+        if (required && (value == null || "".equals(value))) {
+            throw new Exception("Missing required option in JAAS Config file: "
+                    + key);
+        }
+
+        return value;
+    }
 }

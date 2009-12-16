@@ -1,3 +1,4 @@
+
 package melcoe.test;
 
 import java.io.IOException;
@@ -14,86 +15,78 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-public final class SnoopFilter implements Filter
-{
-	private static final Logger log = Logger.getLogger(SnoopFilter.class);
+public final class SnoopFilter
+        implements Filter {
 
-	private FilterConfig filterConfig = null;
+    private static final Logger log = Logger.getLogger(SnoopFilter.class);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse,
-	 *      javax.servlet.FilterChain)
-	 */
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-			ServletException
-	{
-		// Need to make sure we are dealing with HttpServlets
-		if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse))
-		{
-			log.error("Servlets are not HttpServlets!");
-			throw new ServletException("Servlets are not HttpServlets!");
-		}
+    private FilterConfig filterConfig = null;
 
-		HttpServletRequest req = (HttpServletRequest) request;
-		HttpServletResponse res = (HttpServletResponse) response;
+    /*
+     * (non-Javadoc)
+     * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest,
+     * javax.servlet.ServletResponse, javax.servlet.FilterChain)
+     */
+    public void doFilter(ServletRequest request,
+                         ServletResponse response,
+                         FilterChain chain) throws IOException,
+            ServletException {
+        // Need to make sure we are dealing with HttpServlets
+        if (!(request instanceof HttpServletRequest)
+                || !(response instanceof HttpServletResponse)) {
+            log.error("Servlets are not HttpServlets!");
+            throw new ServletException("Servlets are not HttpServlets!");
+        }
 
-		String uri = req.getRequestURI();
-		
-		if (log.isDebugEnabled())
-		{
-			log.debug("Incoming Request, URI: " + uri);
-			log.debug("Headers: ");
-			Enumeration headerNames = req.getHeaderNames();
-			while (headerNames.hasMoreElements())
-			{
-				String headerName = (String) headerNames.nextElement();
-				Enumeration values = req.getHeaders(headerName);
-				while (values.hasMoreElements())
-				{
-					String value = (String) values.nextElement();
-					log.debug(headerName + ": " + value);
-				}
-			}
-			log.debug("userPrincipal: " + req.getUserPrincipal());
-			log.debug("remoteUser: " + req.getRemoteUser());
-		}
-		
-		chain.doFilter(req, res);
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse res = (HttpServletResponse) response;
 
-		if (log.isDebugEnabled())
-		{
-			log.debug("Outgoing Response, URI: " + uri);
-		}
-	}
+        String uri = req.getRequestURI();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
-	 */
-	public void init(FilterConfig filterCfg) throws ServletException
-	{
-		log.info("Initialising Servlet Filter: " + this.getClass().getName());
-		this.filterConfig = filterCfg;
+        if (log.isDebugEnabled()) {
+            log.debug("Incoming Request, URI: " + uri);
+            log.debug("Headers: ");
+            Enumeration headerNames = req.getHeaderNames();
+            while (headerNames.hasMoreElements()) {
+                String headerName = (String) headerNames.nextElement();
+                Enumeration values = req.getHeaders(headerName);
+                while (values.hasMoreElements()) {
+                    String value = (String) values.nextElement();
+                    log.debug(headerName + ": " + value);
+                }
+            }
+            log.debug("userPrincipal: " + req.getUserPrincipal());
+            log.debug("remoteUser: " + req.getRemoteUser());
+        }
 
-		// exit if no config. Should always have a config.
-		if (this.filterConfig == null)
-		{
-			log.error("No config found!");
-			throw new ServletException("No config found for filter (filterConfig)");
-		}
-	}
+        chain.doFilter(req, res);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.Filter#destroy()
-	 */
-	public void destroy()
-	{
-		log.info("Destroying Servlet Filter: " + this.getClass().getName());
-		filterConfig = null;
-	}
+        if (log.isDebugEnabled()) {
+            log.debug("Outgoing Response, URI: " + uri);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
+     */
+    public void init(FilterConfig filterCfg) throws ServletException {
+        log.info("Initialising Servlet Filter: " + this.getClass().getName());
+        filterConfig = filterCfg;
+
+        // exit if no config. Should always have a config.
+        if (filterConfig == null) {
+            log.error("No config found!");
+            throw new ServletException("No config found for filter (filterConfig)");
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see javax.servlet.Filter#destroy()
+     */
+    public void destroy() {
+        log.info("Destroying Servlet Filter: " + this.getClass().getName());
+        filterConfig = null;
+    }
 }

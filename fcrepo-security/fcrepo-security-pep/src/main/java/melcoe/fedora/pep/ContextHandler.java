@@ -32,57 +32,61 @@ import com.sun.xacml.ctx.ResponseCtx;
  * receives the response and passes it to the PEP.
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public interface ContextHandler
-{
+public interface ContextHandler {
 
-	/**
-	 * Creates a new Request.
-	 * 
-	 * @param subjects a list of Map<URI, AttributeValue> containing the
-	 *        attributes for a set of subjects.
-	 * @param actions the URI of the requested Action.
-	 * @param resources a Map<URI, AttributeValue> containing the attributes
-	 *        for a resource.
-	 * @param environment Map<URI, AttributeValue> containing the attributes
-	 *        for the environment.
-	 * @return a request context for a PDP to handle.
-	 * 
-	 * @throws PEPException
-	 */
-	public RequestCtx buildRequest(List<Map<URI, List<AttributeValue>>> subjects, Map<URI, AttributeValue> actions,
-			Map<URI, AttributeValue> resources, Map<URI, AttributeValue> environment) throws PEPException;
+    /**
+     * Creates a new Request.
+     * 
+     * @param subjects
+     *        a list of Map<URI, AttributeValue> containing the attributes for a
+     *        set of subjects.
+     * @param actions
+     *        the URI of the requested Action.
+     * @param resources
+     *        a Map<URI, AttributeValue> containing the attributes for a
+     *        resource.
+     * @param environment
+     *        Map<URI, AttributeValue> containing the attributes for the
+     *        environment.
+     * @return a request context for a PDP to handle.
+     * @throws PEPException
+     */
+    public RequestCtx buildRequest(List<Map<URI, List<AttributeValue>>> subjects,
+                                   Map<URI, AttributeValue> actions,
+                                   Map<URI, AttributeValue> resources,
+                                   Map<URI, AttributeValue> environment)
+            throws PEPException;
 
-	/**
-	 * @param reqCtx an XACML request context for resolution.
-	 * @return an XACML response context based on the evaluation of the request
-	 *         context.
-	 * 
-	 * @throws PEPException
-	 */
-	public ResponseCtx evaluate(RequestCtx reqCtx) throws PEPException;
+    /**
+     * @param reqCtx
+     *        an XACML request context for resolution.
+     * @return an XACML response context based on the evaluation of the request
+     *         context.
+     * @throws PEPException
+     */
+    public ResponseCtx evaluate(RequestCtx reqCtx) throws PEPException;
 
-	/**
-	 * @param req an XACML request as a string for resolution.
-	 * @return an XACML response as a string based on the evaluation of the
-	 *         request context.
-	 * 
-	 * @throws PEPException
-	 */
-	public String evaluate(String req) throws PEPException;
+    /**
+     * @param req
+     *        an XACML request as a string for resolution.
+     * @return an XACML response as a string based on the evaluation of the
+     *         request context.
+     * @throws PEPException
+     */
+    public String evaluate(String req) throws PEPException;
 
-	/**
-	 * @param requests an array of XACML requests as strings for resolution.
-	 * @return an XACML response as a string based on the evaluation of the
-	 *         request context.
-	 * 
-	 * @throws PEPException
-	 */
-	public String evaluateBatch(String[] requests) throws PEPException;
-	
-	/**
-	 * @return a reference to the response cache.
-	 */
-	public ResponseCache getResponseCache();
+    /**
+     * @param requests
+     *        an array of XACML requests as strings for resolution.
+     * @return an XACML response as a string based on the evaluation of the
+     *         request context.
+     * @throws PEPException
+     */
+    public String evaluateBatch(String[] requests) throws PEPException;
+
+    /**
+     * @return a reference to the response cache.
+     */
+    public ResponseCache getResponseCache();
 }

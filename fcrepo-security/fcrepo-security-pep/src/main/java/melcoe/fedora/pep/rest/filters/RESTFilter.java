@@ -30,31 +30,36 @@ import com.sun.xacml.ctx.RequestCtx;
  * The interface for filters.
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public interface RESTFilter
-{
-	/**
-	 * Handles the request path and returns a RequestCtx if necessary.
-	 * 
-	 * @param request the servlet request
-	 * @param response the servlet response
-	 * @return the RequestCtx if one is needed, or else null
-	 * @throws IOException
-	 * @throws ServletException
-	 */
-	public RequestCtx handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException,
-			ServletException;
+public interface RESTFilter {
 
-	/**
-	 * Handles the response path and returns a RequestCtx if necessary.
-	 * 
-	 * @param request the servlet request
-	 * @param response the servlet response
-	 * @return the RequestCtx if one is needed, or else null
-	 * @throws IOException
-	 * @throws ServletException
-	 */
-	public RequestCtx handleResponse(HttpServletRequest request, HttpServletResponse response) throws IOException,
-			ServletException;
+    /**
+     * Handles the request path and returns a RequestCtx if necessary.
+     * 
+     * @param request
+     *        the servlet request
+     * @param response
+     *        the servlet response
+     * @return the RequestCtx if one is needed, or else null
+     * @throws IOException
+     * @throws ServletException
+     */
+    public RequestCtx handleRequest(HttpServletRequest request,
+                                    HttpServletResponse response)
+            throws IOException, ServletException;
+
+    /**
+     * Handles the response path and returns a RequestCtx if necessary.
+     * 
+     * @param request
+     *        the servlet request
+     * @param response
+     *        the servlet response
+     * @return the RequestCtx if one is needed, or else null
+     * @throws IOException
+     * @throws ServletException
+     */
+    public RequestCtx handleResponse(HttpServletRequest request,
+                                     HttpServletResponse response)
+            throws IOException, ServletException;
 }

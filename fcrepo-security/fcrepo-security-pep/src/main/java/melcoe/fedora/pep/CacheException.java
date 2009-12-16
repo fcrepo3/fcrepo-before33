@@ -16,34 +16,29 @@
  * limitations under the License.
  */
 
-
 package melcoe.fedora.pep;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- *
  */
-public class CacheException extends Exception
-{
-	private static final long serialVersionUID = -7143993083535893238L;
+public class CacheException
+        extends Exception {
 
-	public CacheException()
-	{
-		super();
-	}
+    private static final long serialVersionUID = -7143993083535893238L;
 
-	public CacheException(String message)
-	{
-		super(message);
-	}
+    public CacheException() {
+        super();
+    }
 
-	public CacheException(Throwable cause)
-	{
-		super(cause);
-	}
+    public CacheException(String message) {
+        super(message);
+    }
 
-	public CacheException(String message, Throwable cause)
-	{
-		super(message, cause);
-	}
+    public CacheException(Throwable cause) {
+        super(cause);
+    }
+
+    public CacheException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -44,112 +44,132 @@ import fedora.common.Constants;
  * Handles the AddDatastream operation.
  * 
  * @author nish.naidoo@gmail.com
- * 
  */
-public class AddDatastream extends AbstractFilter
-{
-	private static Logger log = Logger.getLogger(AddDatastream.class.getName());
+public class AddDatastream
+        extends AbstractFilter {
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @throws PEPException
-	 */
-	public AddDatastream() throws PEPException
-	{
-		super();
-	}
+    private static Logger log = Logger.getLogger(AddDatastream.class.getName());
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet
-	 * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleRequest(HttpServletRequest request, HttpServletResponse response)
-	    throws IOException, ServletException
-	{
-		if (log.isDebugEnabled())
-			log.debug(this.getClass().getName() + "/handleRequest!");
+    /**
+     * Default constructor.
+     * 
+     * @throws PEPException
+     */
+    public AddDatastream()
+            throws PEPException {
+        super();
+    }
 
-		String path = request.getPathInfo();
-		String[] parts = path.split("/");
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleRequest(HttpServletRequest request,
+                                    HttpServletResponse response)
+            throws IOException, ServletException {
+        if (log.isDebugEnabled()) {
+            log.debug(this.getClass().getName() + "/handleRequest!");
+        }
 
-		String pid = parts[1];
-		String dsID = parts[3];
-		// String[] altIDs = null;
-		// String dsLabel = null;
-		// Boolean versionable = null;
-		String mimeType = request.getParameter("mimeType");
-		String formatURI = request.getParameter("formatURI");
-		String dsLocation = request.getParameter("dsLocation");
-		String controlGroup = request.getParameter("controlGroup");
-		String dsState = request.getParameter("dsState");
-		String checksumType = request.getParameter("checksumType");
-		String checksum = request.getParameter("checksum");
-		// String logMessage = null;
+        String path = request.getPathInfo();
+        String[] parts = path.split("/");
 
-		RequestCtx req = null;
-		Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
-		Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
-		try
-		{
-			if (pid != null && !"".equals(pid))
-				resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute(pid));
-			if (pid != null && !"".equals(pid))
-				resAttr.put(new URI(XACML_RESOURCE_ID), new AnyURIAttribute(new URI(pid)));
-			if (dsID != null && !"".equals(dsID))
-				resAttr.put(Constants.DATASTREAM.ID.getURI(), new StringAttribute(dsID));
-			if (mimeType != null && !"".equals(mimeType))
-				resAttr.put(Constants.DATASTREAM.NEW_MIME_TYPE.getURI(), new StringAttribute(mimeType));
-			if (formatURI != null && !"".equals(formatURI))
-				resAttr.put(Constants.DATASTREAM.NEW_FORMAT_URI.getURI(), new AnyURIAttribute(new URI(
-				    formatURI)));
-			if (dsLocation != null && !"".equals(dsLocation))
-				resAttr.put(Constants.DATASTREAM.NEW_LOCATION.getURI(), new AnyURIAttribute(new URI(
-				    dsLocation)));
-			if (controlGroup != null && !"".equals(controlGroup))
-				resAttr.put(Constants.DATASTREAM.NEW_CONTROL_GROUP.getURI(),
-				    new StringAttribute(controlGroup));
-			if (dsState != null && !"".equals(dsState))
-				resAttr.put(Constants.DATASTREAM.NEW_STATE.getURI(), new StringAttribute(dsState));
-			if (checksumType != null && !"".equals(checksumType))
-				resAttr.put(Constants.DATASTREAM.NEW_CHECKSUM_TYPE.getURI(),
-				    new StringAttribute(checksumType));
-			if (checksum != null && !"".equals(checksum))
-				resAttr.put(Constants.DATASTREAM.NEW_CHECKSUM.getURI(), new StringAttribute(checksum));
+        String pid = parts[1];
+        String dsID = parts[3];
+        // String[] altIDs = null;
+        // String dsLabel = null;
+        // Boolean versionable = null;
+        String mimeType = request.getParameter("mimeType");
+        String formatURI = request.getParameter("formatURI");
+        String dsLocation = request.getParameter("dsLocation");
+        String controlGroup = request.getParameter("controlGroup");
+        String dsState = request.getParameter("dsState");
+        String checksumType = request.getParameter("checksumType");
+        String checksum = request.getParameter("checksum");
+        // String logMessage = null;
 
-			actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(Constants.ACTION.ADD_DATASTREAM
-			    .getURI().toASCIIString()));
-			actions.put(Constants.ACTION.API.getURI(), new StringAttribute(Constants.ACTION.APIM.getURI()
-			    .toASCIIString()));
+        RequestCtx req = null;
+        Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
+        Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
+        try {
+            if (pid != null && !"".equals(pid)) {
+                resAttr.put(Constants.OBJECT.PID.getURI(),
+                            new StringAttribute(pid));
+            }
+            if (pid != null && !"".equals(pid)) {
+                resAttr.put(new URI(XACML_RESOURCE_ID),
+                            new AnyURIAttribute(new URI(pid)));
+            }
+            if (dsID != null && !"".equals(dsID)) {
+                resAttr.put(Constants.DATASTREAM.ID.getURI(),
+                            new StringAttribute(dsID));
+            }
+            if (mimeType != null && !"".equals(mimeType)) {
+                resAttr.put(Constants.DATASTREAM.NEW_MIME_TYPE.getURI(),
+                            new StringAttribute(mimeType));
+            }
+            if (formatURI != null && !"".equals(formatURI)) {
+                resAttr.put(Constants.DATASTREAM.NEW_FORMAT_URI.getURI(),
+                            new AnyURIAttribute(new URI(formatURI)));
+            }
+            if (dsLocation != null && !"".equals(dsLocation)) {
+                resAttr.put(Constants.DATASTREAM.NEW_LOCATION.getURI(),
+                            new AnyURIAttribute(new URI(dsLocation)));
+            }
+            if (controlGroup != null && !"".equals(controlGroup)) {
+                resAttr.put(Constants.DATASTREAM.NEW_CONTROL_GROUP.getURI(),
+                            new StringAttribute(controlGroup));
+            }
+            if (dsState != null && !"".equals(dsState)) {
+                resAttr.put(Constants.DATASTREAM.NEW_STATE.getURI(),
+                            new StringAttribute(dsState));
+            }
+            if (checksumType != null && !"".equals(checksumType)) {
+                resAttr.put(Constants.DATASTREAM.NEW_CHECKSUM_TYPE.getURI(),
+                            new StringAttribute(checksumType));
+            }
+            if (checksum != null && !"".equals(checksum)) {
+                resAttr.put(Constants.DATASTREAM.NEW_CHECKSUM.getURI(),
+                            new StringAttribute(checksum));
+            }
 
-			req = getContextHandler().buildRequest(getSubjects(request), actions, resAttr,
-			    getEnvironment(request));
+            actions.put(Constants.ACTION.ID.getURI(),
+                        new StringAttribute(Constants.ACTION.ADD_DATASTREAM
+                                .getURI().toASCIIString()));
+            actions.put(Constants.ACTION.API.getURI(),
+                        new StringAttribute(Constants.ACTION.APIM.getURI()
+                                .toASCIIString()));
 
-			LogUtil.statLog(request.getRemoteUser(), Constants.ACTION.ADD_DATASTREAM.getURI().toASCIIString(),
-			    pid, dsID);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			throw new ServletException(e.getMessage(), e);
-		}
+            req =
+                    getContextHandler().buildRequest(getSubjects(request),
+                                                     actions,
+                                                     resAttr,
+                                                     getEnvironment(request));
 
-		return req;
-	}
+            LogUtil.statLog(request.getRemoteUser(),
+                            Constants.ACTION.ADD_DATASTREAM.getURI()
+                                    .toASCIIString(),
+                            pid,
+                            dsID);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new ServletException(e.getMessage(), e);
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet
-	 * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleResponse(HttpServletRequest request, HttpServletResponse response)
-	    throws IOException, ServletException
-	{
-		return null;
-	}
+        return req;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleResponse(HttpServletRequest request,
+                                     HttpServletResponse response)
+            throws IOException, ServletException {
+        return null;
+    }
 }

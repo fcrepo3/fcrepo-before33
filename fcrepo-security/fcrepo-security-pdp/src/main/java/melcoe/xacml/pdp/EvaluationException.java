@@ -20,18 +20,24 @@ package melcoe.xacml.pdp;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public class EvaluationException extends MelcoePDPException {
-	public EvaluationException() {
-		super();
-	}
+public class EvaluationException
+        extends MelcoePDPException {
 
-	public EvaluationException(String msg) {
-		super(msg);
-	}
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	public EvaluationException(String msg, Throwable t) {
-		super(msg, t);
-	}
+    public EvaluationException() {
+        super();
+    }
+
+    public EvaluationException(String msg) {
+        super(msg);
+    }
+
+    public EvaluationException(String msg, Throwable t) {
+        super(msg, t);
+    }
 }

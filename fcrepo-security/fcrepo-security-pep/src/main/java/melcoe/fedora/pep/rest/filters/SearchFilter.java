@@ -71,389 +71,419 @@ import fedora.common.Constants;
  * Filter to handle the search operation.
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public class SearchFilter extends AbstractFilter
-{
-	private static Logger log = Logger.getLogger(SearchFilter.class.getName());
+public class SearchFilter
+        extends AbstractFilter {
 
-	private ContextUtil contextUtil = null;
-	private Transformer xFormer = null;
-	private Tidy tidy = null;
+    private static Logger log = Logger.getLogger(SearchFilter.class.getName());
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @throws PEPException
-	 */
-	public SearchFilter() throws PEPException
-	{
-		super();
+    private ContextUtil contextUtil = null;
 
-		contextUtil = new ContextUtil();
+    private Transformer xFormer = null;
 
-		try
-		{
-			TransformerFactory xFactory = TransformerFactory.newInstance();
-			xFormer = xFactory.newTransformer();
-		}
-		catch (TransformerConfigurationException tce)
-		{
-			throw new PEPException("Error initialising SearchFilter", tce);
-		}
+    private Tidy tidy = null;
 
-		tidy = new Tidy();
-		tidy.setShowWarnings(false);
-		tidy.setQuiet(true);
-	}
+    /**
+     * Default constructor.
+     * 
+     * @throws PEPException
+     */
+    public SearchFilter()
+            throws PEPException {
+        super();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException,
-			ServletException
-	{
-		RequestCtx req = null;
+        contextUtil = new ContextUtil();
 
-		Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
-		Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
+        try {
+            TransformerFactory xFactory = TransformerFactory.newInstance();
+            xFormer = xFactory.newTransformer();
+        } catch (TransformerConfigurationException tce) {
+            throw new PEPException("Error initialising SearchFilter", tce);
+        }
 
-		try
-		{
-			resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute("FedoraRepository"));
-			resAttr.put(new URI("urn:oasis:names:tc:xacml:1.0:resource:resource-id"), new AnyURIAttribute(new URI(
-					"FedoraRepository")));
+        tidy = new Tidy();
+        tidy.setShowWarnings(false);
+        tidy.setQuiet(true);
+    }
 
-			actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(Constants.ACTION.FIND_OBJECTS.getURI()
-					.toASCIIString()));
-			actions.put(Constants.ACTION.API.getURI(), new StringAttribute(Constants.ACTION.APIA.getURI()
-					.toASCIIString()));
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleRequest(HttpServletRequest request,
+                                    HttpServletResponse response)
+            throws IOException, ServletException {
+        RequestCtx req = null;
 
-			req = getContextHandler().buildRequest(getSubjects(request), actions, resAttr, getEnvironment(request));
+        Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
+        Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
 
-			LogUtil.statLog(request.getRemoteUser(), Constants.ACTION.FIND_OBJECTS.getURI().toASCIIString(),
-							"FedoraRepository", null);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage());
-			throw AxisFault.makeFault(e);
-		}
+        try {
+            resAttr.put(Constants.OBJECT.PID.getURI(),
+                        new StringAttribute("FedoraRepository"));
+            resAttr
+                    .put(new URI("urn:oasis:names:tc:xacml:1.0:resource:resource-id"),
+                         new AnyURIAttribute(new URI("FedoraRepository")));
 
-		return req;
-	}
+            actions.put(Constants.ACTION.ID.getURI(),
+                        new StringAttribute(Constants.ACTION.FIND_OBJECTS
+                                .getURI().toASCIIString()));
+            actions.put(Constants.ACTION.API.getURI(),
+                        new StringAttribute(Constants.ACTION.APIA.getURI()
+                                .toASCIIString()));
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleResponse(HttpServletRequest request, HttpServletResponse response) throws IOException,
-			ServletException
-	{
-		if (request.getParameter("terms") == null && request.getParameter("query") == null
-				&& request.getParameter("sessionToken") == null)
-			return null;
+            req =
+                    getContextHandler().buildRequest(getSubjects(request),
+                                                     actions,
+                                                     resAttr,
+                                                     getEnvironment(request));
 
-		DataResponseWrapper res = (DataResponseWrapper) response;
-		byte[] data = res.getData();
+            LogUtil.statLog(request.getRemoteUser(),
+                            Constants.ACTION.FIND_OBJECTS.getURI()
+                                    .toASCIIString(),
+                            "FedoraRepository",
+                            null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw AxisFault.makeFault(e);
+        }
 
-		String result = null;
-		String body = new String(data);
+        return req;
+    }
 
-		if (body.startsWith("<html>"))
-		{
-			if (log.isDebugEnabled())
-				log.debug("filtering html");
-			result = filterHTML(request, res);
-		}
-		else if (body.startsWith("<?xml"))
-		{
-			if (log.isDebugEnabled())
-				log.debug("filtering html");
-			result = filterXML(request, res);
-		}
-		else
-		{
-			if (log.isDebugEnabled())
-			{
-				log.debug("not filtering due to unexpected output: " + body);
-			}
-			result = body;
-		}
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleResponse(HttpServletRequest request,
+                                     HttpServletResponse response)
+            throws IOException, ServletException {
+        if (request.getParameter("terms") == null
+                && request.getParameter("query") == null
+                && request.getParameter("sessionToken") == null) {
+            return null;
+        }
 
-		res.setData(result.getBytes());
+        DataResponseWrapper res = (DataResponseWrapper) response;
+        byte[] data = res.getData();
 
-		return null;
-	}
+        String result = null;
+        String body = new String(data);
 
-	/**
-	 * Parses an XML based response and removes the items that are not permitted.
-	 * 
-	 * @param request the http servlet request
-	 * @param response the http servlet response
-	 * @return the new response body without non-permissable objects.
-	 * 
-	 * @throws ServletException
-	 */
-	private String filterXML(HttpServletRequest request, DataResponseWrapper response) throws ServletException
-	{
-		String body = new String(response.getData());
-		DocumentBuilder docBuilder = null;
-		Document doc = null;
+        if (body.startsWith("<html>")) {
+            if (log.isDebugEnabled()) {
+                log.debug("filtering html");
+            }
+            result = filterHTML(request, res);
+        } else if (body.startsWith("<?xml")) {
+            if (log.isDebugEnabled()) {
+                log.debug("filtering html");
+            }
+            result = filterXML(request, res);
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("not filtering due to unexpected output: " + body);
+            }
+            result = body;
+        }
 
-		try
-		{
-			docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			doc = docBuilder.parse(new ByteArrayInputStream(response.getData()));
-		}
-		catch (Exception e)
-		{
-			throw new ServletException(e);
-		}
+        res.setData(result.getBytes());
 
-		XPath xpath = XPathFactory.newInstance().newXPath();
-		NodeList rows = null;
-		try
-		{
-			rows = (NodeList) xpath.evaluate("/result/resultList/objectFields", doc, XPathConstants.NODESET);
-		}
-		catch (XPathExpressionException xpe)
-		{
-			throw new ServletException("Error parsing HTML for search results: ", xpe);
-		}
+        return null;
+    }
 
-		if (rows.getLength() == 0)
-		{
-			if (log.isDebugEnabled())
-				log.debug("No results to filter.");
-			
-			return body;
-		}
+    /**
+     * Parses an XML based response and removes the items that are not
+     * permitted.
+     * 
+     * @param request
+     *        the http servlet request
+     * @param response
+     *        the http servlet response
+     * @return the new response body without non-permissable objects.
+     * @throws ServletException
+     */
+    private String filterXML(HttpServletRequest request,
+                             DataResponseWrapper response)
+            throws ServletException {
+        String body = new String(response.getData());
+        DocumentBuilder docBuilder = null;
+        Document doc = null;
 
-		Map<String, Node> pids = new HashMap<String, Node>();
-		for (int x = 0; x < rows.getLength(); x++)
-		{
-			NodeList children = rows.item(x).getChildNodes();
-			for (int y = 0; y < children.getLength(); y++)
-			{
-				if ("pid".equals(children.item(y).getNodeName()))
-				{
-					pids.put(children.item(y).getFirstChild().getNodeValue(), rows.item(x));
-					break;
-				}
-			}
-		}
+        try {
+            docBuilder =
+                    DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            doc =
+                    docBuilder.parse(new ByteArrayInputStream(response
+                            .getData()));
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
 
-		Set<Result> results = evaluatePids(pids.keySet(), request, response);
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        NodeList rows = null;
+        try {
+            rows =
+                    (NodeList) xpath
+                            .evaluate("/result/resultList/objectFields",
+                                      doc,
+                                      XPathConstants.NODESET);
+        } catch (XPathExpressionException xpe) {
+            throw new ServletException("Error parsing HTML for search results: ",
+                                       xpe);
+        }
 
-		for (Result r : results)
-		{
-			if (r.getResource() == null || "".equals(r.getResource()))
-				log.warn("This resource has no resource identifier in the xacml response results!");
-			else if (log.isDebugEnabled())
-				log.debug("Checking: " + r.getResource());
+        if (rows.getLength() == 0) {
+            if (log.isDebugEnabled()) {
+                log.debug("No results to filter.");
+            }
 
-			String[] ridComponents = r.getResource().split("\\/");
-			String rid = ridComponents[ridComponents.length - 1];
+            return body;
+        }
 
-			if (r.getStatus().getCode().contains(Status.STATUS_OK) && r.getDecision() != Result.DECISION_PERMIT)
-			{
-				Node node = pids.get(rid);
-				node.getParentNode().removeChild(node);
-				if (log.isDebugEnabled())
-					log.debug("Removing: " + r.getResource() + "[" + rid + "]");
-			}
-		}
+        Map<String, Node> pids = new HashMap<String, Node>();
+        for (int x = 0; x < rows.getLength(); x++) {
+            NodeList children = rows.item(x).getChildNodes();
+            for (int y = 0; y < children.getLength(); y++) {
+                if ("pid".equals(children.item(y).getNodeName())) {
+                    pids.put(children.item(y).getFirstChild().getNodeValue(),
+                             rows.item(x));
+                    break;
+                }
+            }
+        }
 
-		Source src = new DOMSource(doc);
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		javax.xml.transform.Result dst = new StreamResult(os);
-		try
-		{
-			xFormer.transform(src, dst);
-		}
-		catch (TransformerException te)
-		{
-			throw new ServletException("error generating output", te);
-		}
+        Set<Result> results = evaluatePids(pids.keySet(), request, response);
 
-		return new String(os.toByteArray());
-	}
+        for (Result r : results) {
+            if (r.getResource() == null || "".equals(r.getResource())) {
+                log
+                        .warn("This resource has no resource identifier in the xacml response results!");
+            } else if (log.isDebugEnabled()) {
+                log.debug("Checking: " + r.getResource());
+            }
 
-	/**
-	 * Parses an HTML based response and removes the items that are not permitted.
-	 * 
-	 * @param request the http servlet request
-	 * @param response the http servlet response
-	 * @return the new response body without non-permissable objects.
-	 * 
-	 * @throws ServletException
-	 */
-	private String filterHTML(HttpServletRequest request, DataResponseWrapper response) throws ServletException
-	{
-		String body = new String(response.getData());
+            String[] ridComponents = r.getResource().split("\\/");
+            String rid = ridComponents[ridComponents.length - 1];
 
-		InputStream is = new ByteArrayInputStream(body.getBytes());
-		Document doc = tidy.parseDOM(is, null);
+            if (r.getStatus().getCode().contains(Status.STATUS_OK)
+                    && r.getDecision() != Result.DECISION_PERMIT) {
+                Node node = pids.get(rid);
+                node.getParentNode().removeChild(node);
+                if (log.isDebugEnabled()) {
+                    log.debug("Removing: " + r.getResource() + "[" + rid + "]");
+                }
+            }
+        }
 
-		XPath xpath = XPathFactory.newInstance().newXPath();
-		NodeList rows = null;
-		try
-		{
-			rows = (NodeList) xpath.evaluate("/html/body/center/center/table/tr", doc, XPathConstants.NODESET);
-		}
-		catch (XPathExpressionException xpe)
-		{
-			throw new ServletException("Error parsing HTML for search results: ", xpe);
-		}
+        Source src = new DOMSource(doc);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        javax.xml.transform.Result dst = new StreamResult(os);
+        try {
+            xFormer.transform(src, dst);
+        } catch (TransformerException te) {
+            throw new ServletException("error generating output", te);
+        }
 
-		// only the header row, no results.
-		if (rows.getLength() == 1)
-		{
-			if (log.isDebugEnabled())
-				log.debug("No results to filter.");
-			return body;
-		}
+        return new String(os.toByteArray());
+    }
 
-		NodeList headers = rows.item(0).getChildNodes();
-		int numHeaders = headers.getLength();
-		int pidHeader = -1;
+    /**
+     * Parses an HTML based response and removes the items that are not
+     * permitted.
+     * 
+     * @param request
+     *        the http servlet request
+     * @param response
+     *        the http servlet response
+     * @return the new response body without non-permissable objects.
+     * @throws ServletException
+     */
+    private String filterHTML(HttpServletRequest request,
+                              DataResponseWrapper response)
+            throws ServletException {
+        String body = new String(response.getData());
 
-		// ensure we have 'pid' in the list and also that it exists
-		for (int x = 0; x < numHeaders; x++)
-		{
-			String header = headers.item(x).getFirstChild().getFirstChild().getNodeValue();
-			if ("pid".equals(header))
-				pidHeader = x;
-		}
+        InputStream is = new ByteArrayInputStream(body.getBytes());
+        Document doc = tidy.parseDOM(is, null);
 
-		if (pidHeader == -1)
-			throw new ServletException("pid field not in result list!");
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        NodeList rows = null;
+        try {
+            rows =
+                    (NodeList) xpath
+                            .evaluate("/html/body/center/center/table/tr",
+                                      doc,
+                                      XPathConstants.NODESET);
+        } catch (XPathExpressionException xpe) {
+            throw new ServletException("Error parsing HTML for search results: ",
+                                       xpe);
+        }
 
-		Map<String, Node> pids = new HashMap<String, Node>();
+        // only the header row, no results.
+        if (rows.getLength() == 1) {
+            if (log.isDebugEnabled()) {
+                log.debug("No results to filter.");
+            }
+            return body;
+        }
 
-		// start from 1 to skip the header column.
-		for (int x = 1; x < rows.getLength(); x++)
-		{
-			NodeList elements = rows.item(x).getChildNodes();
-			if (elements.getLength() == numHeaders)
-			{
-				String pid = elements.item(pidHeader).getFirstChild().getFirstChild().getNodeValue();
-				pids.put(pid, rows.item(x));
-			}
-		}
+        NodeList headers = rows.item(0).getChildNodes();
+        int numHeaders = headers.getLength();
+        int pidHeader = -1;
 
-		Set<Result> results = evaluatePids(pids.keySet(), request, response);
+        // ensure we have 'pid' in the list and also that it exists
+        for (int x = 0; x < numHeaders; x++) {
+            String header =
+                    headers.item(x).getFirstChild().getFirstChild()
+                            .getNodeValue();
+            if ("pid".equals(header)) {
+                pidHeader = x;
+            }
+        }
 
-		for (Result r : results)
-		{
-			if (r.getResource() == null || "".equals(r.getResource()))
-				log.warn("This resource has no resource identifier in the xacml response results!");
-			else if (log.isDebugEnabled())
-				log.debug("Checking: " + r.getResource());
+        if (pidHeader == -1) {
+            throw new ServletException("pid field not in result list!");
+        }
 
-			String[] ridComponents = r.getResource().split("\\/");
-			String rid = ridComponents[ridComponents.length - 1];
+        Map<String, Node> pids = new HashMap<String, Node>();
 
-			if (r.getStatus().getCode().contains(Status.STATUS_OK) && r.getDecision() != Result.DECISION_PERMIT)
-			{
-				Node node = pids.get(rid);
-				node.getParentNode().removeChild(node.getNextSibling());
-				node.getParentNode().removeChild(node);
-				if (log.isDebugEnabled())
-					log.debug("Removing: " + r.getResource() + "[" + rid + "]");
-			}
-		}
+        // start from 1 to skip the header column.
+        for (int x = 1; x < rows.getLength(); x++) {
+            NodeList elements = rows.item(x).getChildNodes();
+            if (elements.getLength() == numHeaders) {
+                String pid =
+                        elements.item(pidHeader).getFirstChild()
+                                .getFirstChild().getNodeValue();
+                pids.put(pid, rows.item(x));
+            }
+        }
 
-		Source src = new DOMSource(doc);
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		javax.xml.transform.Result dst = new StreamResult(os);
-		try
-		{
-			xFormer.transform(src, dst);
-		}
-		catch (TransformerException te)
-		{
-			throw new ServletException("error generating output", te);
-		}
+        Set<Result> results = evaluatePids(pids.keySet(), request, response);
 
-		return new String(os.toByteArray());
-	}
+        for (Result r : results) {
+            if (r.getResource() == null || "".equals(r.getResource())) {
+                log
+                        .warn("This resource has no resource identifier in the xacml response results!");
+            } else if (log.isDebugEnabled()) {
+                log.debug("Checking: " + r.getResource());
+            }
 
-	/**
-	 * Takes a given list of PID's and evaluates them.
-	 * 
-	 * @param pids the list of pids to check
-	 * @param request the http servlet request
-	 * @param response the http servlet resposne
-	 * @return a set of XACML results.
-	 * @throws ServletException
-	 */
-	private Set<Result> evaluatePids(Set<String> pids, HttpServletRequest request, DataResponseWrapper response)
-			throws ServletException
-	{
-		Set<String> requests = new HashSet<String>();
-		for (String pid : pids)
-		{
-			if (log.isDebugEnabled())
-				log.debug("Checking: " + pid);
+            String[] ridComponents = r.getResource().split("\\/");
+            String rid = ridComponents[ridComponents.length - 1];
 
-			Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
-			Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
+            if (r.getStatus().getCode().contains(Status.STATUS_OK)
+                    && r.getDecision() != Result.DECISION_PERMIT) {
+                Node node = pids.get(rid);
+                node.getParentNode().removeChild(node.getNextSibling());
+                node.getParentNode().removeChild(node);
+                if (log.isDebugEnabled()) {
+                    log.debug("Removing: " + r.getResource() + "[" + rid + "]");
+                }
+            }
+        }
 
-			try
-			{
-				actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(
-						Constants.ACTION.LIST_OBJECT_IN_FIELD_SEARCH_RESULTS.getURI().toASCIIString()));
+        Source src = new DOMSource(doc);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        javax.xml.transform.Result dst = new StreamResult(os);
+        try {
+            xFormer.transform(src, dst);
+        } catch (TransformerException te) {
+            throw new ServletException("error generating output", te);
+        }
 
-				if (pid != null && !"".equals(pid))
-					resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute(pid));
-				if (pid != null && !"".equals(pid))
-					resAttr.put(new URI(XACML_RESOURCE_ID), new AnyURIAttribute(new URI(pid)));
+        return new String(os.toByteArray());
+    }
 
-				RequestCtx req = getContextHandler().buildRequest(getSubjects(request), actions, resAttr,
-																	getEnvironment(request));
+    /**
+     * Takes a given list of PID's and evaluates them.
+     * 
+     * @param pids
+     *        the list of pids to check
+     * @param request
+     *        the http servlet request
+     * @param response
+     *        the http servlet resposne
+     * @return a set of XACML results.
+     * @throws ServletException
+     */
+    private Set<Result> evaluatePids(Set<String> pids,
+                                     HttpServletRequest request,
+                                     DataResponseWrapper response)
+            throws ServletException {
+        Set<String> requests = new HashSet<String>();
+        for (String pid : pids) {
+            if (log.isDebugEnabled()) {
+                log.debug("Checking: " + pid);
+            }
 
-				String r = contextUtil.makeRequestCtx(req);
-				if (log.isDebugEnabled())
-					log.debug(r);
+            Map<URI, AttributeValue> actions =
+                    new HashMap<URI, AttributeValue>();
+            Map<URI, AttributeValue> resAttr =
+                    new HashMap<URI, AttributeValue>();
 
-				requests.add(r);
-			}
-			catch (Exception e)
-			{
-				log.error(e.getMessage(), e);
-				throw new ServletException(e.getMessage(), e);
-			}
-		}
+            try {
+                actions
+                        .put(Constants.ACTION.ID.getURI(),
+                             new StringAttribute(Constants.ACTION.LIST_OBJECT_IN_FIELD_SEARCH_RESULTS
+                                     .getURI().toASCIIString()));
 
-		String res = null;
-		ResponseCtx resCtx = null;
-		try
-		{
-			if (log.isDebugEnabled())
-				log.debug("Number of requests: " + requests.size());
+                if (pid != null && !"".equals(pid)) {
+                    resAttr.put(Constants.OBJECT.PID.getURI(),
+                                new StringAttribute(pid));
+                }
+                if (pid != null && !"".equals(pid)) {
+                    resAttr.put(new URI(XACML_RESOURCE_ID),
+                                new AnyURIAttribute(new URI(pid)));
+                }
 
-			res = getContextHandler().evaluateBatch(requests.toArray(new String[requests.size()]));
+                RequestCtx req =
+                        getContextHandler()
+                                .buildRequest(getSubjects(request),
+                                              actions,
+                                              resAttr,
+                                              getEnvironment(request));
 
-			if (log.isDebugEnabled())
-				log.debug("Response: " + res);
+                String r = contextUtil.makeRequestCtx(req);
+                if (log.isDebugEnabled()) {
+                    log.debug(r);
+                }
 
-			resCtx = contextUtil.makeResponseCtx(res);
-		}
-		catch (MelcoeXacmlException pe)
-		{
-			throw new ServletException("Error evaluating pids: " + pe.getMessage(), pe);
-		}
+                requests.add(r);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                throw new ServletException(e.getMessage(), e);
+            }
+        }
 
-		@SuppressWarnings("unchecked")
-		Set<Result> results = resCtx.getResults();
+        String res = null;
+        ResponseCtx resCtx = null;
+        try {
+            if (log.isDebugEnabled()) {
+                log.debug("Number of requests: " + requests.size());
+            }
 
-		return results;
-	}
+            res =
+                    getContextHandler().evaluateBatch(requests
+                            .toArray(new String[requests.size()]));
+
+            if (log.isDebugEnabled()) {
+                log.debug("Response: " + res);
+            }
+
+            resCtx = contextUtil.makeResponseCtx(res);
+        } catch (MelcoeXacmlException pe) {
+            throw new ServletException("Error evaluating pids: "
+                    + pe.getMessage(), pe);
+        }
+
+        @SuppressWarnings("unchecked")
+        Set<Result> results = resCtx.getResults();
+
+        return results;
+    }
 }

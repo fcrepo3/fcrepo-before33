@@ -16,36 +16,31 @@
  * limitations under the License.
  */
 
-
 package melcoe.fedora.pep;
 
 import melcoe.xacml.MelcoeXacmlException;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- *
  */
-public class PEPException extends MelcoeXacmlException
-{
-	private static final long serialVersionUID = 2167100768360635796L;
+public class PEPException
+        extends MelcoeXacmlException {
 
-	public PEPException()
-	{
-		super();
-	}
+    private static final long serialVersionUID = 2167100768360635796L;
 
-	public PEPException(String message)
-	{
-		super(message);
-	}
+    public PEPException() {
+        super();
+    }
 
-	public PEPException(Throwable cause)
-	{
-		super(cause);
-	}
+    public PEPException(String message) {
+        super(message);
+    }
 
-	public PEPException(String message, Throwable cause)
-	{
-		super(message, cause);
-	}
+    public PEPException(Throwable cause) {
+        super(cause);
+    }
+
+    public PEPException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

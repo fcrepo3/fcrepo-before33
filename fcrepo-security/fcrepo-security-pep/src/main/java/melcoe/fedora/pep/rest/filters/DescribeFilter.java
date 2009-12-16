@@ -44,69 +44,80 @@ import fedora.common.Constants;
  * This class handles the describe operation.
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public class DescribeFilter extends AbstractFilter
-{
-	private static Logger log = Logger.getLogger(DescribeFilter.class.getName());
+public class DescribeFilter
+        extends AbstractFilter {
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @throws PEPException
-	 */
-	public DescribeFilter() throws PEPException
-	{
-		super();
-	}
+    private static Logger log =
+            Logger.getLogger(DescribeFilter.class.getName());
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException,
-			ServletException
-	{
-		RequestCtx req = null;
+    /**
+     * Default constructor.
+     * 
+     * @throws PEPException
+     */
+    public DescribeFilter()
+            throws PEPException {
+        super();
+    }
 
-		Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
-		Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleRequest(HttpServletRequest request,
+                                    HttpServletResponse response)
+            throws IOException, ServletException {
+        RequestCtx req = null;
 
-		try
-		{
-			resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute("FedoraRepository"));
-			resAttr.put(new URI("urn:oasis:names:tc:xacml:1.0:resource:resource-id"), new AnyURIAttribute(new URI(
-					"FedoraRepository")));
+        Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
+        Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
 
-			actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(Constants.ACTION.DESCRIBE_REPOSITORY.getURI()
-					.toASCIIString()));
-			actions.put(Constants.ACTION.API.getURI(), new StringAttribute(Constants.ACTION.APIA.getURI()
-					.toASCIIString()));
+        try {
+            resAttr.put(Constants.OBJECT.PID.getURI(),
+                        new StringAttribute("FedoraRepository"));
+            resAttr
+                    .put(new URI("urn:oasis:names:tc:xacml:1.0:resource:resource-id"),
+                         new AnyURIAttribute(new URI("FedoraRepository")));
 
-			req = getContextHandler().buildRequest(getSubjects(request), actions, resAttr, getEnvironment(request));
+            actions
+                    .put(Constants.ACTION.ID.getURI(),
+                         new StringAttribute(Constants.ACTION.DESCRIBE_REPOSITORY
+                                 .getURI().toASCIIString()));
+            actions.put(Constants.ACTION.API.getURI(),
+                        new StringAttribute(Constants.ACTION.APIA.getURI()
+                                .toASCIIString()));
 
-			LogUtil.statLog(request.getRemoteUser(), Constants.ACTION.DESCRIBE_REPOSITORY.getURI().toASCIIString(), "FedoraRepository", null);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage());
-			throw AxisFault.makeFault(e);
-		}
+            req =
+                    getContextHandler().buildRequest(getSubjects(request),
+                                                     actions,
+                                                     resAttr,
+                                                     getEnvironment(request));
 
-		return req;
-	}
+            LogUtil.statLog(request.getRemoteUser(),
+                            Constants.ACTION.DESCRIBE_REPOSITORY.getURI()
+                                    .toASCIIString(),
+                            "FedoraRepository",
+                            null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw AxisFault.makeFault(e);
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleResponse(HttpServletRequest request, HttpServletResponse response) throws IOException,
-			ServletException
-	{
-		return null;
-	}
+        return req;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleResponse(HttpServletRequest request,
+                                     HttpServletResponse response)
+            throws IOException, ServletException {
+        return null;
+    }
 }

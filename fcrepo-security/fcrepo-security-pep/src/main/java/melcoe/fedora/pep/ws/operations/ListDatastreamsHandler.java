@@ -49,195 +49,221 @@ import fedora.server.types.gen.DatastreamDef;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public class ListDatastreamsHandler extends AbstractOperationHandler
-{
-	private static Logger log = Logger.getLogger(ListDatastreamsHandler.class.getName());
+public class ListDatastreamsHandler
+        extends AbstractOperationHandler {
 
-	private ContextUtil contextUtil = new ContextUtil();
+    private static Logger log =
+            Logger.getLogger(ListDatastreamsHandler.class.getName());
 
-	public ListDatastreamsHandler() throws PEPException
-	{
-		super();
-	}
+    private final ContextUtil contextUtil = new ContextUtil();
 
-	public RequestCtx handleResponse(MessageContext context) throws OperationHandlerException
-	{
-		if (log.isDebugEnabled())
-			log.debug("ListDatastreamsHandler/handleResponse!");
+    public ListDatastreamsHandler()
+            throws PEPException {
+        super();
+    }
 
-		try
-		{
-			DatastreamDef[] dsDefs = (DatastreamDef[]) getSOAPResponseObject(context);
-			if (dsDefs == null || dsDefs.length == 0)
-				return null;
+    public RequestCtx handleResponse(MessageContext context)
+            throws OperationHandlerException {
+        if (log.isDebugEnabled()) {
+            log.debug("ListDatastreamsHandler/handleResponse!");
+        }
 
-			List<Object> oMap = getSOAPRequestObjects(context);
-			if (oMap == null || oMap.size() == 0)
-			{
-				log.error("No request objects!");
-				throw new OperationHandlerException("ListDatastream had no pid");
-			}
-			String pid = (String) oMap.get(0);
+        try {
+            DatastreamDef[] dsDefs =
+                    (DatastreamDef[]) getSOAPResponseObject(context);
+            if (dsDefs == null || dsDefs.length == 0) {
+                return null;
+            }
 
-			dsDefs = filter(context, dsDefs, pid);
+            List<Object> oMap = getSOAPRequestObjects(context);
+            if (oMap == null || oMap.size() == 0) {
+                log.error("No request objects!");
+                throw new OperationHandlerException("ListDatastream had no pid");
+            }
+            String pid = (String) oMap.get(0);
 
-			RPCParam[] params = new RPCParam[dsDefs.length];
-			for (int x = 0; x < dsDefs.length; x++)
-				params[x] = new RPCParam(context.getOperation().getReturnQName(), dsDefs[x]);
-			
-			setSOAPResponseObject(context, params);
-		}
-		catch (Exception e)
-		{
-			log.error("Error filtering datastreams", e);
-			throw new OperationHandlerException("Error filtering datastreams");
-		}
-		
-		return null;
-	}
+            dsDefs = filter(context, dsDefs, pid);
 
-	public RequestCtx handleRequest(MessageContext context) throws OperationHandlerException
-	{
-		if (log.isDebugEnabled())
-			log.debug("ListDatastreamsHandler/handleRequest!");
+            RPCParam[] params = new RPCParam[dsDefs.length];
+            for (int x = 0; x < dsDefs.length; x++) {
+                params[x] =
+                        new RPCParam(context.getOperation().getReturnQName(),
+                                     dsDefs[x]);
+            }
 
-		RequestCtx req = null;
-		List<Object> oMap = null;
+            setSOAPResponseObject(context, params);
+        } catch (Exception e) {
+            log.error("Error filtering datastreams", e);
+            throw new OperationHandlerException("Error filtering datastreams");
+        }
 
-		String pid = null;
-		String asOfDateTime = null;
+        return null;
+    }
 
-		try
-		{
-			oMap = getSOAPRequestObjects(context);
-			log.debug("Retrieved SOAP Request Objects");
-		}
-		catch (AxisFault af)
-		{
-			log.error("Error obtaining SOAP Request Objects", af);
-			throw new OperationHandlerException("Error obtaining SOAP Request Objects", af);
-		}
+    public RequestCtx handleRequest(MessageContext context)
+            throws OperationHandlerException {
+        if (log.isDebugEnabled()) {
+            log.debug("ListDatastreamsHandler/handleRequest!");
+        }
 
-		try
-		{
-			pid = (String) oMap.get(0);
-			asOfDateTime = (String) oMap.get(1);
-		}
-		catch (Exception e)
-		{
-			log.error("Error obtaining parameters", e);
-			throw new OperationHandlerException("Error obtaining parameters.", e);
-		}
+        RequestCtx req = null;
+        List<Object> oMap = null;
 
-		log.debug("Extracted SOAP Request Objects");
+        String pid = null;
+        String asOfDateTime = null;
 
-		Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
-		Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
+        try {
+            oMap = getSOAPRequestObjects(context);
+            log.debug("Retrieved SOAP Request Objects");
+        } catch (AxisFault af) {
+            log.error("Error obtaining SOAP Request Objects", af);
+            throw new OperationHandlerException("Error obtaining SOAP Request Objects",
+                                                af);
+        }
 
-		try
-		{
-			if (pid != null && !"".equals(pid))
-				resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute(pid));
-			if (pid != null && !"".equals(pid))
-				resAttr.put(new URI(XACML_RESOURCE_ID), new AnyURIAttribute(new URI(pid)));
-			if (asOfDateTime != null && !"".equals(asOfDateTime))
-				resAttr.put(Constants.DATASTREAM.AS_OF_DATETIME.getURI(), DateTimeAttribute.getInstance(asOfDateTime));
+        try {
+            pid = (String) oMap.get(0);
+            asOfDateTime = (String) oMap.get(1);
+        } catch (Exception e) {
+            log.error("Error obtaining parameters", e);
+            throw new OperationHandlerException("Error obtaining parameters.",
+                                                e);
+        }
 
-			actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(Constants.ACTION.LIST_DATASTREAMS.getURI()
-					.toASCIIString()));
-			actions.put(Constants.ACTION.API.getURI(), new StringAttribute(Constants.ACTION.APIA.getURI()
-					.toASCIIString()));
+        log.debug("Extracted SOAP Request Objects");
 
-			req = getContextHandler().buildRequest(getSubjects(context), actions, resAttr, getEnvironment(context));
+        Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
+        Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
 
-			LogUtil.statLog(context.getUsername(), Constants.ACTION.LIST_DATASTREAMS.getURI().toASCIIString(), pid,
-							null);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			throw new OperationHandlerException(e.getMessage(), e);
-		}
+        try {
+            if (pid != null && !"".equals(pid)) {
+                resAttr.put(Constants.OBJECT.PID.getURI(),
+                            new StringAttribute(pid));
+            }
+            if (pid != null && !"".equals(pid)) {
+                resAttr.put(new URI(XACML_RESOURCE_ID),
+                            new AnyURIAttribute(new URI(pid)));
+            }
+            if (asOfDateTime != null && !"".equals(asOfDateTime)) {
+                resAttr.put(Constants.DATASTREAM.AS_OF_DATETIME.getURI(),
+                            DateTimeAttribute.getInstance(asOfDateTime));
+            }
 
-		return req;
-	}
-	
-	public DatastreamDef[] filter(MessageContext context, DatastreamDef[] dsDefs, String pid) throws OperationHandlerException, PEPException
-	{
-		List<String> requests = new ArrayList<String>();
-		Map<String, DatastreamDef> objects = new HashMap<String, DatastreamDef>();
+            actions.put(Constants.ACTION.ID.getURI(),
+                        new StringAttribute(Constants.ACTION.LIST_DATASTREAMS
+                                .getURI().toASCIIString()));
+            actions.put(Constants.ACTION.API.getURI(),
+                        new StringAttribute(Constants.ACTION.APIA.getURI()
+                                .toASCIIString()));
 
-		for (DatastreamDef dsDef : dsDefs)
-		{
-			if (log.isDebugEnabled())
-				log.debug("Checking: " + dsDef.getID());
-			
-			objects.put(dsDef.getID(), dsDef);
-			
-			Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
-			Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
-			
-			try
-			{
-				actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(
-						Constants.ACTION.GET_DATASTREAM.getURI().toASCIIString()));
+            req =
+                    getContextHandler().buildRequest(getSubjects(context),
+                                                     actions,
+                                                     resAttr,
+                                                     getEnvironment(context));
 
-				resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute(pid));
-				resAttr.put(new URI(XACML_RESOURCE_ID), new AnyURIAttribute(new URI(pid)));
-				resAttr.put(Constants.DATASTREAM.ID.getURI(), new StringAttribute(dsDef.getID()));
+            LogUtil.statLog(context.getUsername(),
+                            Constants.ACTION.LIST_DATASTREAMS.getURI()
+                                    .toASCIIString(),
+                            pid,
+                            null);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new OperationHandlerException(e.getMessage(), e);
+        }
 
-				RequestCtx req = getContextHandler().buildRequest(getSubjects(context), actions, resAttr,
-																	getEnvironment(context));
+        return req;
+    }
 
-				requests.add(contextUtil.makeRequestCtx(req));
-			}
-			catch (Exception e)
-			{
-				log.error(e.getMessage(), e);
-				throw new OperationHandlerException(e.getMessage(), e);
-			}
-		}
-		
-		String response = getContextHandler().evaluateBatch(requests.toArray(new String[requests.size()]));
-		ResponseCtx resCtx;
-		try {
-			resCtx = contextUtil.makeResponseCtx(response);
-		} catch (MelcoeXacmlException e) {
-			throw new PEPException(e);
-		}
+    public DatastreamDef[] filter(MessageContext context,
+                                  DatastreamDef[] dsDefs,
+                                  String pid) throws OperationHandlerException,
+            PEPException {
+        List<String> requests = new ArrayList<String>();
+        Map<String, DatastreamDef> objects =
+                new HashMap<String, DatastreamDef>();
 
-		@SuppressWarnings("unchecked")
-		Set<Result> results = resCtx.getResults();
+        for (DatastreamDef dsDef : dsDefs) {
+            if (log.isDebugEnabled()) {
+                log.debug("Checking: " + dsDef.getID());
+            }
 
-		List<DatastreamDef> resultObjects = new ArrayList<DatastreamDef>();
-		for (Result r : results)
-		{
-			if (r.getResource() == null || "".equals(r.getResource()))
-				log.warn("This resource has no resource identifier in the xacml response results!");
-			else if (log.isDebugEnabled())
-				log.debug("Checking: " + r.getResource());
+            objects.put(dsDef.getID(), dsDef);
 
-			String[] ridComponents = r.getResource().split("\\/");
-			String rid = ridComponents[ridComponents.length - 1];
+            Map<URI, AttributeValue> actions =
+                    new HashMap<URI, AttributeValue>();
+            Map<URI, AttributeValue> resAttr =
+                    new HashMap<URI, AttributeValue>();
 
-			if (r.getStatus().getCode().contains(Status.STATUS_OK) && r.getDecision() == Result.DECISION_PERMIT)
-			{
-				DatastreamDef tmp = objects.get(rid);
-				if (tmp != null)
-				{
-					resultObjects.add(tmp);
-					if (log.isDebugEnabled())
-						log.debug("Adding: " + r.getResource() + "[" + rid + "]");
-				}
-				else
-				{
-					log.warn("Not adding this object as no object found for this key: " + r.getResource() + "[" + rid + "]");
-				}
-			}
-		}
+            try {
+                actions.put(Constants.ACTION.ID.getURI(),
+                            new StringAttribute(Constants.ACTION.GET_DATASTREAM
+                                    .getURI().toASCIIString()));
 
-		return resultObjects.toArray(new DatastreamDef[resultObjects.size()]);
-	}
+                resAttr.put(Constants.OBJECT.PID.getURI(),
+                            new StringAttribute(pid));
+                resAttr.put(new URI(XACML_RESOURCE_ID),
+                            new AnyURIAttribute(new URI(pid)));
+                resAttr.put(Constants.DATASTREAM.ID.getURI(),
+                            new StringAttribute(dsDef.getID()));
+
+                RequestCtx req =
+                        getContextHandler()
+                                .buildRequest(getSubjects(context),
+                                              actions,
+                                              resAttr,
+                                              getEnvironment(context));
+
+                requests.add(contextUtil.makeRequestCtx(req));
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                throw new OperationHandlerException(e.getMessage(), e);
+            }
+        }
+
+        String response =
+                getContextHandler().evaluateBatch(requests
+                        .toArray(new String[requests.size()]));
+        ResponseCtx resCtx;
+        try {
+            resCtx = contextUtil.makeResponseCtx(response);
+        } catch (MelcoeXacmlException e) {
+            throw new PEPException(e);
+        }
+
+        @SuppressWarnings("unchecked")
+        Set<Result> results = resCtx.getResults();
+
+        List<DatastreamDef> resultObjects = new ArrayList<DatastreamDef>();
+        for (Result r : results) {
+            if (r.getResource() == null || "".equals(r.getResource())) {
+                log
+                        .warn("This resource has no resource identifier in the xacml response results!");
+            } else if (log.isDebugEnabled()) {
+                log.debug("Checking: " + r.getResource());
+            }
+
+            String[] ridComponents = r.getResource().split("\\/");
+            String rid = ridComponents[ridComponents.length - 1];
+
+            if (r.getStatus().getCode().contains(Status.STATUS_OK)
+                    && r.getDecision() == Result.DECISION_PERMIT) {
+                DatastreamDef tmp = objects.get(rid);
+                if (tmp != null) {
+                    resultObjects.add(tmp);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Adding: " + r.getResource() + "[" + rid
+                                + "]");
+                    }
+                } else {
+                    log
+                            .warn("Not adding this object as no object found for this key: "
+                                    + r.getResource() + "[" + rid + "]");
+                }
+            }
+        }
+
+        return resultObjects.toArray(new DatastreamDef[resultObjects.size()]);
+    }
 }

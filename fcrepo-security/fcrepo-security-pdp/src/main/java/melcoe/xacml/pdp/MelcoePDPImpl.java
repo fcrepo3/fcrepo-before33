@@ -26,9 +26,7 @@ import java.util.Set;
 
 import melcoe.xacml.util.PopulatePolicyDatabase;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 import com.sun.xacml.ConfigurationStore;
 import com.sun.xacml.Indenter;
@@ -38,118 +36,120 @@ import com.sun.xacml.ctx.RequestCtx;
 import com.sun.xacml.ctx.ResponseCtx;
 import com.sun.xacml.ctx.Result;
 
-import fedora.common.Constants;
-
 /**
  * This is an implementation of the MelcoePDP interface. It provides for the
  * evaluation of requests. It uses
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public class MelcoePDPImpl implements MelcoePDP {
-	private static final Logger log = Logger.getLogger(MelcoePDPImpl.class
-			.getName());
-	private PDP pdp;
+public class MelcoePDPImpl
+        implements MelcoePDP {
 
-	/**
-	 * The default constructor. This reads in the configuration file and
-	 * instantiates a PDP based on it.
-	 * 
-	 * @throws MelcoePDPException
-	 */
-	public MelcoePDPImpl() throws MelcoePDPException {
-		ConfigurationStore config = null;
-		try {
-			String home = PDP_HOME.getAbsolutePath();
-			File f = null;
-			String filename = null;
+    private static final Logger log =
+            Logger.getLogger(MelcoePDPImpl.class.getName());
 
-			// Loads the policies in PDP_HOME/policies
-			// Does not monitor the directory for changes, nor will 
-			// subsequently deleted policies be removed from the policy store
-			PopulatePolicyDatabase.addDocuments();
-			//
-			
-			// Ensure we have the configuration file.
-			filename = home + "/conf/config-pdp.xml";
-			f = new File(filename);
-			if (!f.exists())
-				throw new MelcoePDPException("Could not locate config file: "
-						+ f.getAbsolutePath());
+    private PDP pdp;
 
-			log.info("Loading config file: " + f.getAbsolutePath());
+    /**
+     * The default constructor. This reads in the configuration file and
+     * instantiates a PDP based on it.
+     * 
+     * @throws MelcoePDPException
+     */
+    public MelcoePDPImpl()
+            throws MelcoePDPException {
+        ConfigurationStore config = null;
+        try {
+            String home = PDP_HOME.getAbsolutePath();
+            File f = null;
+            String filename = null;
 
-			config = new ConfigurationStore(f);
-			pdp = new PDP(config.getDefaultPDPConfig());
+            // Loads the policies in PDP_HOME/policies
+            // Does not monitor the directory for changes, nor will 
+            // subsequently deleted policies be removed from the policy store
+            PopulatePolicyDatabase.addDocuments();
+            //
 
-			log.info("PDP Instantiated and initialised!");
-		} catch (Exception e) {
-			log.fatal("Could not initialise PDP: " + e.getMessage(), e);
-			throw new MelcoePDPException("Could not initialise PDP: "
-					+ e.getMessage(), e);
-		}
-	}
+            // Ensure we have the configuration file.
+            filename = home + "/conf/config-pdp.xml";
+            f = new File(filename);
+            if (!f.exists()) {
+                throw new MelcoePDPException("Could not locate config file: "
+                        + f.getAbsolutePath());
+            }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.xacml.pdp.MelcoePDP#evaluate(java.lang.String)
-	 */
-	public String evaluate(String request) throws EvaluationException {
-		if (log.isDebugEnabled())
-			log.debug("evaluating request");
+            log.info("Loading config file: " + f.getAbsolutePath());
 
-		RequestCtx req = null;
-		ByteArrayInputStream is = new ByteArrayInputStream(request.getBytes());
+            config = new ConfigurationStore(f);
+            pdp = new PDP(config.getDefaultPDPConfig());
 
-		try {
-			req = RequestCtx.getInstance(is);
-		} catch (ParsingException pe) {
-			log.error("Error parsing request:\n" + request, pe);
-			throw new EvaluationException("Error parsing request:\n" + request);
-		}
+            log.info("PDP Instantiated and initialised!");
+        } catch (Exception e) {
+            log.fatal("Could not initialise PDP: " + e.getMessage(), e);
+            throw new MelcoePDPException("Could not initialise PDP: "
+                    + e.getMessage(), e);
+        }
+    }
 
-		ResponseCtx res = pdp.evaluate(req);
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		res.encode(os, new Indenter());
+    /*
+     * (non-Javadoc)
+     * @see melcoe.xacml.pdp.MelcoePDP#evaluate(java.lang.String)
+     */
+    public String evaluate(String request) throws EvaluationException {
+        if (log.isDebugEnabled()) {
+            log.debug("evaluating request");
+        }
 
-		return os.toString();
-	}
+        RequestCtx req = null;
+        ByteArrayInputStream is = new ByteArrayInputStream(request.getBytes());
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.xacml.pdp.MelcoePDP#evaluateBatch(java.lang.String[])
-	 */
-	public String evaluateBatch(String[] requests) throws EvaluationException {
-		if (log.isDebugEnabled())
-			log.debug("evaluating request batch");
+        try {
+            req = RequestCtx.getInstance(is);
+        } catch (ParsingException pe) {
+            log.error("Error parsing request:\n" + request, pe);
+            throw new EvaluationException("Error parsing request:\n" + request);
+        }
 
-		Set<Result> results = new HashSet<Result>();
+        ResponseCtx res = pdp.evaluate(req);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        res.encode(os, new Indenter());
 
-		for (String req : requests) {
-			ResponseCtx resCtx = null;
-			String response = evaluate(req);
-			ByteArrayInputStream is = new ByteArrayInputStream(response
-					.getBytes());
-			try {
-				resCtx = ResponseCtx.getInstance(is);
-			} catch (ParsingException pe) {
-				log.error("Error parsing response:\n" + response, pe);
-				throw new EvaluationException("Error parsing response:\n"
-						+ response);
-			}
+        return os.toString();
+    }
 
-			@SuppressWarnings("unchecked")
-			Set<Result> r = resCtx.getResults();
-			results.addAll(r);
-		}
+    /*
+     * (non-Javadoc)
+     * @see melcoe.xacml.pdp.MelcoePDP#evaluateBatch(java.lang.String[])
+     */
+    public String evaluateBatch(String[] requests) throws EvaluationException {
+        if (log.isDebugEnabled()) {
+            log.debug("evaluating request batch");
+        }
 
-		ResponseCtx combinedResponse = new ResponseCtx(results);
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		combinedResponse.encode(os, new Indenter());
+        Set<Result> results = new HashSet<Result>();
 
-		return os.toString();
-	}
+        for (String req : requests) {
+            ResponseCtx resCtx = null;
+            String response = evaluate(req);
+            ByteArrayInputStream is =
+                    new ByteArrayInputStream(response.getBytes());
+            try {
+                resCtx = ResponseCtx.getInstance(is);
+            } catch (ParsingException pe) {
+                log.error("Error parsing response:\n" + response, pe);
+                throw new EvaluationException("Error parsing response:\n"
+                        + response);
+            }
+
+            @SuppressWarnings("unchecked")
+            Set<Result> r = resCtx.getResults();
+            results.addAll(r);
+        }
+
+        ResponseCtx combinedResponse = new ResponseCtx(results);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        combinedResponse.encode(os, new Indenter());
+
+        return os.toString();
+    }
 }

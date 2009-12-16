@@ -29,71 +29,72 @@ import javax.servlet.http.HttpServletRequestWrapper;
  * roles and principals.
  * 
  * @author nish.naidoo@gmail.com
- * 
  */
-public class AuthHttpServletRequestWrapper extends HttpServletRequestWrapper {
-	private Principal userPrincipal = null;
-	private Set<String> userRoles = null;
+public class AuthHttpServletRequestWrapper
+        extends HttpServletRequestWrapper {
 
-	public AuthHttpServletRequestWrapper(HttpServletRequest request) {
-		super(request);
-	}
+    private Principal userPrincipal = null;
 
-	/**
-	 * Sets the userPrincipal attribute.
-	 * 
-	 * @param userPrincipal
-	 *            the userPrincipal to set.
-	 */
-	public void setUserPrincipal(Principal userPrincipal) {
-		this.userPrincipal = userPrincipal;
-	}
+    private Set<String> userRoles = null;
 
-	/**
-	 * Sets the userRoles attribute.
-	 * 
-	 * @param userRoles
-	 *            the userRoles to set.
-	 */
-	public void setUserRoles(Set<String> userRoles) {
-		this.userRoles = userRoles;
-	}
+    public AuthHttpServletRequestWrapper(HttpServletRequest request) {
+        super(request);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.http.HttpServletRequestWrapper#getUserPrincipal()
-	 */
-	@Override
-	public Principal getUserPrincipal() {
-		return userPrincipal;
-	}
+    /**
+     * Sets the userPrincipal attribute.
+     * 
+     * @param userPrincipal
+     *        the userPrincipal to set.
+     */
+    public void setUserPrincipal(Principal userPrincipal) {
+        this.userPrincipal = userPrincipal;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.http.HttpServletRequestWrapper#getRemoteUser()
-	 */
-	@Override
-	public String getRemoteUser() {
-		if (userPrincipal == null)
-			return null;
+    /**
+     * Sets the userRoles attribute.
+     * 
+     * @param userRoles
+     *        the userRoles to set.
+     */
+    public void setUserRoles(Set<String> userRoles) {
+        this.userRoles = userRoles;
+    }
 
-		return userPrincipal.getName();
-	}
+    /*
+     * (non-Javadoc)
+     * @see javax.servlet.http.HttpServletRequestWrapper#getUserPrincipal()
+     */
+    @Override
+    public Principal getUserPrincipal() {
+        return userPrincipal;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * javax.servlet.http.HttpServletRequestWrapper#isUserInRole(java.lang.String
-	 * )
-	 */
-	@Override
-	public boolean isUserInRole(String role) {
-		if (userRoles == null)
-			return false;
+    /*
+     * (non-Javadoc)
+     * @see javax.servlet.http.HttpServletRequestWrapper#getRemoteUser()
+     */
+    @Override
+    public String getRemoteUser() {
+        if (userPrincipal == null) {
+            return null;
+        }
 
-		return userRoles.contains(role);
-	}
+        return userPrincipal.getName();
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * javax.servlet.http.HttpServletRequestWrapper#isUserInRole(java.lang.String
+     * )
+     */
+    @Override
+    public boolean isUserInRole(String role) {
+        if (userRoles == null) {
+            return false;
+        }
+
+        return userRoles.contains(role);
+    }
 }

@@ -35,146 +35,150 @@ import melcoe.xacml.util.AttributeBean;
  * @see DbXmlPolicyDataManager
  */
 public class PolicyDataManagerService {
-	private PolicyDataManager policyDataManager = null;
 
-	public PolicyDataManagerService() throws PolicyDataManagerException {
-		setPolicyDataManager(new DbXmlPolicyDataManager());
-	}
+    private PolicyDataManager policyDataManager = null;
 
-	/**
-	 * Retrieves the document of the given name from the document store and
-	 * returns it as an array of bytes.
-	 * 
-	 * @param name
-	 *            the document name to return
-	 * @return the document as a byte array
-	 * @throws PolicyDataManagerException
-	 */
-	public DocumentInfo getPolicy(String name)
-			throws PolicyDataManagerException {
-		byte[] documentData = policyDataManager.getPolicy(name);
-		if (documentData == null)
-			return null;
+    public PolicyDataManagerService()
+            throws PolicyDataManagerException {
+        setPolicyDataManager(new DbXmlPolicyDataManager());
+    }
 
-		String data = null;
-		try {
-			data = new String(documentData, "UTF-8");
-		} catch (UnsupportedEncodingException uee) {
-			throw new PolicyDataManagerException(uee.getMessage(), uee);
-		}
+    /**
+     * Retrieves the document of the given name from the document store and
+     * returns it as an array of bytes.
+     * 
+     * @param name
+     *        the document name to return
+     * @return the document as a byte array
+     * @throws PolicyDataManagerException
+     */
+    public DocumentInfo getPolicy(String name)
+            throws PolicyDataManagerException {
+        byte[] documentData = policyDataManager.getPolicy(name);
+        if (documentData == null) {
+            return null;
+        }
 
-		DocumentInfo docInfo = new DocumentInfo(name, data);
-		return docInfo;
-	}
+        String data = null;
+        try {
+            data = new String(documentData, "UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            throw new PolicyDataManagerException(uee.getMessage(), uee);
+        }
 
-	/**
-	 * Adds a policy document to the document store.
-	 * 
-	 * @param document
-	 *            the document to add as a String
-	 * @param name
-	 *            the name of the document to add. This can be null for
-	 *            extracting the name from the policy itself.
-	 * @return the name of the document that was added.
-	 * @throws PolicyDataManagerException
-	 */
-	public String addPolicy(String document, String name)
-			throws PolicyDataManagerException {
-		return policyDataManager.addPolicy(document, name);
-	}
+        DocumentInfo docInfo = new DocumentInfo(name, data);
+        return docInfo;
+    }
 
-	/**
-	 * Removes the document of the given name from the document store.
-	 * 
-	 * @param name
-	 *            the name of the document to remove.
-	 * @throws PolicyDataManagerException
-	 */
-	public boolean deletePolicy(String name) throws PolicyDataManagerException {
-		return policyDataManager.deletePolicy(name);
-	}
+    /**
+     * Adds a policy document to the document store.
+     * 
+     * @param document
+     *        the document to add as a String
+     * @param name
+     *        the name of the document to add. This can be null for extracting
+     *        the name from the policy itself.
+     * @return the name of the document that was added.
+     * @throws PolicyDataManagerException
+     */
+    public String addPolicy(String document, String name)
+            throws PolicyDataManagerException {
+        return policyDataManager.addPolicy(document, name);
+    }
 
-	/**
-	 * Updates a document of the given name by replacing it with the new
-	 * document provided as a String.
-	 * 
-	 * @param name
-	 *            the name of the document to update.
-	 * @param newDocument
-	 *            the new document as a String.
-	 * @throws PolicyDataManagerException
-	 */
-	public boolean updatePolicy(String name, String newDocument)
-			throws PolicyDataManagerException {
-		return policyDataManager.updatePolicy(name, newDocument);
-	}
+    /**
+     * Removes the document of the given name from the document store.
+     * 
+     * @param name
+     *        the name of the document to remove.
+     * @throws PolicyDataManagerException
+     */
+    public boolean deletePolicy(String name) throws PolicyDataManagerException {
+        return policyDataManager.deletePolicy(name);
+    }
 
-	/**
-	 * Lists all documents in the document store.
-	 * 
-	 * @return array of Strings that are the names of all stored documents.
-	 * @throws PolicyDataManagerException
-	 */
-	public String[] listPolicies() throws PolicyDataManagerException {
-		List<String> result = policyDataManager.listPolicies();
-		return result.toArray(new String[result.size()]);
-	}
+    /**
+     * Updates a document of the given name by replacing it with the new
+     * document provided as a String.
+     * 
+     * @param name
+     *        the name of the document to update.
+     * @param newDocument
+     *        the new document as a String.
+     * @throws PolicyDataManagerException
+     */
+    public boolean updatePolicy(String name, String newDocument)
+            throws PolicyDataManagerException {
+        return policyDataManager.updatePolicy(name, newDocument);
+    }
 
-	/**
-	 * Get the time of the latest add/update/delete operation from the document
-	 * store in milliseconds. The time is based on the document store servers
-	 * unix epoch time.
-	 * 
-	 * @return the time the document store was last updated.
-	 */
-	public long lastUpdate() {
-		return policyDataManager.getLastUpdate();
-	}
+    /**
+     * Lists all documents in the document store.
+     * 
+     * @return array of Strings that are the names of all stored documents.
+     * @throws PolicyDataManagerException
+     */
+    public String[] listPolicies() throws PolicyDataManagerException {
+        List<String> result = policyDataManager.listPolicies();
+        return result.toArray(new String[result.size()]);
+    }
 
-	/**
-	 * Search for policies that contain all the attribute id/value pairs in the
-	 * array of AttributeBeans.
-	 * 
-	 * @param attributes
-	 *            Array of AttributeBeans that contain the attributes for which
-	 *            to search for.
-	 * @return array of DocumentInfo objects. Each contains the document name
-	 *         and the byte[] data.
-	 * @throws PolicyDataManagerException
-	 */
-	public DocumentInfo[] findPolicies(AttributeBean[] attributes)
-			throws PolicyDataManagerException {
-		Map<String, byte[]> result = policyDataManager.findPolicies(attributes);
-		if (result == null)
-			return null;
+    /**
+     * Get the time of the latest add/update/delete operation from the document
+     * store in milliseconds. The time is based on the document store servers
+     * unix epoch time.
+     * 
+     * @return the time the document store was last updated.
+     */
+    public long lastUpdate() {
+        return policyDataManager.getLastUpdate();
+    }
 
-		List<DocumentInfo> docList = new ArrayList<DocumentInfo>();
-		for (String name : result.keySet()) {
-			String data = null;
-			try {
-				data = new String(result.get(name), "UTF-8");
-			} catch (UnsupportedEncodingException uee) {
-				throw new PolicyDataManagerException(uee.getMessage(), uee);
-			}
+    /**
+     * Search for policies that contain all the attribute id/value pairs in the
+     * array of AttributeBeans.
+     * 
+     * @param attributes
+     *        Array of AttributeBeans that contain the attributes for which to
+     *        search for.
+     * @return array of DocumentInfo objects. Each contains the document name
+     *         and the byte[] data.
+     * @throws PolicyDataManagerException
+     */
+    public DocumentInfo[] findPolicies(AttributeBean[] attributes)
+            throws PolicyDataManagerException {
+        Map<String, byte[]> result = policyDataManager.findPolicies(attributes);
+        if (result == null) {
+            return null;
+        }
 
-			DocumentInfo d = new DocumentInfo(name, data);
-			docList.add(d);
-		}
-		return docList.toArray(new DocumentInfo[docList.size()]);
-	}
+        List<DocumentInfo> docList = new ArrayList<DocumentInfo>();
+        for (String name : result.keySet()) {
+            String data = null;
+            try {
+                data = new String(result.get(name), "UTF-8");
+            } catch (UnsupportedEncodingException uee) {
+                throw new PolicyDataManagerException(uee.getMessage(), uee);
+            }
 
-	/**
-	 * @return the policyDataManager
-	 */
-	public PolicyDataManager getPolicyDataManager() {
-		return policyDataManager;
-	}
+            DocumentInfo d = new DocumentInfo(name, data);
+            docList.add(d);
+        }
+        return docList.toArray(new DocumentInfo[docList.size()]);
+    }
 
-	/**
-	 * @param policyDataManager
-	 *            the policyDataManager to set
-	 */
-	public void setPolicyDataManager(PolicyDataManager policyDataManager) {
-		this.policyDataManager = policyDataManager;
-	}
+    /**
+     * @return the policyDataManager
+     */
+    public PolicyDataManager getPolicyDataManager() {
+        return policyDataManager;
+    }
+
+    /**
+     * @param policyDataManager
+     *        the policyDataManager to set
+     */
+    public void setPolicyDataManager(PolicyDataManager policyDataManager) {
+        this.policyDataManager = policyDataManager;
+    }
 }

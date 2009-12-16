@@ -16,34 +16,29 @@
  * limitations under the License.
  */
 
-
 package melcoe.fedora.pep;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- *
  */
-public class AuthzDeniedException extends Exception
-{
-	private static final long serialVersionUID = 9156316947565968757L;
+public class AuthzDeniedException
+        extends Exception {
 
-	public AuthzDeniedException()
-	{
-		super();
-	}
+    private static final long serialVersionUID = 9156316947565968757L;
 
-	public AuthzDeniedException(String message)
-	{
-		super(message);
-	}
+    public AuthzDeniedException() {
+        super();
+    }
 
-	public AuthzDeniedException(Throwable cause)
-	{
-		super(cause);
-	}
+    public AuthzDeniedException(String message) {
+        super(message);
+    }
 
-	public AuthzDeniedException(String message, Throwable cause)
-	{
-		super(message, cause);
-	}
+    public AuthzDeniedException(Throwable cause) {
+        super(cause);
+    }
+
+    public AuthzDeniedException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

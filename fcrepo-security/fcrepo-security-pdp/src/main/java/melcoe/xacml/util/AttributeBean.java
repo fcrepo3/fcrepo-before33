@@ -26,136 +26,145 @@ import java.util.Set;
  * Attribute.
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
 public class AttributeBean {
-	private String id;
-	private String type;
-	private Set<String> values;
 
-	/**
-	 * Default constructor.
-	 */
-	public AttributeBean() {
-		// Default constructor
-		values = new HashSet<String>();
-	}
+    private String id;
 
-	/**
-	 * The parameterised constructor that creates a n object with values
-	 * initialised.
-	 * 
-	 * @param id
-	 *            the id of the Attribute
-	 * @param type
-	 *            the type of the Attribute
-	 * @param values
-	 *            the value of the Attribute
-	 */
-	public AttributeBean(String id, String type, Set<String> values) {
-		this.id = id;
-		this.type = type;
-		this.values = values;
-	}
+    private String type;
 
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
+    private Set<String> values;
 
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
+    /**
+     * Default constructor.
+     */
+    public AttributeBean() {
+        // Default constructor
+        values = new HashSet<String>();
+    }
 
-	/**
-	 * @return the type
-	 */
-	public String getType() {
-		return type;
-	}
+    /**
+     * The parameterised constructor that creates a n object with values
+     * initialised.
+     * 
+     * @param id
+     *        the id of the Attribute
+     * @param type
+     *        the type of the Attribute
+     * @param values
+     *        the value of the Attribute
+     */
+    public AttributeBean(String id, String type, Set<String> values) {
+        this.id = id;
+        this.type = type;
+        this.values = values;
+    }
 
-	/**
-	 * @param type
-	 *            the type to set
-	 */
-	public void setType(String type) {
-		this.type = type;
-	}
+    /**
+     * @return the id
+     */
+    public String getId() {
+        return id;
+    }
 
-	/**
-	 * @return the value
-	 */
-	public Set<String> getValues() {
-		return values;
-	}
+    /**
+     * @param id
+     *        the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	/**
-	 * @param values
-	 *            the value to set
-	 */
-	public void setValues(Set<String> values) {
-		this.values = values;
-	}
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
 
-	/**
-	 * Adds a value for this attribute.
-	 * 
-	 * @param value
-	 */
-	public void addValue(String value) {
-		this.values.add(value);
-	}
+    /**
+     * @param type
+     *        the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		result = prime * result + ((values == null) ? 0 : values.hashCode());
-		return result;
-	}
+    /**
+     * @return the value
+     */
+    public Set<String> getValues() {
+        return values;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final AttributeBean other = (AttributeBean) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (type == null) {
-			if (other.type != null)
-				return false;
-		} else if (!type.equals(other.type))
-			return false;
-		if (values == null) {
-			if (other.values != null)
-				return false;
-		} else if (!values.equals(other.values))
-			return false;
-		return true;
-	}
+    /**
+     * @param values
+     *        the value to set
+     */
+    public void setValues(Set<String> values) {
+        this.values = values;
+    }
+
+    /**
+     * Adds a value for this attribute.
+     * 
+     * @param value
+     */
+    public void addValue(String value) {
+        values.add(value);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (id == null ? 0 : id.hashCode());
+        result = prime * result + (type == null ? 0 : type.hashCode());
+        result = prime * result + (values == null ? 0 : values.hashCode());
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AttributeBean other = (AttributeBean) obj;
+        if (id == null) {
+            if (other.id != null) {
+                return false;
+            }
+        } else if (!id.equals(other.id)) {
+            return false;
+        }
+        if (type == null) {
+            if (other.type != null) {
+                return false;
+            }
+        } else if (!type.equals(other.type)) {
+            return false;
+        }
+        if (values == null) {
+            if (other.values != null) {
+                return false;
+            }
+        } else if (!values.equals(other.values)) {
+            return false;
+        }
+        return true;
+    }
 }

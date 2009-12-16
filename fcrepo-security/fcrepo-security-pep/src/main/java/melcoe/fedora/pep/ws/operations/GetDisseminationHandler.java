@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-
 package melcoe.fedora.pep.ws.operations;
 
 import java.net.URI;
@@ -41,87 +40,108 @@ import fedora.common.Constants;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- *
  */
-public class GetDisseminationHandler extends AbstractOperationHandler
-{
-	private static Logger log = Logger.getLogger(GetDisseminationHandler.class.getName());
+public class GetDisseminationHandler
+        extends AbstractOperationHandler {
 
-	public GetDisseminationHandler() throws PEPException
-	{
-		super();
-	}
+    private static Logger log =
+            Logger.getLogger(GetDisseminationHandler.class.getName());
 
-	public RequestCtx handleResponse(MessageContext context) throws OperationHandlerException
-	{
-		return null;
-	}
+    public GetDisseminationHandler()
+            throws PEPException {
+        super();
+    }
 
-	@SuppressWarnings("deprecation")
-	public RequestCtx handleRequest(MessageContext context) throws OperationHandlerException
-	{
-		log.debug("GetDisseminationHandler/handleRequest!");
+    public RequestCtx handleResponse(MessageContext context)
+            throws OperationHandlerException {
+        return null;
+    }
 
-		RequestCtx req = null;
-		List<Object> oMap = null;
+    @SuppressWarnings("deprecation")
+    public RequestCtx handleRequest(MessageContext context)
+            throws OperationHandlerException {
+        log.debug("GetDisseminationHandler/handleRequest!");
 
-		String pid = null;
-		String sDefPid = null;
-		String methodName = null;
-		// Property[] properties = null;
-		String asOfDateTime = null;
+        RequestCtx req = null;
+        List<Object> oMap = null;
 
-		try
-		{
-			oMap = getSOAPRequestObjects(context);
-			log.debug("Retrieved SOAP Request Objects");
-		}
-		catch (AxisFault af)
-		{
-			log.error("Error obtaining SOAP Request Objects", af);
-			throw new OperationHandlerException("Error obtaining SOAP Request Objects", af);
-		}
+        String pid = null;
+        String sDefPid = null;
+        String methodName = null;
+        // Property[] properties = null;
+        String asOfDateTime = null;
 
-		try
-		{
-			pid = (String) oMap.get(0);
-			sDefPid = (String) oMap.get(1);
-			methodName = (String) oMap.get(2);
-			// properties = (Property[]) oMap.get(3);
-			asOfDateTime = (String) oMap.get(4);
-		}
-		catch (Exception e)
-		{
-			log.error("Error obtaining parameters", e);
-			throw new OperationHandlerException("Error obtaining parameters.", e);
-		}
+        try {
+            oMap = getSOAPRequestObjects(context);
+            log.debug("Retrieved SOAP Request Objects");
+        } catch (AxisFault af) {
+            log.error("Error obtaining SOAP Request Objects", af);
+            throw new OperationHandlerException("Error obtaining SOAP Request Objects",
+                                                af);
+        }
 
-		log.debug("Extracted SOAP Request Objects");
+        try {
+            pid = (String) oMap.get(0);
+            sDefPid = (String) oMap.get(1);
+            methodName = (String) oMap.get(2);
+            // properties = (Property[]) oMap.get(3);
+            asOfDateTime = (String) oMap.get(4);
+        } catch (Exception e) {
+            log.error("Error obtaining parameters", e);
+            throw new OperationHandlerException("Error obtaining parameters.",
+                                                e);
+        }
 
-		Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
-		Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
+        log.debug("Extracted SOAP Request Objects");
 
-		try
-		{
-			if (pid != null && !"".equals(pid)) resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute(pid));
-			if (pid != null && !"".equals(pid)) resAttr.put(new URI(XACML_RESOURCE_ID), new AnyURIAttribute(new URI(pid)));
-			if (sDefPid != null && !"".equals(sDefPid)) resAttr.put(Constants.SDEF.PID.getURI(), new StringAttribute(sDefPid));
-			if (methodName != null && !"".equals(methodName)) resAttr.put(Constants.DISSEMINATOR.METHOD.getURI(), new StringAttribute(methodName));
-			if (asOfDateTime != null && !"".equals(asOfDateTime)) resAttr.put(Constants.DATASTREAM.AS_OF_DATETIME.getURI(), DateTimeAttribute.getInstance(asOfDateTime));
+        Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
+        Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
 
-			actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(Constants.ACTION.GET_DISSEMINATION.getURI().toASCIIString()));
-			actions.put(Constants.ACTION.API.getURI(), new StringAttribute(Constants.ACTION.APIA.getURI().toASCIIString()));
+        try {
+            if (pid != null && !"".equals(pid)) {
+                resAttr.put(Constants.OBJECT.PID.getURI(),
+                            new StringAttribute(pid));
+            }
+            if (pid != null && !"".equals(pid)) {
+                resAttr.put(new URI(XACML_RESOURCE_ID),
+                            new AnyURIAttribute(new URI(pid)));
+            }
+            if (sDefPid != null && !"".equals(sDefPid)) {
+                resAttr.put(Constants.SDEF.PID.getURI(),
+                            new StringAttribute(sDefPid));
+            }
+            if (methodName != null && !"".equals(methodName)) {
+                resAttr.put(Constants.DISSEMINATOR.METHOD.getURI(),
+                            new StringAttribute(methodName));
+            }
+            if (asOfDateTime != null && !"".equals(asOfDateTime)) {
+                resAttr.put(Constants.DATASTREAM.AS_OF_DATETIME.getURI(),
+                            DateTimeAttribute.getInstance(asOfDateTime));
+            }
 
-			req = getContextHandler().buildRequest(getSubjects(context), actions, resAttr, getEnvironment(context));
+            actions.put(Constants.ACTION.ID.getURI(),
+                        new StringAttribute(Constants.ACTION.GET_DISSEMINATION
+                                .getURI().toASCIIString()));
+            actions.put(Constants.ACTION.API.getURI(),
+                        new StringAttribute(Constants.ACTION.APIA.getURI()
+                                .toASCIIString()));
 
-			LogUtil.statLog(context.getUsername(), Constants.ACTION.GET_DISSEMINATION.getURI().toASCIIString(), pid, null);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			throw new OperationHandlerException(e.getMessage(), e);
-		}
+            req =
+                    getContextHandler().buildRequest(getSubjects(context),
+                                                     actions,
+                                                     resAttr,
+                                                     getEnvironment(context));
 
-		return req;
-	}
+            LogUtil.statLog(context.getUsername(),
+                            Constants.ACTION.GET_DISSEMINATION.getURI()
+                                    .toASCIIString(),
+                            pid,
+                            null);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new OperationHandlerException(e.getMessage(), e);
+        }
+
+        return req;
+    }
 }

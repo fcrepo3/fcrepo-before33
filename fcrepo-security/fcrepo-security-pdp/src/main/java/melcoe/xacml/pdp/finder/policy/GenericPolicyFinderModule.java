@@ -39,79 +39,80 @@ import com.sun.xacml.finder.PolicyFinderResult;
  * policy set.
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public class GenericPolicyFinderModule extends PolicyFinderModule {
-	private static final Logger log = Logger
-			.getLogger(GenericPolicyFinderModule.class.getName());
+public class GenericPolicyFinderModule
+        extends PolicyFinderModule {
 
-	private PolicyManager policyManager = null;
+    private static final Logger log =
+            Logger.getLogger(GenericPolicyFinderModule.class.getName());
 
-	public GenericPolicyFinderModule() {
-		super();
-	}
+    private PolicyManager policyManager = null;
 
-	/**
-	 * Always returns <code>true</code> since this module does support finding
-	 * policies based on context.
-	 * 
-	 * @return true
-	 */
-	@Override
-	public boolean isRequestSupported() {
-		return true;
-	}
+    public GenericPolicyFinderModule() {
+        super();
+    }
 
-	/**
-	 * Initialize this module. Typically this is called by
-	 * <code>PolicyFinder</code> when a PDP is created.
-	 * 
-	 * @param finder
-	 *            the <code>PolicyFinder</code> using this module
-	 */
-	@Override
-	public void init(PolicyFinder finder) {
-		try {
-			policyManager = new PolicyManager(finder);
-		} catch (URISyntaxException use) {
-			log
-					.fatal(
-							"Error initialising DBPolicyFinderModule due to improper URI:",
-							use);
-		} catch (PolicyDataManagerException pdme) {
-			log.fatal("Error initialising DBPolicyFinderModule:", pdme);
-		}
-	}
+    /**
+     * Always returns <code>true</code> since this module does support finding
+     * policies based on context.
+     * 
+     * @return true
+     */
+    @Override
+    public boolean isRequestSupported() {
+        return true;
+    }
 
-	/**
-	 * Finds a policy based on a request's context. If more than one policy
-	 * matches, then this either returns an error or a new policy wrapping the
-	 * multiple policies (depending on which constructor was used to construct
-	 * this instance).
-	 * 
-	 * @param context
-	 *            the representation of the request data
-	 * 
-	 * @return the result of trying to find an applicable policy
-	 */
-	@Override
-	public PolicyFinderResult findPolicy(EvaluationCtx context) {
-		try {
-			AbstractPolicy policy = policyManager.getPolicy(context);
+    /**
+     * Initialize this module. Typically this is called by
+     * <code>PolicyFinder</code> when a PDP is created.
+     * 
+     * @param finder
+     *        the <code>PolicyFinder</code> using this module
+     */
+    @Override
+    public void init(PolicyFinder finder) {
+        try {
+            policyManager = new PolicyManager(finder);
+        } catch (URISyntaxException use) {
+            log
+                    .fatal("Error initialising DBPolicyFinderModule due to improper URI:",
+                           use);
+        } catch (PolicyDataManagerException pdme) {
+            log.fatal("Error initialising DBPolicyFinderModule:", pdme);
+        }
+    }
 
-			if (policy == null)
-				return new PolicyFinderResult();
+    /**
+     * Finds a policy based on a request's context. If more than one policy
+     * matches, then this either returns an error or a new policy wrapping the
+     * multiple policies (depending on which constructor was used to construct
+     * this instance).
+     * 
+     * @param context
+     *        the representation of the request data
+     * @return the result of trying to find an applicable policy
+     */
+    @Override
+    public PolicyFinderResult findPolicy(EvaluationCtx context) {
+        try {
+            AbstractPolicy policy = policyManager.getPolicy(context);
 
-			return new PolicyFinderResult(policy);
-		} catch (TopLevelPolicyException tlpe) {
-			return new PolicyFinderResult(tlpe.getStatus());
-		} catch (PolicyDataManagerException pdme) {
-			if (log.isDebugEnabled())
-				log.debug("problem processing policy", pdme);
+            if (policy == null) {
+                return new PolicyFinderResult();
+            }
 
-			List<String> codes = new ArrayList<String>();
-			codes.add(Status.STATUS_PROCESSING_ERROR);
-			return new PolicyFinderResult(new Status(codes, pdme.getMessage()));
-		}
-	}
+            return new PolicyFinderResult(policy);
+        } catch (TopLevelPolicyException tlpe) {
+            return new PolicyFinderResult(tlpe.getStatus());
+        } catch (PolicyDataManagerException pdme) {
+            if (log.isDebugEnabled()) {
+                log.debug("problem processing policy", pdme);
+            }
+
+            List<String> codes = new ArrayList<String>();
+            codes.add(Status.STATUS_PROCESSING_ERROR);
+            return new PolicyFinderResult(new Status(codes, pdme.getMessage()));
+        }
+    }
 }

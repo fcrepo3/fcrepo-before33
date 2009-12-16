@@ -16,36 +16,31 @@
  * limitations under the License.
  */
 
-
 package melcoe.fedora.pep.ws.operations;
 
 import melcoe.fedora.pep.PEPException;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- *
  */
-public class OperationHandlerException extends PEPException
-{
-	private static final long serialVersionUID = 68951269970061808L;
+public class OperationHandlerException
+        extends PEPException {
 
-	public OperationHandlerException()
-	{
-		super();
-	}
+    private static final long serialVersionUID = 68951269970061808L;
 
-	public OperationHandlerException(String message)
-	{
-		super(message);
-	}
+    public OperationHandlerException() {
+        super();
+    }
 
-	public OperationHandlerException(Throwable cause)
-	{
-		super(cause);
-	}
+    public OperationHandlerException(String message) {
+        super(message);
+    }
 
-	public OperationHandlerException(String message, Throwable cause)
-	{
-		super(message, cause);
-	}
+    public OperationHandlerException(Throwable cause) {
+        super(cause);
+    }
+
+    public OperationHandlerException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

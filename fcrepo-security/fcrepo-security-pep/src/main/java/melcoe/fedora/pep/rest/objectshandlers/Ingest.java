@@ -44,77 +44,82 @@ import fedora.common.Constants;
  * Handles the Ingest operation.
  * 
  * @author nish.naidoo@gmail.com
- * 
  */
-public class Ingest extends AbstractFilter
-{
-	private static Logger log = Logger.getLogger(Ingest.class.getName());
+public class Ingest
+        extends AbstractFilter {
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @throws PEPException
-	 */
-	public Ingest() throws PEPException
-	{
-		super();
-	}
+    private static Logger log = Logger.getLogger(Ingest.class.getName());
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet
-	 * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleRequest(HttpServletRequest request, HttpServletResponse response)
-	    throws IOException, ServletException
-	{
-		if (log.isDebugEnabled())
-			log.debug(this.getClass().getName() + "/handleRequest!");
+    /**
+     * Default constructor.
+     * 
+     * @throws PEPException
+     */
+    public Ingest()
+            throws PEPException {
+        super();
+    }
 
-		String format = request.getParameter("format");
-		
-		RequestCtx req = null;
-		Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
-		Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
-		try
-		{
-			resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute("FedoraRepository"));
-			resAttr.put(new URI(XACML_RESOURCE_ID), new AnyURIAttribute(new URI("FedoraRepository")));
-			if (format != null && !"".equals(format))
-				resAttr.put(Constants.OBJECT.FORMAT_URI.getURI(), new StringAttribute(format));
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleRequest(HttpServletRequest request,
+                                    HttpServletResponse response)
+            throws IOException, ServletException {
+        if (log.isDebugEnabled()) {
+            log.debug(this.getClass().getName() + "/handleRequest!");
+        }
 
-			actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(Constants.ACTION.INGEST.getURI()
-			    .toASCIIString()));
-			actions.put(Constants.ACTION.API.getURI(), new StringAttribute(Constants.ACTION.APIM.getURI()
-			    .toASCIIString()));
+        String format = request.getParameter("format");
 
-			req = getContextHandler().buildRequest(getSubjects(request), actions, resAttr,
-			    getEnvironment(request));
+        RequestCtx req = null;
+        Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
+        Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
+        try {
+            resAttr.put(Constants.OBJECT.PID.getURI(),
+                        new StringAttribute("FedoraRepository"));
+            resAttr.put(new URI(XACML_RESOURCE_ID),
+                        new AnyURIAttribute(new URI("FedoraRepository")));
+            if (format != null && !"".equals(format)) {
+                resAttr.put(Constants.OBJECT.FORMAT_URI.getURI(),
+                            new StringAttribute(format));
+            }
 
-			LogUtil.statLog(request.getRemoteUser(), Constants.ACTION.INGEST.getURI().toASCIIString(),
-			    "FedoraRepository", null);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			throw new ServletException(e.getMessage(), e);
-		}
+            actions.put(Constants.ACTION.ID.getURI(),
+                        new StringAttribute(Constants.ACTION.INGEST.getURI()
+                                .toASCIIString()));
+            actions.put(Constants.ACTION.API.getURI(),
+                        new StringAttribute(Constants.ACTION.APIM.getURI()
+                                .toASCIIString()));
 
-		return req;
-	}
+            req =
+                    getContextHandler().buildRequest(getSubjects(request),
+                                                     actions,
+                                                     resAttr,
+                                                     getEnvironment(request));
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet
-	 * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleResponse(HttpServletRequest request, HttpServletResponse response)
-	    throws IOException, ServletException
-	{
-		return null;
-	}
+            LogUtil.statLog(request.getRemoteUser(), Constants.ACTION.INGEST
+                    .getURI().toASCIIString(), "FedoraRepository", null);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new ServletException(e.getMessage(), e);
+        }
+
+        return req;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleResponse(HttpServletRequest request,
+                                     HttpServletResponse response)
+            throws IOException, ServletException {
+        return null;
+    }
 }

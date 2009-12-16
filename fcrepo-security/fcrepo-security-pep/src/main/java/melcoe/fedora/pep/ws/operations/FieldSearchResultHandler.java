@@ -46,175 +46,198 @@ import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.ObjectFields;
 
 /**
- * This class handles the filtering of search results for both the findObjects and resumeFindObjects
- * operations and is called by each of them.
+ * This class handles the filtering of search results for both the findObjects
+ * and resumeFindObjects operations and is called by each of them.
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public class FieldSearchResultHandler extends AbstractOperationHandler
-{
-	private static Logger log = Logger.getLogger(FieldSearchResultHandler.class.getName());
+public class FieldSearchResultHandler
+        extends AbstractOperationHandler {
 
-	private ContextUtil contextUtil = new ContextUtil();
+    private static Logger log =
+            Logger.getLogger(FieldSearchResultHandler.class.getName());
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @throws PEPException
-	 */
-	public FieldSearchResultHandler() throws PEPException
-	{
-		super();
-	}
+    private final ContextUtil contextUtil = new ContextUtil();
 
-	/**
-	 * Removes non-permissable objects from the result list.
-	 * 
-	 * @param context the message context
-	 * @param result the search result object
-	 * @return the new search result object without non-permissable items
-	 * @throws PEPException
-	 */
-	public FieldSearchResult filter(MessageContext context, FieldSearchResult result) throws PEPException
-	{
-		ObjectFields[] objs = result.getResultList();
-		List<String> requests = new ArrayList<String>();
-		Map<String, ObjectFields> objects = new HashMap<String, ObjectFields>();
+    /**
+     * Default constructor.
+     * 
+     * @throws PEPException
+     */
+    public FieldSearchResultHandler()
+            throws PEPException {
+        super();
+    }
 
-		if (objs.length == 0)
-			return result;
+    /**
+     * Removes non-permissable objects from the result list.
+     * 
+     * @param context
+     *        the message context
+     * @param result
+     *        the search result object
+     * @return the new search result object without non-permissable items
+     * @throws PEPException
+     */
+    public FieldSearchResult filter(MessageContext context,
+                                    FieldSearchResult result)
+            throws PEPException {
+        ObjectFields[] objs = result.getResultList();
+        List<String> requests = new ArrayList<String>();
+        Map<String, ObjectFields> objects = new HashMap<String, ObjectFields>();
 
-		for (ObjectFields o : objs)
-		{
-			if (log.isDebugEnabled())
-				log.debug("Checking: " + o.getPid());
+        if (objs.length == 0) {
+            return result;
+        }
 
-			Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
-			Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
+        for (ObjectFields o : objs) {
+            if (log.isDebugEnabled()) {
+                log.debug("Checking: " + o.getPid());
+            }
 
-			String pid = o.getPid();
-			if (pid != null && !"".equals(pid))
-			{
-				objects.put(pid, o);
+            Map<URI, AttributeValue> actions =
+                    new HashMap<URI, AttributeValue>();
+            Map<URI, AttributeValue> resAttr =
+                    new HashMap<URI, AttributeValue>();
 
-				try
-				{
-					actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(
-							Constants.ACTION.LIST_OBJECT_IN_FIELD_SEARCH_RESULTS.getURI().toASCIIString()));
+            String pid = o.getPid();
+            if (pid != null && !"".equals(pid)) {
+                objects.put(pid, o);
 
-					resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute(pid));
-					resAttr.put(new URI(XACML_RESOURCE_ID), new AnyURIAttribute(new URI(pid)));
+                try {
+                    actions
+                            .put(Constants.ACTION.ID.getURI(),
+                                 new StringAttribute(Constants.ACTION.LIST_OBJECT_IN_FIELD_SEARCH_RESULTS
+                                         .getURI().toASCIIString()));
 
-					RequestCtx req = getContextHandler().buildRequest(getSubjects(context), actions, resAttr,
-																		getEnvironment(context));
+                    resAttr.put(Constants.OBJECT.PID.getURI(),
+                                new StringAttribute(pid));
+                    resAttr.put(new URI(XACML_RESOURCE_ID),
+                                new AnyURIAttribute(new URI(pid)));
 
-					requests.add(contextUtil.makeRequestCtx(req));
-				}
-				catch (Exception e)
-				{
-					log.error(e.getMessage(), e);
-					throw new OperationHandlerException(e.getMessage(), e);
-				}
-			}
-		}
+                    RequestCtx req =
+                            getContextHandler()
+                                    .buildRequest(getSubjects(context),
+                                                  actions,
+                                                  resAttr,
+                                                  getEnvironment(context));
 
-		String response = getContextHandler().evaluateBatch(requests.toArray(new String[requests.size()]));
-		ResponseCtx resCtx;
-		try {
-			resCtx = contextUtil.makeResponseCtx(response);
-		} catch (MelcoeXacmlException e) {
-			throw new PEPException(e);
-		}
+                    requests.add(contextUtil.makeRequestCtx(req));
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                    throw new OperationHandlerException(e.getMessage(), e);
+                }
+            }
+        }
 
-		@SuppressWarnings("unchecked")
-		Set<Result> results = resCtx.getResults();
+        String response =
+                getContextHandler().evaluateBatch(requests
+                        .toArray(new String[requests.size()]));
+        ResponseCtx resCtx;
+        try {
+            resCtx = contextUtil.makeResponseCtx(response);
+        } catch (MelcoeXacmlException e) {
+            throw new PEPException(e);
+        }
 
-		List<ObjectFields> resultObjects = new ArrayList<ObjectFields>();
-		for (Result r : results)
-		{
-			if (r.getResource() == null || "".equals(r.getResource()))
-				log.warn("This resource has no resource identifier in the xacml response results!");
-			else if (log.isDebugEnabled())
-				log.debug("Checking: " + r.getResource());
+        @SuppressWarnings("unchecked")
+        Set<Result> results = resCtx.getResults();
 
-			String[] ridComponents = r.getResource().split("\\/");
-			String rid = ridComponents[ridComponents.length - 1];
+        List<ObjectFields> resultObjects = new ArrayList<ObjectFields>();
+        for (Result r : results) {
+            if (r.getResource() == null || "".equals(r.getResource())) {
+                log
+                        .warn("This resource has no resource identifier in the xacml response results!");
+            } else if (log.isDebugEnabled()) {
+                log.debug("Checking: " + r.getResource());
+            }
 
-			if (r.getStatus().getCode().contains(Status.STATUS_OK) && r.getDecision() == Result.DECISION_PERMIT)
-			{
-				ObjectFields tmp = objects.get(rid);
-				if (tmp != null)
-				{
-					resultObjects.add(tmp);
-					if (log.isDebugEnabled())
-						log.debug("Adding: " + r.getResource() + "[" + rid + "]");
-				}
-				else
-				{
-					log.warn("Not adding this object as no object found for this key: " + r.getResource() + "[" + rid + "]");
-				}
-			}
-		}
+            String[] ridComponents = r.getResource().split("\\/");
+            String rid = ridComponents[ridComponents.length - 1];
 
-		result.setResultList(resultObjects.toArray(new ObjectFields[resultObjects.size()]));
+            if (r.getStatus().getCode().contains(Status.STATUS_OK)
+                    && r.getDecision() == Result.DECISION_PERMIT) {
+                ObjectFields tmp = objects.get(rid);
+                if (tmp != null) {
+                    resultObjects.add(tmp);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Adding: " + r.getResource() + "[" + rid
+                                + "]");
+                    }
+                } else {
+                    log
+                            .warn("Not adding this object as no object found for this key: "
+                                    + r.getResource() + "[" + rid + "]");
+                }
+            }
+        }
 
-		return result;
-	}
+        result.setResultList(resultObjects
+                .toArray(new ObjectFields[resultObjects.size()]));
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.ws.operations.OperationHandler#handleRequest(org.apache.axis.MessageContext)
-	 */
-	public RequestCtx handleRequest(MessageContext context) throws OperationHandlerException
-	{
-		RequestCtx req = null;
+        return result;
+    }
 
-		Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
-		Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.ws.operations.OperationHandler#handleRequest(org.apache
+     * .axis.MessageContext)
+     */
+    public RequestCtx handleRequest(MessageContext context)
+            throws OperationHandlerException {
+        RequestCtx req = null;
 
-		try
-		{
-			resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute("FedoraRepository"));
-			resAttr.put(new URI(XACML_RESOURCE_ID), new AnyURIAttribute(new URI("FedoraRepository")));
+        Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
+        Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
 
-			actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(Constants.ACTION.FIND_OBJECTS.getURI()
-					.toASCIIString()));
-			actions.put(Constants.ACTION.API.getURI(), new StringAttribute(Constants.ACTION.APIA.getURI()
-					.toASCIIString()));
+        try {
+            resAttr.put(Constants.OBJECT.PID.getURI(),
+                        new StringAttribute("FedoraRepository"));
+            resAttr.put(new URI(XACML_RESOURCE_ID),
+                        new AnyURIAttribute(new URI("FedoraRepository")));
 
-			req = getContextHandler().buildRequest(getSubjects(context), actions, resAttr, getEnvironment(context));
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			throw new OperationHandlerException(e.getMessage(), e);
-		}
+            actions.put(Constants.ACTION.ID.getURI(),
+                        new StringAttribute(Constants.ACTION.FIND_OBJECTS
+                                .getURI().toASCIIString()));
+            actions.put(Constants.ACTION.API.getURI(),
+                        new StringAttribute(Constants.ACTION.APIA.getURI()
+                                .toASCIIString()));
 
-		return req;
-	}
+            req =
+                    getContextHandler().buildRequest(getSubjects(context),
+                                                     actions,
+                                                     resAttr,
+                                                     getEnvironment(context));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new OperationHandlerException(e.getMessage(), e);
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.ws.operations.OperationHandler#handleResponse(org.apache.axis.MessageContext)
-	 */
-	public RequestCtx handleResponse(MessageContext context) throws OperationHandlerException
-	{
-		try
-		{
-			FieldSearchResult result = (FieldSearchResult) getSOAPResponseObject(context);
-			result = filter(context, result);
-			RPCParam param = new RPCParam(context.getOperation().getReturnQName(), result);
-			setSOAPResponseObject(context, param);
-		}
-		catch (Exception e)
-		{
-			log.error("Error filtering Objects", e);
-			throw new OperationHandlerException("Error filtering Objects", e);
-		}
+        return req;
+    }
 
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.ws.operations.OperationHandler#handleResponse(org.apache
+     * .axis.MessageContext)
+     */
+    public RequestCtx handleResponse(MessageContext context)
+            throws OperationHandlerException {
+        try {
+            FieldSearchResult result =
+                    (FieldSearchResult) getSOAPResponseObject(context);
+            result = filter(context, result);
+            RPCParam param =
+                    new RPCParam(context.getOperation().getReturnQName(),
+                                 result);
+            setSOAPResponseObject(context, param);
+        } catch (Exception e) {
+            log.error("Error filtering Objects", e);
+            throw new OperationHandlerException("Error filtering Objects", e);
+        }
+
+        return null;
+    }
 }

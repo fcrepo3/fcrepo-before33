@@ -30,78 +30,70 @@ import org.apache.log4j.Logger;
  * in melcoe.fedora.pdp.client which are the Web Service client stubs.
  * 
  * @author nishen@melcoe.mq.edu.au
- *
  */
-public class DirectPDPClient implements PDPClient
-{
-	private static Logger log = Logger.getLogger(DirectPDPClient.class.getName());
+public class DirectPDPClient
+        implements PDPClient {
 
-	private MelcoePDP client = null;
+    private static Logger log =
+            Logger.getLogger(DirectPDPClient.class.getName());
 
-	/**
-	 * Initialises the DirectPDPClient class.
-	 * 
-	 * @param options a Map of options for this class
-	 * @throws PEPException
-	 */
-	public DirectPDPClient(Map<String, String> options) throws PEPException
-	{
-		try
-		{
-			client = new MelcoePDPImpl();
-		}
-		catch (Exception e)
-		{
-			log.error("Could not initialise the PEP Client.");
-			throw new PEPException("Could not initialise the PEP Client.", e);
-		}
-	}
+    private MelcoePDP client = null;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.PEPClient#evaluate(java.lang.String)
-	 */
-	public String evaluate(String request) throws PEPException
-	{
-		if (log.isDebugEnabled())
-			log.debug("Resolving String request:\n" + request);
+    /**
+     * Initialises the DirectPDPClient class.
+     * 
+     * @param options
+     *        a Map of options for this class
+     * @throws PEPException
+     */
+    public DirectPDPClient(Map<String, String> options)
+            throws PEPException {
+        try {
+            client = new MelcoePDPImpl();
+        } catch (Exception e) {
+            log.error("Could not initialise the PEP Client.");
+            throw new PEPException("Could not initialise the PEP Client.", e);
+        }
+    }
 
-		String response = null;
-		try
-		{
-			response = client.evaluate(request);
-		}
-		catch (Exception e)
-		{
-			log.error("Error evaluating request.", e);
-			throw new PEPException("Error evaluating request", e);
-		}
+    /*
+     * (non-Javadoc)
+     * @see melcoe.fedora.pep.PEPClient#evaluate(java.lang.String)
+     */
+    public String evaluate(String request) throws PEPException {
+        if (log.isDebugEnabled()) {
+            log.debug("Resolving String request:\n" + request);
+        }
 
-		return response;
-	}
+        String response = null;
+        try {
+            response = client.evaluate(request);
+        } catch (Exception e) {
+            log.error("Error evaluating request.", e);
+            throw new PEPException("Error evaluating request", e);
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.PEPClient#evaluateBatch(java.lang.String[])
-	 */
-	public String evaluateBatch(String[] request) throws PEPException
-	{
-		if (log.isDebugEnabled())
-			log.debug("Resolving request batch (" + request.length + " requests)");
+        return response;
+    }
 
-		String response = null;
-		try
-		{
-			response = client.evaluateBatch(request);
-		}
-		catch (Exception e)
-		{
-			log.error("Error evaluating request.", e);
-			throw new PEPException("Error evaluating request", e);
-		}
+    /*
+     * (non-Javadoc)
+     * @see melcoe.fedora.pep.PEPClient#evaluateBatch(java.lang.String[])
+     */
+    public String evaluateBatch(String[] request) throws PEPException {
+        if (log.isDebugEnabled()) {
+            log.debug("Resolving request batch (" + request.length
+                    + " requests)");
+        }
 
-		return response;
-	}
+        String response = null;
+        try {
+            response = client.evaluateBatch(request);
+        } catch (Exception e) {
+            log.error("Error evaluating request.", e);
+            throw new PEPException("Error evaluating request", e);
+        }
+
+        return response;
+    }
 }

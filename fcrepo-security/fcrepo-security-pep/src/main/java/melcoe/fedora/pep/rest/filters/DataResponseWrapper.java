@@ -33,102 +33,100 @@ import javax.servlet.http.HttpServletResponseWrapper;
  * @author nishen@melcoe.mq.edu.au
  */
 
-public class DataResponseWrapper extends HttpServletResponseWrapper
-{
-	private ByteArrayOutputStream output = null;
-	private String contentType = null;
-	private int contentLength;
+public class DataResponseWrapper
+        extends HttpServletResponseWrapper {
 
-	/**
-	 * Default constructor that duplicates the response provided.
-	 * 
-	 * @param response the response to duplicate.
-	 */
-	public DataResponseWrapper(HttpServletResponse response)
-	{
-		super(response);
-		output = new ByteArrayOutputStream();
-	}
+    private ByteArrayOutputStream output = null;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.ServletResponseWrapper#getOutputStream()
-	 */
-	public ServletOutputStream getOutputStream() throws IOException
-	{
-		return new DataServletOutputStream(output);
-	}
+    private String contentType = null;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.ServletResponseWrapper#getWriter()
-	 */
-	public PrintWriter getWriter() throws IOException
-	{
-		return new PrintWriter(new OutputStreamWriter(getOutputStream(), "UTF-8"), true);
-	}
+    private int contentLength;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.ServletResponseWrapper#setContentType(java.lang.String)
-	 */
-	public void setContentType(String type)
-	{
-		this.contentType = type;
-		super.setContentType(type);
-	}
+    /**
+     * Default constructor that duplicates the response provided.
+     * 
+     * @param response
+     *        the response to duplicate.
+     */
+    public DataResponseWrapper(HttpServletResponse response) {
+        super(response);
+        output = new ByteArrayOutputStream();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.ServletResponseWrapper#getContentType()
-	 */
-	public String getContentType()
-	{
-		return this.contentType;
-	}
+    /*
+     * (non-Javadoc)
+     * @see javax.servlet.ServletResponseWrapper#getOutputStream()
+     */
+    @Override
+    public ServletOutputStream getOutputStream() throws IOException {
+        return new DataServletOutputStream(output);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.ServletResponseWrapper#setContentLength(int)
-	 */
-	public void setContentLength(int length)
-	{
-		this.contentLength = length;
-		super.setContentLength(length);
-	}
+    /*
+     * (non-Javadoc)
+     * @see javax.servlet.ServletResponseWrapper#getWriter()
+     */
+    @Override
+    public PrintWriter getWriter() throws IOException {
+        return new PrintWriter(new OutputStreamWriter(getOutputStream(),
+                                                      "UTF-8"), true);
+    }
 
-	/**
-	 * @return the content length of this response
-	 */
-	public int getContentLength()
-	{
-		return this.contentLength;
-	}
+    /*
+     * (non-Javadoc)
+     * @see
+     * javax.servlet.ServletResponseWrapper#setContentType(java.lang.String)
+     */
+    @Override
+    public void setContentType(String type) {
+        contentType = type;
+        super.setContentType(type);
+    }
 
-	/**
-	 * @return the body of this response
-	 */
-	public byte[] getData()
-	{
-		return output.toByteArray();
-	}
+    /*
+     * (non-Javadoc)
+     * @see javax.servlet.ServletResponseWrapper#getContentType()
+     */
+    @Override
+    public String getContentType() {
+        return contentType;
+    }
 
-	/**
-	 * Sets the body of this response.
-	 * 
-	 * @param data the data to set the body of this reponse to
-	 * @throws IOException
-	 */
-	public void setData(byte[] data) throws IOException
-	{
-		output = new ByteArrayOutputStream();
-		output.write(data);
-		output.flush();
-		setContentLength(output.size());
-	}
+    /*
+     * (non-Javadoc)
+     * @see javax.servlet.ServletResponseWrapper#setContentLength(int)
+     */
+    @Override
+    public void setContentLength(int length) {
+        contentLength = length;
+        super.setContentLength(length);
+    }
+
+    /**
+     * @return the content length of this response
+     */
+    public int getContentLength() {
+        return contentLength;
+    }
+
+    /**
+     * @return the body of this response
+     */
+    public byte[] getData() {
+        return output.toByteArray();
+    }
+
+    /**
+     * Sets the body of this response.
+     * 
+     * @param data
+     *        the data to set the body of this reponse to
+     * @throws IOException
+     */
+    public void setData(byte[] data) throws IOException {
+        output = new ByteArrayOutputStream();
+        output.write(data);
+        output.flush();
+        setContentLength(output.size());
+    }
 }

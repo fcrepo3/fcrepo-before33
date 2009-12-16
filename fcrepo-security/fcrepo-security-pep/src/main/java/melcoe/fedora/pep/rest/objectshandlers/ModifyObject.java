@@ -44,91 +44,106 @@ import fedora.common.Constants;
  * Handles the ModifyObject operation.
  * 
  * @author nish.naidoo@gmail.com
- * 
  */
-public class ModifyObject extends AbstractFilter
-{
-	private static Logger log = Logger.getLogger(ModifyObject.class.getName());
+public class ModifyObject
+        extends AbstractFilter {
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @throws PEPException
-	 */
-	public ModifyObject() throws PEPException
-	{
-		super();
-	}
+    private static Logger log = Logger.getLogger(ModifyObject.class.getName());
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet
-	 * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleRequest(HttpServletRequest request, HttpServletResponse response)
-	    throws IOException, ServletException
-	{
-		if (log.isDebugEnabled())
-			log.debug(this.getClass().getName() + "/handleRequest!");
+    /**
+     * Default constructor.
+     * 
+     * @throws PEPException
+     */
+    public ModifyObject()
+            throws PEPException {
+        super();
+    }
 
-		String path = request.getPathInfo();
-		String[] parts = path.split("/");
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleRequest(HttpServletRequest request,
+                                    HttpServletResponse response)
+            throws IOException, ServletException {
+        if (log.isDebugEnabled()) {
+            log.debug(this.getClass().getName() + "/handleRequest!");
+        }
 
-		String pid = parts[1];
-		String state = request.getParameter("state");
-		String ownerId = request.getParameter("ownerId");
+        String path = request.getPathInfo();
+        String[] parts = path.split("/");
 
-		RequestCtx req = null;
-		Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
-		Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
-		try
-		{
-			if (pid != null && !"".equals(pid))
-				resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute(pid));
-			if (pid != null && !"".equals(pid))
-				resAttr.put(new URI(XACML_RESOURCE_ID), new AnyURIAttribute(new URI(pid)));
-			if (state != null && !"".equals(state))
-				resAttr.put(Constants.OBJECT.STATE.getURI(), new StringAttribute(state));
-			if (ownerId != null && !"".equals(ownerId))
-				resAttr.put(Constants.OBJECT.OWNER.getURI(), new StringAttribute(state));
+        String pid = parts[1];
+        String state = request.getParameter("state");
+        String ownerId = request.getParameter("ownerId");
 
-			if (state != null && (state.equals("A")))
-				actions.put(Constants.ACTION.ID.getURI(), new StringAttribute("publish"));
-			else if (state != null && (state.equals("I")))
-				actions.put(Constants.ACTION.ID.getURI(), new StringAttribute("unpublish"));
-			else
-				actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(Constants.ACTION.MODIFY_OBJECT
-				    .getURI().toASCIIString()));
-			actions.put(Constants.ACTION.API.getURI(), new StringAttribute(Constants.ACTION.APIM.getURI()
-			    .toASCIIString()));
+        RequestCtx req = null;
+        Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
+        Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
+        try {
+            if (pid != null && !"".equals(pid)) {
+                resAttr.put(Constants.OBJECT.PID.getURI(),
+                            new StringAttribute(pid));
+            }
+            if (pid != null && !"".equals(pid)) {
+                resAttr.put(new URI(XACML_RESOURCE_ID),
+                            new AnyURIAttribute(new URI(pid)));
+            }
+            if (state != null && !"".equals(state)) {
+                resAttr.put(Constants.OBJECT.STATE.getURI(),
+                            new StringAttribute(state));
+            }
+            if (ownerId != null && !"".equals(ownerId)) {
+                resAttr.put(Constants.OBJECT.OWNER.getURI(),
+                            new StringAttribute(state));
+            }
 
-			req = getContextHandler().buildRequest(getSubjects(request), actions, resAttr,
-			    getEnvironment(request));
+            if (state != null && state.equals("A")) {
+                actions.put(Constants.ACTION.ID.getURI(),
+                            new StringAttribute("publish"));
+            } else if (state != null && state.equals("I")) {
+                actions.put(Constants.ACTION.ID.getURI(),
+                            new StringAttribute("unpublish"));
+            } else {
+                actions.put(Constants.ACTION.ID.getURI(),
+                            new StringAttribute(Constants.ACTION.MODIFY_OBJECT
+                                    .getURI().toASCIIString()));
+            }
+            actions.put(Constants.ACTION.API.getURI(),
+                        new StringAttribute(Constants.ACTION.APIM.getURI()
+                                .toASCIIString()));
 
-			LogUtil.statLog(request.getRemoteUser(), Constants.ACTION.MODIFY_OBJECT.getURI().toASCIIString(),
-			    pid, null);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			throw new ServletException(e.getMessage(), e);
-		}
+            req =
+                    getContextHandler().buildRequest(getSubjects(request),
+                                                     actions,
+                                                     resAttr,
+                                                     getEnvironment(request));
 
-		return req;
-	}
+            LogUtil.statLog(request.getRemoteUser(),
+                            Constants.ACTION.MODIFY_OBJECT.getURI()
+                                    .toASCIIString(),
+                            pid,
+                            null);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new ServletException(e.getMessage(), e);
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet
-	 * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleResponse(HttpServletRequest request, HttpServletResponse response)
-	    throws IOException, ServletException
-	{
-		return null;
-	}
+        return req;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleResponse(HttpServletRequest request,
+                                     HttpServletResponse response)
+            throws IOException, ServletException {
+        return null;
+    }
 }

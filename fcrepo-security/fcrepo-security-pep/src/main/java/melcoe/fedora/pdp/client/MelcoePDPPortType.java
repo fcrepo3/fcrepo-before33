@@ -7,7 +7,14 @@
 
 package melcoe.fedora.pdp.client;
 
-public interface MelcoePDPPortType extends java.rmi.Remote {
-    public java.lang.String evaluateBatch(java.lang.String[] requests) throws java.rmi.RemoteException, melcoe.fedora.pdp.client.EvaluationExceptionType0;
-    public java.lang.String evaluate(java.lang.String request) throws java.rmi.RemoteException, melcoe.fedora.pdp.client.EvaluationExceptionType0;
+public interface MelcoePDPPortType
+        extends java.rmi.Remote {
+
+    public java.lang.String evaluateBatch(java.lang.String[] requests)
+            throws java.rmi.RemoteException,
+            melcoe.fedora.pdp.client.EvaluationExceptionType0;
+
+    public java.lang.String evaluate(java.lang.String request)
+            throws java.rmi.RemoteException,
+            melcoe.fedora.pdp.client.EvaluationExceptionType0;
 }

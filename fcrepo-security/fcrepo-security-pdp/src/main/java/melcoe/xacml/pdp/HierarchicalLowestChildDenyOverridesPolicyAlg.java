@@ -46,259 +46,287 @@ import com.sun.xacml.combine.PolicyCombiningAlgorithm;
 import com.sun.xacml.ctx.Result;
 import com.sun.xacml.ctx.Status;
 
-public class HierarchicalLowestChildDenyOverridesPolicyAlg extends
-		PolicyCombiningAlgorithm {
-	private static final Logger log = Logger
-			.getLogger(HierarchicalLowestChildDenyOverridesPolicyAlg.class
-					.getName());
+public class HierarchicalLowestChildDenyOverridesPolicyAlg
+        extends PolicyCombiningAlgorithm {
 
-	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    private static final Logger log =
+            Logger
+                    .getLogger(HierarchicalLowestChildDenyOverridesPolicyAlg.class
+                            .getName());
 
-	public static final String XACML_RESOURCE_ID = "urn:oasis:names:tc:xacml:1.0:resource:resource-id";
-	public static final String algId = "urn:oasis:names:tc:xacml:1.0:policy-combining-algorithm:hierarchical-lowest-child-deny-overrides";
-	private static URI identifierURI;
-	private static RuntimeException earlyException;
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-	static {
-		try {
-			identifierURI = new URI(algId);
-		} catch (URISyntaxException se) {
-			earlyException = new IllegalArgumentException();
-			earlyException.initCause(se);
-		}
-	}
+    public static final String XACML_RESOURCE_ID =
+            "urn:oasis:names:tc:xacml:1.0:resource:resource-id";
 
-	/**
-	 * Standard constructor.
-	 */
-	public HierarchicalLowestChildDenyOverridesPolicyAlg() {
-		super(identifierURI);
+    public static final String algId =
+            "urn:oasis:names:tc:xacml:1.0:policy-combining-algorithm:hierarchical-lowest-child-deny-overrides";
 
-		if (earlyException != null)
-			throw earlyException;
+    private static URI identifierURI;
 
-		factory = DocumentBuilderFactory.newInstance();
-	}
+    private static RuntimeException earlyException;
 
-	/**
-	 * Protected constructor used by the ordered version of this algorithm.
-	 * 
-	 * @param identifier
-	 *            the algorithm's identifier
-	 */
-	protected HierarchicalLowestChildDenyOverridesPolicyAlg(URI identifier) {
-		super(identifier);
-	}
+    static {
+        try {
+            identifierURI = new URI(algId);
+        } catch (URISyntaxException se) {
+            earlyException = new IllegalArgumentException();
+            earlyException.initCause(se);
+        }
+    }
 
-	/**
-	 * Applies the combining rule to the set of policies based on the evaluation
-	 * context.
-	 * 
-	 * @param context
-	 *            the context from the request
-	 * @param parameters
-	 *            a (possibly empty) non-null <code>List</code> of
-	 *            <code>CombinerParameter<code>s
-	 * @param policyElements
-	 *            the policies to combine
-	 * 
-	 * @return the result of running the combining algorithm
-	 */
-	@Override
-	@SuppressWarnings("unchecked")
-	public Result combine(EvaluationCtx context, List parameters,
-			List policyElements) {
-		log.info("Combining using: " + this.getIdentifier());
+    /**
+     * Standard constructor.
+     */
+    public HierarchicalLowestChildDenyOverridesPolicyAlg() {
+        super(identifierURI);
 
-		boolean atLeastOneError = false;
-		boolean atLeastOnePermit = false;
-		Set denyObligations = new HashSet();
-		Status firstIndeterminateStatus = null;
+        if (earlyException != null) {
+            throw earlyException;
+        }
 
-		Set<AbstractPolicy> matchedPolicies = new HashSet<AbstractPolicy>();
+        factory = DocumentBuilderFactory.newInstance();
+    }
 
-		Iterator it = policyElements.iterator();
-		while (it.hasNext()) {
-			AbstractPolicy policy = ((PolicyCombinerElement) (it.next()))
-					.getPolicy();
+    /**
+     * Protected constructor used by the ordered version of this algorithm.
+     * 
+     * @param identifier
+     *        the algorithm's identifier
+     */
+    protected HierarchicalLowestChildDenyOverridesPolicyAlg(URI identifier) {
+        super(identifier);
+    }
 
-			// make sure that the policy matches the context
-			MatchResult match = policy.match(context);
+    /**
+     * Applies the combining rule to the set of policies based on the evaluation
+     * context.
+     * 
+     * @param context
+     *        the context from the request
+     * @param parameters
+     *        a (possibly empty) non-null <code>List</code> of
+     *        <code>CombinerParameter<code>s
+     * @param policyElements
+     *        the policies to combine
+     * @return the result of running the combining algorithm
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Result combine(EvaluationCtx context,
+                          List parameters,
+                          List policyElements) {
+        log.info("Combining using: " + getIdentifier());
 
-			if (match.getResult() == MatchResult.INDETERMINATE) {
-				atLeastOneError = true;
+        boolean atLeastOneError = false;
+        boolean atLeastOnePermit = false;
+        Set denyObligations = new HashSet();
+        Status firstIndeterminateStatus = null;
 
-				// keep track of the first error, regardless of cause
-				if (firstIndeterminateStatus == null)
-					firstIndeterminateStatus = match.getStatus();
-			} else if (match.getResult() == MatchResult.MATCH) {
-				matchedPolicies.add(policy);
-			}
-		}
+        Set<AbstractPolicy> matchedPolicies = new HashSet<AbstractPolicy>();
 
-		Set<AbstractPolicy> applicablePolicies = getApplicablePolicies(context,
-				matchedPolicies);
+        Iterator it = policyElements.iterator();
+        while (it.hasNext()) {
+            AbstractPolicy policy =
+                    ((PolicyCombinerElement) it.next()).getPolicy();
 
-		for (AbstractPolicy policy : applicablePolicies) {
-			Result result = policy.evaluate(context);
-			int effect = result.getDecision();
+            // make sure that the policy matches the context
+            MatchResult match = policy.match(context);
 
-			if (effect == Result.DECISION_DENY) {
-				denyObligations.addAll(result.getObligations());
-				return new Result(Result.DECISION_DENY, context.getResourceId()
-						.encode(), denyObligations);
-			}
+            if (match.getResult() == MatchResult.INDETERMINATE) {
+                atLeastOneError = true;
 
-			if (effect == Result.DECISION_PERMIT) {
-				atLeastOnePermit = true;
-			} else if (effect == Result.DECISION_INDETERMINATE) {
-				atLeastOneError = true;
+                // keep track of the first error, regardless of cause
+                if (firstIndeterminateStatus == null) {
+                    firstIndeterminateStatus = match.getStatus();
+                }
+            } else if (match.getResult() == MatchResult.MATCH) {
+                matchedPolicies.add(policy);
+            }
+        }
 
-				// keep track of the first error, regardless of cause
-				if (firstIndeterminateStatus == null)
-					firstIndeterminateStatus = result.getStatus();
-			}
-		}
+        Set<AbstractPolicy> applicablePolicies =
+                getApplicablePolicies(context, matchedPolicies);
 
-		// if we got a PERMIT, return it
-		if (atLeastOnePermit)
-			return new Result(Result.DECISION_PERMIT, context.getResourceId()
-					.encode());
+        for (AbstractPolicy policy : applicablePolicies) {
+            Result result = policy.evaluate(context);
+            int effect = result.getDecision();
 
-		// if we got an INDETERMINATE, return it
-		if (atLeastOneError)
-			return new Result(Result.DECISION_INDETERMINATE,
-					firstIndeterminateStatus, context.getResourceId().encode());
+            if (effect == Result.DECISION_DENY) {
+                denyObligations.addAll(result.getObligations());
+                return new Result(Result.DECISION_DENY, context.getResourceId()
+                        .encode(), denyObligations);
+            }
 
-		// if we got here, then nothing applied to us
-		return new Result(Result.DECISION_NOT_APPLICABLE, context
-				.getResourceId().encode());
-	}
+            if (effect == Result.DECISION_PERMIT) {
+                atLeastOnePermit = true;
+            } else if (effect == Result.DECISION_INDETERMINATE) {
+                atLeastOneError = true;
 
-	private Set<AbstractPolicy> getApplicablePolicies(EvaluationCtx context,
-			Set<AbstractPolicy> policies) {
-		int largest = 0;
-		Set<AbstractPolicy> applicablePolicies = new HashSet<AbstractPolicy>();
+                // keep track of the first error, regardless of cause
+                if (firstIndeterminateStatus == null) {
+                    firstIndeterminateStatus = result.getStatus();
+                }
+            }
+        }
 
-		for (AbstractPolicy policy : policies) {
-			String resourceId = null;
+        // if we got a PERMIT, return it
+        if (atLeastOnePermit) {
+            return new Result(Result.DECISION_PERMIT, context.getResourceId()
+                    .encode());
+        }
 
-			@SuppressWarnings("unchecked")
-			List<TargetMatchGroup> tmg = policy.getTarget()
-					.getResourcesSection().getMatchGroups();
-			for (TargetMatchGroup t : tmg) {
-				if (t.match(context).getResult() > 0)
-					continue;
+        // if we got an INDETERMINATE, return it
+        if (atLeastOneError) {
+            return new Result(Result.DECISION_INDETERMINATE,
+                              firstIndeterminateStatus,
+                              context.getResourceId().encode());
+        }
 
-				resourceId = extractResourceId(t);
+        // if we got here, then nothing applied to us
+        return new Result(Result.DECISION_NOT_APPLICABLE, context
+                .getResourceId().encode());
+    }
 
-				if (resourceId == null) {
-					log.warn("Policy did not contain resourceId: "
-							+ policy.getId());
-					continue;
-				}
+    private Set<AbstractPolicy> getApplicablePolicies(EvaluationCtx context,
+                                                      Set<AbstractPolicy> policies) {
+        int largest = 0;
+        Set<AbstractPolicy> applicablePolicies = new HashSet<AbstractPolicy>();
 
-				if (log.isDebugEnabled())
-					log.debug("ResourceID: " + resourceId);
-			}
+        for (AbstractPolicy policy : policies) {
+            String resourceId = null;
 
-			int current;
+            @SuppressWarnings("unchecked")
+            List<TargetMatchGroup> tmg =
+                    policy.getTarget().getResourcesSection().getMatchGroups();
+            for (TargetMatchGroup t : tmg) {
+                if (t.match(context).getResult() > 0) {
+                    continue;
+                }
 
-			if ("".equals(resourceId))
-				current = 0;
-			else
-				current = getLength(resourceId);
+                resourceId = extractResourceId(t);
 
-			if (current > largest) {
-				largest = current;
-				applicablePolicies = new HashSet<AbstractPolicy>();
-			}
+                if (resourceId == null) {
+                    log.warn("Policy did not contain resourceId: "
+                            + policy.getId());
+                    continue;
+                }
 
-			if (current >= largest)
-				applicablePolicies.add(policy);
-		}
+                if (log.isDebugEnabled()) {
+                    log.debug("ResourceID: " + resourceId);
+                }
+            }
 
-		if (log.isDebugEnabled()) {
-			log.debug("Applicable policies:");
-			for (AbstractPolicy p : applicablePolicies)
-				log.debug("\t" + p.getId());
-		}
+            int current;
 
-		return applicablePolicies;
-	}
+            if ("".equals(resourceId)) {
+                current = 0;
+            } else {
+                current = getLength(resourceId);
+            }
 
-	private String extractResourceId(TargetMatchGroup tmg) {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		tmg.encode(output, new Indenter(4));
+            if (current > largest) {
+                largest = current;
+                applicablePolicies = new HashSet<AbstractPolicy>();
+            }
 
-		DocumentBuilder docBuilder = null;
+            if (current >= largest) {
+                applicablePolicies.add(policy);
+            }
+        }
 
-		try {
-			docBuilder = factory.newDocumentBuilder();
-		} catch (ParserConfigurationException pe) {
-			log.error("Error obtaining an XML parser: " + pe.getMessage(), pe);
-			return null;
-		}
+        if (log.isDebugEnabled()) {
+            log.debug("Applicable policies:");
+            for (AbstractPolicy p : applicablePolicies) {
+                log.debug("\t" + p.getId());
+            }
+        }
 
-		Document doc = null;
-		try {
-			doc = docBuilder.parse(new ByteArrayInputStream(output
-					.toByteArray()));
-		} catch (Exception e) {
-			log.error("Problem parsing TargetMatchGroup to obtain id");
-			return null;
-		}
+        return applicablePolicies;
+    }
 
-		String resourceId = null;
-		String designator = null;
-		String value = null;
+    private String extractResourceId(TargetMatchGroup tmg) {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        tmg.encode(output, new Indenter(4));
 
-		NodeList nodes = doc.getElementsByTagName("ResourceMatch").item(0)
-				.getChildNodes();
-		for (int x = 0; x < nodes.getLength() && resourceId == null; x++) {
-			Node n = nodes.item(x);
-			if (n.getNodeType() == Node.ELEMENT_NODE) {
-				if ("AttributeValue".equals(n.getNodeName()))
-					value = n.getFirstChild().getNodeValue();
-				else if ("ResourceAttributeDesignator".equals(n.getNodeName()))
-					designator = n.getAttributes().getNamedItem("AttributeId")
-							.getNodeValue();
+        DocumentBuilder docBuilder = null;
 
-				if (XACML_RESOURCE_ID.equals(designator))
-					resourceId = value;
-			}
-		}
+        try {
+            docBuilder = factory.newDocumentBuilder();
+        } catch (ParserConfigurationException pe) {
+            log.error("Error obtaining an XML parser: " + pe.getMessage(), pe);
+            return null;
+        }
 
-		if (resourceId == null) {
-			resourceId = "";
-		}
+        Document doc = null;
+        try {
+            doc =
+                    docBuilder.parse(new ByteArrayInputStream(output
+                            .toByteArray()));
+        } catch (Exception e) {
+            log.error("Problem parsing TargetMatchGroup to obtain id");
+            return null;
+        }
 
-		return resourceId;
-	}
+        String resourceId = null;
+        String designator = null;
+        String value = null;
 
-	private int getLength(String resourceId) {
-		if (resourceId == null || "".equals(resourceId)) {
-			if (log.isDebugEnabled())
-				log.debug("Length: " + resourceId + " " + 0);
+        NodeList nodes =
+                doc.getElementsByTagName("ResourceMatch").item(0)
+                        .getChildNodes();
+        for (int x = 0; x < nodes.getLength() && resourceId == null; x++) {
+            Node n = nodes.item(x);
+            if (n.getNodeType() == Node.ELEMENT_NODE) {
+                if ("AttributeValue".equals(n.getNodeName())) {
+                    value = n.getFirstChild().getNodeValue();
+                } else if ("ResourceAttributeDesignator"
+                        .equals(n.getNodeName())) {
+                    designator =
+                            n.getAttributes().getNamedItem("AttributeId")
+                                    .getNodeValue();
+                }
 
-			return 0;
-		}
+                if (XACML_RESOURCE_ID.equals(designator)) {
+                    resourceId = value;
+                }
+            }
+        }
 
-		String[] components = resourceId.split("\\/");
+        if (resourceId == null) {
+            resourceId = "";
+        }
 
-		for (int x = 0; x < components.length; x++)
-			if (components[x].matches(".*[^\\w\\-\\&\\:\\+\\~\\$]+.*")) {
-				if (log.isDebugEnabled())
-					log.debug("Length: " + resourceId + " " + (x - 1)
-							+ "\tComponent: " + components[x]);
+        return resourceId;
+    }
 
-				return x - 1;
-			}
+    private int getLength(String resourceId) {
+        if (resourceId == null || "".equals(resourceId)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Length: " + resourceId + " " + 0);
+            }
 
-		if (log.isDebugEnabled())
-			log.debug("Length [return]: " + resourceId + " "
-					+ (components.length - 1));
+            return 0;
+        }
 
-		return components.length - 1;
-	}
+        String[] components = resourceId.split("\\/");
+
+        for (int x = 0; x < components.length; x++) {
+            if (components[x].matches(".*[^\\w\\-\\&\\:\\+\\~\\$]+.*")) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Length: " + resourceId + " " + (x - 1)
+                            + "\tComponent: " + components[x]);
+                }
+
+                return x - 1;
+            }
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Length [return]: " + resourceId + " "
+                    + (components.length - 1));
+        }
+
+        return components.length - 1;
+    }
 }

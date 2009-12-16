@@ -26,44 +26,49 @@ import com.sun.xacml.ctx.Attribute;
  * Class to compare two Attributes.
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public class AttributeComparator implements Comparator
-{
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-	 */
-	public int compare(Object o1, Object o2)
-	{
-		Attribute a = (Attribute) o1;
-		Attribute b = (Attribute) o2;
+public class AttributeComparator
+        implements Comparator {
 
-		int result = a.getId().toString().compareTo(b.getId().toString());
+    /*
+     * (non-Javadoc)
+     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     */
+    public int compare(Object o1, Object o2) {
+        Attribute a = (Attribute) o1;
+        Attribute b = (Attribute) o2;
 
-		if (result == 0)
-			result = a.getType().toString().compareTo(b.getType().toString());
-		else
-			return result;
+        int result = a.getId().toString().compareTo(b.getId().toString());
 
-		if (result == 0)
-			result = a.getValue().encode().compareTo(b.getValue().encode());
-		else
-			return result;
+        if (result == 0) {
+            result = a.getType().toString().compareTo(b.getType().toString());
+        } else {
+            return result;
+        }
 
-		if (result == 0 && (a.getIssueInstant() != null || b.getIssueInstant() != null))
-		{
-			if (a.getIssueInstant() == null && b.getIssueInstant() == null)
-				result = 0;
-			else if (a.getIssueInstant() != null && b.getIssueInstant() == null)
-				result = 1;
-			else if (a.getIssueInstant() == null && b.getIssueInstant() != null)
-				result = -1;
-			else
-				result = a.getIssueInstant().encode().compareTo(b.getIssueInstant().encode());
-		}
+        if (result == 0) {
+            result = a.getValue().encode().compareTo(b.getValue().encode());
+        } else {
+            return result;
+        }
 
-		return result;
-	}
+        if (result == 0
+                && (a.getIssueInstant() != null || b.getIssueInstant() != null)) {
+            if (a.getIssueInstant() == null && b.getIssueInstant() == null) {
+                result = 0;
+            } else if (a.getIssueInstant() != null
+                    && b.getIssueInstant() == null) {
+                result = 1;
+            } else if (a.getIssueInstant() == null
+                    && b.getIssueInstant() != null) {
+                result = -1;
+            } else {
+                result =
+                        a.getIssueInstant().encode().compareTo(b
+                                .getIssueInstant().encode());
+            }
+        }
+
+        return result;
+    }
 }

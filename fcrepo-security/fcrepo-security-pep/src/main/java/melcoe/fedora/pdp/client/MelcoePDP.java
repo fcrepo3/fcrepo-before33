@@ -7,10 +7,14 @@
 
 package melcoe.fedora.pdp.client;
 
-public interface MelcoePDP extends javax.xml.rpc.Service {
+public interface MelcoePDP
+        extends javax.xml.rpc.Service {
+
     public java.lang.String getMelcoePDPSOAP11port_httpAddress();
 
-    public melcoe.fedora.pdp.client.MelcoePDPPortType getMelcoePDPSOAP11port_http() throws javax.xml.rpc.ServiceException;
+    public melcoe.fedora.pdp.client.MelcoePDPPortType getMelcoePDPSOAP11port_http()
+            throws javax.xml.rpc.ServiceException;
 
-    public melcoe.fedora.pdp.client.MelcoePDPPortType getMelcoePDPSOAP11port_http(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
+    public melcoe.fedora.pdp.client.MelcoePDPPortType getMelcoePDPSOAP11port_http(java.net.URL portAddress)
+            throws javax.xml.rpc.ServiceException;
 }

@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-
 package melcoe.fedora.util;
 
 import java.text.SimpleDateFormat;
@@ -24,32 +23,36 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
-public class LogUtil
-{
-	private static Logger statLog = Logger.getLogger("statistics");
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SSS");
+public class LogUtil {
 
-	public static void statLog(String username, String action, String resourceId, String dsID)
-	{
-		String tmp = null;
-		StringBuilder sb = new StringBuilder();
-		char separator = '\t';
-		
-		tmp = dateFormat.format(new Date());
-		sb.append(tmp).append(separator);
+    private static Logger statLog = Logger.getLogger("statistics");
 
-		tmp = ("".equals(username)) ? "anonymous" : username;
-		sb.append(tmp).append(separator);
+    private static SimpleDateFormat dateFormat =
+            new SimpleDateFormat("yyyyMMdd HH:mm:ss.SSS");
 
-		tmp = (action == null || "".equals(action))? "" : action;
-		sb.append(tmp).append(separator);
+    public static void statLog(String username,
+                               String action,
+                               String resourceId,
+                               String dsID) {
+        String tmp = null;
+        StringBuilder sb = new StringBuilder();
+        char separator = '\t';
 
-		tmp = (resourceId == null || "".equals(resourceId))? "" : resourceId;
-		sb.append(tmp).append(separator);
+        tmp = dateFormat.format(new Date());
+        sb.append(tmp).append(separator);
 
-		tmp = (dsID == null || "".equals(dsID))? "" : dsID;
-		sb.append(tmp);
+        tmp = "".equals(username) ? "anonymous" : username;
+        sb.append(tmp).append(separator);
 
-		statLog.info(sb.toString());
-	}
+        tmp = action == null || "".equals(action) ? "" : action;
+        sb.append(tmp).append(separator);
+
+        tmp = resourceId == null || "".equals(resourceId) ? "" : resourceId;
+        sb.append(tmp).append(separator);
+
+        tmp = dsID == null || "".equals(dsID) ? "" : dsID;
+        sb.append(tmp);
+
+        statLog.info(sb.toString());
+    }
 }

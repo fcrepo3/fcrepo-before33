@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-
 package melcoe.fedora.pep.ws.operations;
 
 import melcoe.fedora.pep.PEPException;
@@ -31,33 +30,38 @@ import fedora.common.Constants;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- *
  */
-public class ResumeFindObjectsHandler extends AbstractOperationHandler
-{
-	private static Logger log = Logger.getLogger(ResumeFindObjectsHandler.class.getName());
-	private FieldSearchResultHandler resultHandler = null;
+public class ResumeFindObjectsHandler
+        extends AbstractOperationHandler {
 
-	public ResumeFindObjectsHandler() throws PEPException
-	{
-		super();
-		resultHandler = new FieldSearchResultHandler();
-	}
+    private static Logger log =
+            Logger.getLogger(ResumeFindObjectsHandler.class.getName());
 
-	public RequestCtx handleResponse(MessageContext context) throws OperationHandlerException
-	{
-		if (log.isDebugEnabled())
-			log.debug("ResumeFindObjectsHandler/handleResponse!");
-		return resultHandler.handleResponse(context);
-	}
+    private FieldSearchResultHandler resultHandler = null;
 
-	public RequestCtx handleRequest(MessageContext context) throws OperationHandlerException
-	{
-		if (log.isDebugEnabled())
-			log.debug("ResumeFindObjectsHandler/handleRequest!");
-		
-		LogUtil.statLog(context.getUsername(), Constants.ACTION.FIND_OBJECTS.getURI().toASCIIString(), "FedoraRepository", null);
+    public ResumeFindObjectsHandler()
+            throws PEPException {
+        super();
+        resultHandler = new FieldSearchResultHandler();
+    }
 
-		return resultHandler.handleRequest(context);
-	}
+    public RequestCtx handleResponse(MessageContext context)
+            throws OperationHandlerException {
+        if (log.isDebugEnabled()) {
+            log.debug("ResumeFindObjectsHandler/handleResponse!");
+        }
+        return resultHandler.handleResponse(context);
+    }
+
+    public RequestCtx handleRequest(MessageContext context)
+            throws OperationHandlerException {
+        if (log.isDebugEnabled()) {
+            log.debug("ResumeFindObjectsHandler/handleRequest!");
+        }
+
+        LogUtil.statLog(context.getUsername(), Constants.ACTION.FIND_OBJECTS
+                .getURI().toASCIIString(), "FedoraRepository", null);
+
+        return resultHandler.handleRequest(context);
+    }
 }

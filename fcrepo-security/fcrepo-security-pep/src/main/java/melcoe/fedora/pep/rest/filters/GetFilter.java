@@ -44,158 +44,172 @@ import fedora.common.Constants;
  * Handles the get operations.
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public class GetFilter extends AbstractFilter
-{
-	private static Logger log = Logger.getLogger(GetFilter.class.getName());
+public class GetFilter
+        extends AbstractFilter {
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @throws PEPException
-	 */
-	public GetFilter() throws PEPException
-	{
-		super();
-	}
+    private static Logger log = Logger.getLogger(GetFilter.class.getName());
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	@SuppressWarnings("deprecation")
-	public RequestCtx handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException,
-			ServletException
-	{
-		if (request.getPathInfo() == null)
-		{
-			log.error("Bad request: " + request.getRequestURI());
-			throw new ServletException("Bad request: " + request.getRequestURI());
-		}
+    /**
+     * Default constructor.
+     * 
+     * @throws PEPException
+     */
+    public GetFilter()
+            throws PEPException {
+        super();
+    }
 
-		String[] parts = request.getPathInfo().split("/");
-		if (parts.length < 2)
-		{
-			log.warn("Not enough path components on the URI.");
-			return null;
-			// throw new ServletException("Not enough path components on the
-			// URI.");
-		}
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    @SuppressWarnings("deprecation")
+    public RequestCtx handleRequest(HttpServletRequest request,
+                                    HttpServletResponse response)
+            throws IOException, ServletException {
+        if (request.getPathInfo() == null) {
+            log.error("Bad request: " + request.getRequestURI());
+            throw new ServletException("Bad request: "
+                    + request.getRequestURI());
+        }
 
-		RequestCtx req = null;
+        String[] parts = request.getPathInfo().split("/");
+        if (parts.length < 2) {
+            log.warn("Not enough path components on the URI.");
+            return null;
+            // throw new ServletException("Not enough path components on the
+            // URI.");
+        }
 
-		String pid = null;
-		String dsID = null;
-		String dissID = null;
-		String methodName = null;
-		String dateTime = null;
+        RequestCtx req = null;
 
-		if (log.isDebugEnabled())
-			for (String p : parts)
-				log.debug("Parts: " + p);
+        String pid = null;
+        String dsID = null;
+        String dissID = null;
+        String methodName = null;
+        String dateTime = null;
 
-		Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
-		Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
-		
-		String logAction = null;
+        if (log.isDebugEnabled()) {
+            for (String p : parts) {
+                log.debug("Parts: " + p);
+            }
+        }
 
-		// Starting assumption is that we are doing a GetObjectProfile
-		pid = parts[1];
-		actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(Constants.ACTION.GET_OBJECT_PROFILE.getURI()
-				.toASCIIString()));
-		logAction = Constants.ACTION.GET_OBJECT_PROFILE.getURI().toASCIIString();
+        Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
+        Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
 
-		if (parts.length > 2)
-		{
-			if (isDate(parts[2]))
-			{
-				dateTime = parts[2];
-			}
-			else if (isDatastream(parts[2]))
-			{
-				dsID = parts[2];
-				actions.clear();
-				actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(
-						Constants.ACTION.GET_DATASTREAM_DISSEMINATION.getURI().toASCIIString()));
-				actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(Constants.ACTION.GET_DATASTREAM.getURI()
-						.toASCIIString()));
-				logAction = Constants.ACTION.GET_DATASTREAM_DISSEMINATION.getURI().toASCIIString();
-			}
-			else
-			{
-				dissID = parts[2];
-				actions.clear();
-				actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(Constants.ACTION.GET_DISSEMINATION
-						.getURI().toASCIIString()));
-				logAction = Constants.ACTION.GET_DISSEMINATION.getURI().toASCIIString();
-			}
-		}
+        String logAction = null;
 
-		if (parts.length > 3)
-		{
-			if (isDate(parts[3]))
-			{
-				dateTime = parts[3];
-			}
-			else
-			{
-				methodName = parts[3];
-			}
-		}
+        // Starting assumption is that we are doing a GetObjectProfile
+        pid = parts[1];
+        actions.put(Constants.ACTION.ID.getURI(),
+                    new StringAttribute(Constants.ACTION.GET_OBJECT_PROFILE
+                            .getURI().toASCIIString()));
+        logAction =
+                Constants.ACTION.GET_OBJECT_PROFILE.getURI().toASCIIString();
 
-		if (parts.length > 4)
-		{
-			if (isDate(parts[4]))
-			{
-				dateTime = parts[4];
-			}
-		}
+        if (parts.length > 2) {
+            if (isDate(parts[2])) {
+                dateTime = parts[2];
+            } else if (isDatastream(parts[2])) {
+                dsID = parts[2];
+                actions.clear();
+                actions
+                        .put(Constants.ACTION.ID.getURI(),
+                             new StringAttribute(Constants.ACTION.GET_DATASTREAM_DISSEMINATION
+                                     .getURI().toASCIIString()));
+                actions.put(Constants.ACTION.ID.getURI(),
+                            new StringAttribute(Constants.ACTION.GET_DATASTREAM
+                                    .getURI().toASCIIString()));
+                logAction =
+                        Constants.ACTION.GET_DATASTREAM_DISSEMINATION.getURI()
+                                .toASCIIString();
+            } else {
+                dissID = parts[2];
+                actions.clear();
+                actions
+                        .put(Constants.ACTION.ID.getURI(),
+                             new StringAttribute(Constants.ACTION.GET_DISSEMINATION
+                                     .getURI().toASCIIString()));
+                logAction =
+                        Constants.ACTION.GET_DISSEMINATION.getURI()
+                                .toASCIIString();
+            }
+        }
 
-		try
-		{
-			if (pid != null && !"".equals(pid))
-				resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute(pid));
-			// XACML 1.0 conformance. resource-id is mandatory. Remove when switching to 2.0
-			if (pid != null && !"".equals(pid))
-				resAttr.put(new URI("urn:oasis:names:tc:xacml:1.0:resource:resource-id"), new AnyURIAttribute(new URI(
-						pid)));
-			if (dsID != null && !"".equals(dsID))
-				resAttr.put(Constants.DATASTREAM.ID.getURI(), new StringAttribute(dsID));
-			if (dissID != null && !"".equals(dissID))
-				resAttr.put(Constants.DISSEMINATOR.ID.getURI(), new StringAttribute(dissID));
-			if (methodName != null && !"".equals(methodName))
-				resAttr.put(Constants.DISSEMINATOR.METHOD.getURI(), new StringAttribute(methodName));
-			if (dateTime != null && !"".equals(dateTime))
-				resAttr.put(Constants.DATASTREAM.AS_OF_DATETIME.getURI(), DateTimeAttribute.getInstance(dateTime));
+        if (parts.length > 3) {
+            if (isDate(parts[3])) {
+                dateTime = parts[3];
+            } else {
+                methodName = parts[3];
+            }
+        }
 
-			actions.put(Constants.ACTION.API.getURI(), new StringAttribute(Constants.ACTION.APIA.getURI()
-					.toASCIIString()));
+        if (parts.length > 4) {
+            if (isDate(parts[4])) {
+                dateTime = parts[4];
+            }
+        }
 
-			req = getContextHandler().buildRequest(getSubjects(request), actions, resAttr, getEnvironment(request));
+        try {
+            if (pid != null && !"".equals(pid)) {
+                resAttr.put(Constants.OBJECT.PID.getURI(),
+                            new StringAttribute(pid));
+            }
+            // XACML 1.0 conformance. resource-id is mandatory. Remove when switching to 2.0
+            if (pid != null && !"".equals(pid)) {
+                resAttr
+                        .put(new URI("urn:oasis:names:tc:xacml:1.0:resource:resource-id"),
+                             new AnyURIAttribute(new URI(pid)));
+            }
+            if (dsID != null && !"".equals(dsID)) {
+                resAttr.put(Constants.DATASTREAM.ID.getURI(),
+                            new StringAttribute(dsID));
+            }
+            if (dissID != null && !"".equals(dissID)) {
+                resAttr.put(Constants.DISSEMINATOR.ID.getURI(),
+                            new StringAttribute(dissID));
+            }
+            if (methodName != null && !"".equals(methodName)) {
+                resAttr.put(Constants.DISSEMINATOR.METHOD.getURI(),
+                            new StringAttribute(methodName));
+            }
+            if (dateTime != null && !"".equals(dateTime)) {
+                resAttr.put(Constants.DATASTREAM.AS_OF_DATETIME.getURI(),
+                            DateTimeAttribute.getInstance(dateTime));
+            }
 
-			LogUtil.statLog(request.getRemoteUser(), logAction, pid, dsID);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			throw new ServletException(e);
-		}
+            actions.put(Constants.ACTION.API.getURI(),
+                        new StringAttribute(Constants.ACTION.APIA.getURI()
+                                .toASCIIString()));
 
-		return req;
-	}
+            req =
+                    getContextHandler().buildRequest(getSubjects(request),
+                                                     actions,
+                                                     resAttr,
+                                                     getEnvironment(request));
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleResponse(HttpServletRequest request, HttpServletResponse response) throws IOException,
-			ServletException
-	{
-		return null;
-	}
+            LogUtil.statLog(request.getRemoteUser(), logAction, pid, dsID);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new ServletException(e);
+        }
+
+        return req;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleResponse(HttpServletRequest request,
+                                     HttpServletResponse response)
+            throws IOException, ServletException {
+        return null;
+    }
 }

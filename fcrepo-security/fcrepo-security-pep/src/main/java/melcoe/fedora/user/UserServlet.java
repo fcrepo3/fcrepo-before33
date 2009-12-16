@@ -1,3 +1,4 @@
+
 package melcoe.fedora.user;
 
 import java.io.IOException;
@@ -20,96 +21,96 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class UserServlet extends HttpServlet
-{
-	private static final long serialVersionUID = 8591611806356037463L;
+public class UserServlet
+        extends HttpServlet {
 
-	private static final Logger log = Logger.getLogger(UserServlet.class);
+    private static final long serialVersionUID = 8591611806356037463L;
 
-	private static final String FEDORA_ATTRS_KEY = "FEDORA_AUX_SUBJECT_ATTRIBUTES";
-	//private static final String ROLE_ATTR_KEY = "fedoraRole";
+    private static final Logger log = Logger.getLogger(UserServlet.class);
 
-	private DocumentBuilder documentBuilder = null;
+    private static final String FEDORA_ATTRS_KEY =
+            "FEDORA_AUX_SUBJECT_ATTRIBUTES";
 
-	@Override
-	public void init() throws ServletException
-	{
-		try
-		{
-			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-			documentBuilderFactory.setNamespaceAware(true);
-			documentBuilder = documentBuilderFactory.newDocumentBuilder();
-		}
-		catch (ParserConfigurationException pce)
-		{
-			log.error("Unable to initialise UserServlet: " + pce.getMessage(), pce);
-		}
-	}
+    //private static final String ROLE_ATTR_KEY = "fedoraRole";
 
-	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-	{
-		doGet(request, response);
-	}
+    private DocumentBuilder documentBuilder = null;
 
-	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-	{
-		String userId = request.getRemoteUser();
-		if (userId == null)
-			userId = "anonymous";
+    @Override
+    public void init() throws ServletException {
+        try {
+            DocumentBuilderFactory documentBuilderFactory =
+                    DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.setNamespaceAware(true);
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        } catch (ParserConfigurationException pce) {
+            log.error("Unable to initialise UserServlet: " + pce.getMessage(),
+                      pce);
+        }
+    }
 
-		Map<String, Set<String>> subjectAttributes = getSubjectAttributes(request);
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
 
-		Document doc = documentBuilder.newDocument();
-		doc.setXmlVersion("1.0");
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String userId = request.getRemoteUser();
+        if (userId == null) {
+            userId = "anonymous";
+        }
 
-		Element root = doc.createElement("user");
-		root.setAttribute("id", userId);
+        Map<String, Set<String>> subjectAttributes =
+                getSubjectAttributes(request);
 
-		doc.appendChild(root);
-		
-		for (String attr : subjectAttributes.keySet())
-		{
-			Element attribute = doc.createElement("attribute");
-			attribute.setAttribute("name", attr);
-			root.appendChild(attribute);
-			
-			for (String value : subjectAttributes.get(attr))
-			{
-				Element v = doc.createElement("value");
-				v.appendChild(doc.createTextNode(value));
-				attribute.appendChild(v);
-			}
-		}
+        Document doc = documentBuilder.newDocument();
+        doc.setXmlVersion("1.0");
 
-		byte[] output = null;
-		try
-		{
-			output = DataUtils.format(doc).getBytes();
-		}
-		catch (Exception e)
-		{
-			log.error("Error obtaining user information: " + e.getMessage(), e);
-		}
+        Element root = doc.createElement("user");
+        root.setAttribute("id", userId);
 
-		response.setContentType("text/xml");
-		response.setContentLength(output.length);
-		OutputStream out = response.getOutputStream();
-		out.write(output);
-		out.flush();
-		out.close();
-	}
+        doc.appendChild(root);
 
-	@SuppressWarnings("unchecked")
-	private Map<String, Set<String>> getSubjectAttributes(HttpServletRequest request)
-	{
-		Map<String, Set<String>> subjectAttr = null;
-		subjectAttr = (Map<String, Set<String>>) request.getAttribute(FEDORA_ATTRS_KEY);
-		
-		if (subjectAttr == null)
-			subjectAttr = new HashMap<String, Set<String>>();
+        for (String attr : subjectAttributes.keySet()) {
+            Element attribute = doc.createElement("attribute");
+            attribute.setAttribute("name", attr);
+            root.appendChild(attribute);
 
-		return subjectAttr;
-	}
+            for (String value : subjectAttributes.get(attr)) {
+                Element v = doc.createElement("value");
+                v.appendChild(doc.createTextNode(value));
+                attribute.appendChild(v);
+            }
+        }
+
+        byte[] output = null;
+        try {
+            output = DataUtils.format(doc).getBytes();
+        } catch (Exception e) {
+            log.error("Error obtaining user information: " + e.getMessage(), e);
+        }
+
+        response.setContentType("text/xml");
+        response.setContentLength(output.length);
+        OutputStream out = response.getOutputStream();
+        out.write(output);
+        out.flush();
+        out.close();
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Set<String>> getSubjectAttributes(HttpServletRequest request) {
+        Map<String, Set<String>> subjectAttr = null;
+        subjectAttr =
+                (Map<String, Set<String>>) request
+                        .getAttribute(FEDORA_ATTRS_KEY);
+
+        if (subjectAttr == null) {
+            subjectAttr = new HashMap<String, Set<String>>();
+        }
+
+        return subjectAttr;
+    }
 }

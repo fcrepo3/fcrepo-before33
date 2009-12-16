@@ -45,90 +45,97 @@ import fedora.common.Constants;
  * Handles the GetObjectProfile operation.
  * 
  * @author nish.naidoo@gmail.com
- * 
  */
-public class GetObjectProfile extends AbstractFilter
-{
-	private static Logger log = Logger.getLogger(GetObjectProfile.class.getName());
+public class GetObjectProfile
+        extends AbstractFilter {
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @throws PEPException
-	 */
-	public GetObjectProfile() throws PEPException
-	{
-		super();
-	}
+    private static Logger log =
+            Logger.getLogger(GetObjectProfile.class.getName());
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet
-	 * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleRequest(HttpServletRequest request, HttpServletResponse response)
-	    throws IOException, ServletException
-	{
-		if (log.isDebugEnabled())
-			log.debug(this.getClass().getName() + "/handleRequest!");
+    /**
+     * Default constructor.
+     * 
+     * @throws PEPException
+     */
+    public GetObjectProfile()
+            throws PEPException {
+        super();
+    }
 
-		String path = request.getPathInfo();
-		String[] parts = path.split("/");
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleRequest(HttpServletRequest request,
+                                    HttpServletResponse response)
+            throws IOException, ServletException {
+        if (log.isDebugEnabled()) {
+            log.debug(this.getClass().getName() + "/handleRequest!");
+        }
 
-		String pid = parts[1].replaceAll(".xml", "");
-		String asOfDateTime = request.getParameter("asOfDateTime");
-		if (!isDate(asOfDateTime))
-			asOfDateTime = null;
+        String path = request.getPathInfo();
+        String[] parts = path.split("/");
 
-		RequestCtx req = null;
-		Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
-		Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
-		try
-		{
-			if (pid != null && !"".equals(pid))
-				resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute(pid));
-			if (pid != null && !"".equals(pid))
-				resAttr.put(new URI(XACML_RESOURCE_ID), new AnyURIAttribute(new URI(pid)));
-			if (asOfDateTime != null && !"".equals(asOfDateTime))
-				resAttr.put(Constants.DATASTREAM.AS_OF_DATETIME.getURI(),
-				    DateTimeAttribute.getInstance(asOfDateTime));
+        String pid = parts[1].replaceAll(".xml", "");
+        String asOfDateTime = request.getParameter("asOfDateTime");
+        if (!isDate(asOfDateTime)) {
+            asOfDateTime = null;
+        }
 
-			actions.put(Constants.ACTION.ID.getURI(),
-			    new StringAttribute(Constants.ACTION.GET_OBJECT_PROFILE.getURI().toASCIIString()));
-			actions.put(Constants.ACTION.API.getURI(),
-			    new StringAttribute(Constants.ACTION.APIA.getURI().toASCIIString()));
+        RequestCtx req = null;
+        Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
+        Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
+        try {
+            if (pid != null && !"".equals(pid)) {
+                resAttr.put(Constants.OBJECT.PID.getURI(),
+                            new StringAttribute(pid));
+            }
+            if (pid != null && !"".equals(pid)) {
+                resAttr.put(new URI(XACML_RESOURCE_ID),
+                            new AnyURIAttribute(new URI(pid)));
+            }
+            if (asOfDateTime != null && !"".equals(asOfDateTime)) {
+                resAttr.put(Constants.DATASTREAM.AS_OF_DATETIME.getURI(),
+                            DateTimeAttribute.getInstance(asOfDateTime));
+            }
 
-			req = getContextHandler().buildRequest(getSubjects(request),
-			    actions,
-			    resAttr,
-			    getEnvironment(request));
+            actions.put(Constants.ACTION.ID.getURI(),
+                        new StringAttribute(Constants.ACTION.GET_OBJECT_PROFILE
+                                .getURI().toASCIIString()));
+            actions.put(Constants.ACTION.API.getURI(),
+                        new StringAttribute(Constants.ACTION.APIA.getURI()
+                                .toASCIIString()));
 
-			LogUtil.statLog(request.getRemoteUser(),
-			    Constants.ACTION.GET_OBJECT_PROFILE.getURI().toASCIIString(),
-			    pid,
-			    null);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			throw new ServletException(e.getMessage(), e);
-		}
+            req =
+                    getContextHandler().buildRequest(getSubjects(request),
+                                                     actions,
+                                                     resAttr,
+                                                     getEnvironment(request));
 
-		return req;
-	}
+            LogUtil.statLog(request.getRemoteUser(),
+                            Constants.ACTION.GET_OBJECT_PROFILE.getURI()
+                                    .toASCIIString(),
+                            pid,
+                            null);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new ServletException(e.getMessage(), e);
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet
-	 * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleResponse(HttpServletRequest request, HttpServletResponse response)
-	    throws IOException, ServletException
-	{
-		return null;
-	}
+        return req;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleResponse(HttpServletRequest request,
+                                     HttpServletResponse response)
+            throws IOException, ServletException {
+        return null;
+    }
 }

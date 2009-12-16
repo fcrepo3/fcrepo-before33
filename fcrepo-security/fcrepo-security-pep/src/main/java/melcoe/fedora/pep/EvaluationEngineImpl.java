@@ -32,145 +32,144 @@ import com.sun.xacml.ctx.Result;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public class EvaluationEngineImpl implements EvaluationEngine
-{
-	private static Logger log = Logger.getLogger(EvaluationEngineImpl.class.getName());
+public class EvaluationEngineImpl
+        implements EvaluationEngine {
 
-	private ContextUtil contextUtil = new ContextUtil();
-	private PDPClient client = null;
-	private ResponseCache responseCache = null;
+    private static Logger log =
+            Logger.getLogger(EvaluationEngineImpl.class.getName());
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.EvaluationEngine#evaluate(com.sun.xacml.ctx.RequestCtx)
-	 */
-	public ResponseCtx evaluate(RequestCtx reqCtx) throws PEPException
-	{
-		if (log.isDebugEnabled())
-			log.debug("evaluating RequestCtx request");
+    private final ContextUtil contextUtil = new ContextUtil();
 
-		String request = contextUtil.makeRequestCtx(reqCtx);
-		String response = evaluate(request);
-		ResponseCtx resCtx;
-		try {
-			resCtx = contextUtil.makeResponseCtx(response);
-		} catch (MelcoeXacmlException e) {
-			throw new PEPException(e);
-		}
-		return resCtx;
-	}
+    private PDPClient client = null;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.EvaluationEngine#evaluate(java.lang.String)
-	 */
-	public String evaluate(String request) throws PEPException
-	{
-		if (log.isDebugEnabled())
-			log.debug("evaluating String request");
+    private ResponseCache responseCache = null;
 
-		String[] requests = new String[] { request };
-		return evaluate(requests);
-	}
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.EvaluationEngine#evaluate(com.sun.xacml.ctx.RequestCtx)
+     */
+    public ResponseCtx evaluate(RequestCtx reqCtx) throws PEPException {
+        if (log.isDebugEnabled()) {
+            log.debug("evaluating RequestCtx request");
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.EvaluationEngine#evaluate(java.lang.String[])
-	 */
-	public String evaluate(String[] requests) throws PEPException
-	{
-		if (log.isDebugEnabled())
-			log.debug("evaluating array of String requests");
+        String request = contextUtil.makeRequestCtx(reqCtx);
+        String response = evaluate(request);
+        ResponseCtx resCtx;
+        try {
+            resCtx = contextUtil.makeResponseCtx(response);
+        } catch (MelcoeXacmlException e) {
+            throw new PEPException(e);
+        }
+        return resCtx;
+    }
 
-		long a, b;
-		
-		Set<Result> finalResults = new HashSet<Result>();
+    /*
+     * (non-Javadoc)
+     * @see melcoe.fedora.pep.EvaluationEngine#evaluate(java.lang.String)
+     */
+    public String evaluate(String request) throws PEPException {
+        if (log.isDebugEnabled()) {
+            log.debug("evaluating String request");
+        }
 
-		for (String r : requests)
-		{
-			String response = null;
+        String[] requests = new String[] {request};
+        return evaluate(requests);
+    }
 
-			a = System.currentTimeMillis();
-			
-			if (responseCache != null)
-				response = responseCache.getCacheItem(r);
+    /*
+     * (non-Javadoc)
+     * @see melcoe.fedora.pep.EvaluationEngine#evaluate(java.lang.String[])
+     */
+    public String evaluate(String[] requests) throws PEPException {
+        if (log.isDebugEnabled()) {
+            log.debug("evaluating array of String requests");
+        }
 
-			if (response == null)
-			{
-				if (log.isDebugEnabled())
-					log.debug("No item found in cache. Sending to PDP for evaluation.");
+        long a, b;
 
-				response = client.evaluate(r);
+        Set<Result> finalResults = new HashSet<Result>();
 
-				// Add this new result to the cache if caching is enabled
-				if (responseCache != null)
-					responseCache.addCacheItem(r, response);
-			}
+        for (String r : requests) {
+            String response = null;
 
-			b = System.currentTimeMillis();
-			if (log.isDebugEnabled())
-				log.debug("Time taken for XACML Evaluation: " + (b - a) + "ms");
+            a = System.currentTimeMillis();
 
-			ResponseCtx resCtx;
-			try {
-				resCtx = contextUtil.makeResponseCtx(response);
-			} catch (MelcoeXacmlException e) {
-				throw new PEPException(e);
-			}
+            if (responseCache != null) {
+                response = responseCache.getCacheItem(r);
+            }
 
-			@SuppressWarnings("unchecked")
-			Set<Result> results = resCtx.getResults();
+            if (response == null) {
+                if (log.isDebugEnabled()) {
+                    log
+                            .debug("No item found in cache. Sending to PDP for evaluation.");
+                }
 
-			finalResults.addAll(results);
-		}
+                response = client.evaluate(r);
 
-		ResponseCtx resultCtx = new ResponseCtx(finalResults);
-		
-		return contextUtil.makeResponseCtx(resultCtx);
-	}
+                // Add this new result to the cache if caching is enabled
+                if (responseCache != null) {
+                    responseCache.addCacheItem(r, response);
+                }
+            }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.EvaluationEngine#getClient()
-	 */
-	public PDPClient getClient()
-	{
-		return client;
-	}
+            b = System.currentTimeMillis();
+            if (log.isDebugEnabled()) {
+                log.debug("Time taken for XACML Evaluation: " + (b - a) + "ms");
+            }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.EvaluationEngine#setClient(melcoe.fedora.pep.PEPClient)
-	 */
-	public void setClient(PDPClient client)
-	{
-		this.client = client;
-	}
+            ResponseCtx resCtx;
+            try {
+                resCtx = contextUtil.makeResponseCtx(response);
+            } catch (MelcoeXacmlException e) {
+                throw new PEPException(e);
+            }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.EvaluationEngine#getResponseCache()
-	 */
-	public ResponseCache getResponseCache()
-	{
-		return responseCache;
-	}
+            @SuppressWarnings("unchecked")
+            Set<Result> results = resCtx.getResults();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.EvaluationEngine#setResponseCache(melcoe.fedora.pep.ResponseCache)
-	 */
-	public void setResponseCache(ResponseCache responseCache)
-	{
-		this.responseCache = responseCache;
-	}
+            finalResults.addAll(results);
+        }
+
+        ResponseCtx resultCtx = new ResponseCtx(finalResults);
+
+        return contextUtil.makeResponseCtx(resultCtx);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see melcoe.fedora.pep.EvaluationEngine#getClient()
+     */
+    public PDPClient getClient() {
+        return client;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.EvaluationEngine#setClient(melcoe.fedora.pep.PEPClient)
+     */
+    public void setClient(PDPClient client) {
+        this.client = client;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see melcoe.fedora.pep.EvaluationEngine#getResponseCache()
+     */
+    public ResponseCache getResponseCache() {
+        return responseCache;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.EvaluationEngine#setResponseCache(melcoe.fedora.pep
+     * .ResponseCache)
+     */
+    public void setResponseCache(ResponseCache responseCache) {
+        this.responseCache = responseCache;
+    }
 }

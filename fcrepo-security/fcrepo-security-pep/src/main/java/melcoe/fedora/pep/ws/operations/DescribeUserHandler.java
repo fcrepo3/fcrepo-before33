@@ -33,46 +33,52 @@ import com.sun.xacml.ctx.RequestCtx;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- *
  */
-public class DescribeUserHandler extends AbstractOperationHandler
-{
-	private static Logger log = Logger.getLogger(DescribeUserHandler.class.getName());
+public class DescribeUserHandler
+        extends AbstractOperationHandler {
 
-	public DescribeUserHandler() throws PEPException
-	{
-		super();
-	}
+    private static Logger log =
+            Logger.getLogger(DescribeUserHandler.class.getName());
 
-	public RequestCtx handleResponse(MessageContext context) throws OperationHandlerException
-	{
-		try
-		{
-			String[] fedoraRoles = getUserRoles(context);
-			if (fedoraRoles == null || fedoraRoles.length == 0)
-				return null;
-			
-			Message message = context.getCurrentMessage();
-			SOAPEnvelope envelope = message.getSOAPEnvelope();
-			SOAPHeader header = envelope.getHeader();
-			
-			SOAPHeaderElement roles = header.addHeaderElement(envelope.createName("roles", "drama", "http://drama.ramp.org.au/"));
-			for (String fedoraRole : fedoraRoles)
-			{
-				SOAPElement role = roles.addChildElement(envelope.createName("role", "drama", "http://drama.ramp.org.au/"));
-				role.addTextNode(fedoraRole);
-			}
-		}
-		catch (Exception e)
-		{
-			log.error("Error setting roles for user: " + e.getMessage(), e);
-		}
-		
-		return null;
-	}
+    public DescribeUserHandler()
+            throws PEPException {
+        super();
+    }
 
-	public RequestCtx handleRequest(MessageContext context) throws OperationHandlerException
-	{
-		return null;
-	}
+    public RequestCtx handleResponse(MessageContext context)
+            throws OperationHandlerException {
+        try {
+            String[] fedoraRoles = getUserRoles(context);
+            if (fedoraRoles == null || fedoraRoles.length == 0) {
+                return null;
+            }
+
+            Message message = context.getCurrentMessage();
+            SOAPEnvelope envelope = message.getSOAPEnvelope();
+            SOAPHeader header = envelope.getHeader();
+
+            SOAPHeaderElement roles =
+                    header.addHeaderElement(envelope
+                            .createName("roles",
+                                        "drama",
+                                        "http://drama.ramp.org.au/"));
+            for (String fedoraRole : fedoraRoles) {
+                SOAPElement role =
+                        roles.addChildElement(envelope
+                                .createName("role",
+                                            "drama",
+                                            "http://drama.ramp.org.au/"));
+                role.addTextNode(fedoraRole);
+            }
+        } catch (Exception e) {
+            log.error("Error setting roles for user: " + e.getMessage(), e);
+        }
+
+        return null;
+    }
+
+    public RequestCtx handleRequest(MessageContext context)
+            throws OperationHandlerException {
+        return null;
+    }
 }

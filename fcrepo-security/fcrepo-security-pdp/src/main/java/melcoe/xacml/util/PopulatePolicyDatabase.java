@@ -33,72 +33,76 @@ import org.apache.log4j.Logger;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- * 
  */
 public class PopulatePolicyDatabase {
-	private static final Logger log = Logger
-			.getLogger(PopulatePolicyDatabase.class);
 
-	private static final String POLICY_HOME = MelcoePDP.PDP_HOME.getAbsolutePath()
-			+ "/policies";
-	private static DbXmlPolicyDataManager dbXmlPolicyDataManager;
+    private static final Logger log =
+            Logger.getLogger(PopulatePolicyDatabase.class);
 
-	private static Set<String> policyNames = new HashSet<String>();
-	
-	static {
-		try {
-			dbXmlPolicyDataManager = new DbXmlPolicyDataManager();
-		} catch (PolicyDataManagerException e) {
-			e.printStackTrace();
-		}
-	}
-	public static void main(String[] args) throws PolicyDataManagerException,
-			FileNotFoundException {
-		BasicConfigurator.configure();
-		dbXmlPolicyDataManager = new DbXmlPolicyDataManager();
-		log.info("Adding");
-		add();
-		log.info("Listing");
-		list();
-	}
+    private static final String POLICY_HOME =
+            MelcoePDP.PDP_HOME.getAbsolutePath() + "/policies";
 
-	public static void add() throws PolicyDataManagerException,
-			FileNotFoundException {
-		log.info("Starting clock!");
-		long time1 = System.nanoTime();
-		addDocuments();
-		long time2 = System.nanoTime();
-		log.info("Stopping clock!");
-		log.info("Time taken: " + (time2 - time1));
-	}
+    private static DbXmlPolicyDataManager dbXmlPolicyDataManager;
 
-	public static void addDocuments() throws PolicyDataManagerException,
-			FileNotFoundException {
-		File[] files = getPolicyFiles();
-		if (files.length == 0)
-			return;
+    private static Set<String> policyNames = new HashSet<String>();
 
-		for (File f : files) {
-			if (dbXmlPolicyDataManager.contains(f)) {
-				if (log.isDebugEnabled()) {
-					log.debug("Policy database already contains " + f.getName() + ". Skipping.");
-				}
-			} else {
-				policyNames.add(dbXmlPolicyDataManager.addPolicy(f));
-			}
-		}
-	}
+    static {
+        try {
+            dbXmlPolicyDataManager = new DbXmlPolicyDataManager();
+        } catch (PolicyDataManagerException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public static void list() throws PolicyDataManagerException {
-		List<String> docNames = dbXmlPolicyDataManager.listPolicies();
-		for (String s : docNames) {
-			log.info("doc: " + s);
-		}
-	}
+    public static void main(String[] args) throws PolicyDataManagerException,
+            FileNotFoundException {
+        BasicConfigurator.configure();
+        dbXmlPolicyDataManager = new DbXmlPolicyDataManager();
+        log.info("Adding");
+        add();
+        log.info("Listing");
+        list();
+    }
 
-	public static File[] getPolicyFiles() {
-		File policyHome = new File(POLICY_HOME);
-		File[] policies = policyHome.listFiles(new PolicyFileFilter());
-		return policies;
-	}
+    public static void add() throws PolicyDataManagerException,
+            FileNotFoundException {
+        log.info("Starting clock!");
+        long time1 = System.nanoTime();
+        addDocuments();
+        long time2 = System.nanoTime();
+        log.info("Stopping clock!");
+        log.info("Time taken: " + (time2 - time1));
+    }
+
+    public static void addDocuments() throws PolicyDataManagerException,
+            FileNotFoundException {
+        File[] files = getPolicyFiles();
+        if (files.length == 0) {
+            return;
+        }
+
+        for (File f : files) {
+            if (dbXmlPolicyDataManager.contains(f)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Policy database already contains " + f.getName()
+                            + ". Skipping.");
+                }
+            } else {
+                policyNames.add(dbXmlPolicyDataManager.addPolicy(f));
+            }
+        }
+    }
+
+    public static void list() throws PolicyDataManagerException {
+        List<String> docNames = dbXmlPolicyDataManager.listPolicies();
+        for (String s : docNames) {
+            log.info("doc: " + s);
+        }
+    }
+
+    public static File[] getPolicyFiles() {
+        File policyHome = new File(POLICY_HOME);
+        File[] policies = policyHome.listFiles(new PolicyFileFilter());
+        return policies;
+    }
 }

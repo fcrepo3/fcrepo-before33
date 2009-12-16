@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-
 package melcoe.fedora.pep.ws.operations;
 
 import java.util.ArrayList;
@@ -41,62 +40,74 @@ import fedora.server.types.gen.FieldSearchQuery;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- *
  */
-public class FindObjectsHandler extends AbstractOperationHandler
-{
-	private static Logger log = Logger.getLogger(FindObjectsHandler.class.getName());
-	private FieldSearchResultHandler resultHandler = null;
+public class FindObjectsHandler
+        extends AbstractOperationHandler {
 
-	public FindObjectsHandler() throws PEPException
-	{
-		super();
-		resultHandler = new FieldSearchResultHandler();
-	}
+    private static Logger log =
+            Logger.getLogger(FindObjectsHandler.class.getName());
 
-	public RequestCtx handleResponse(MessageContext context) throws OperationHandlerException
-	{
-		if (log.isDebugEnabled())
-			log.debug("FindObjectsHandler/handleResponse!");
-		return resultHandler.handleResponse(context);
-	}
+    private FieldSearchResultHandler resultHandler = null;
 
-	public RequestCtx handleRequest(MessageContext context) throws OperationHandlerException
-	{
-		if (log.isDebugEnabled())
-			log.debug("FindObjectsHandler/handleRequest!");
+    public FindObjectsHandler()
+            throws PEPException {
+        super();
+        resultHandler = new FieldSearchResultHandler();
+    }
 
-		// Ensuring that there is always a PID present in a request.
-		List<Object> oMap = null;
+    public RequestCtx handleResponse(MessageContext context)
+            throws OperationHandlerException {
+        if (log.isDebugEnabled()) {
+            log.debug("FindObjectsHandler/handleResponse!");
+        }
+        return resultHandler.handleResponse(context);
+    }
 
-		try
-		{
-			oMap = getSOAPRequestObjects(context);
-			String[] resultFields = (String[]) oMap.get(0);
-			NonNegativeInteger maxResults = (NonNegativeInteger) oMap.get(1);
-			FieldSearchQuery fieldSearchQuery = (FieldSearchQuery) oMap.get(2);
+    public RequestCtx handleRequest(MessageContext context)
+            throws OperationHandlerException {
+        if (log.isDebugEnabled()) {
+            log.debug("FindObjectsHandler/handleRequest!");
+        }
 
-			List<String> resultFieldsList = new ArrayList<String>(Arrays.asList(resultFields));
+        // Ensuring that there is always a PID present in a request.
+        List<Object> oMap = null;
 
-			if (!resultFieldsList.contains("pid"))
-				resultFieldsList.add("pid");
-			String[] newResultFields = resultFieldsList.toArray(new String[resultFieldsList.size()]);
-						
-			List<RPCParam> params = new ArrayList<RPCParam>();
-			params.add(new RPCParam(new QName("http://www.fedora.info/definitions/1/0/types/#FieldSearchResult"),
-					newResultFields));
-			params.add(new RPCParam(Constants.XSD_NONNEGATIVEINTEGER, maxResults));
-			params.add(new RPCParam(new QName("http://www.fedora.info/definitions/1/0/types/#FieldSearchQuery"),
-					fieldSearchQuery));
-			setSOAPRequestObjects(context, params);
-			
-			LogUtil.statLog(context.getUsername(), fedora.common.Constants.ACTION.FIND_OBJECTS.getURI().toASCIIString(), "FedoraRepository", null);
-		}
-		catch (AxisFault af)
-		{
-			throw new OperationHandlerException("Error filtering objects.", af);
-		}
+        try {
+            oMap = getSOAPRequestObjects(context);
+            String[] resultFields = (String[]) oMap.get(0);
+            NonNegativeInteger maxResults = (NonNegativeInteger) oMap.get(1);
+            FieldSearchQuery fieldSearchQuery = (FieldSearchQuery) oMap.get(2);
 
-		return resultHandler.handleRequest(context);
-	}
+            List<String> resultFieldsList =
+                    new ArrayList<String>(Arrays.asList(resultFields));
+
+            if (!resultFieldsList.contains("pid")) {
+                resultFieldsList.add("pid");
+            }
+            String[] newResultFields =
+                    resultFieldsList
+                            .toArray(new String[resultFieldsList.size()]);
+
+            List<RPCParam> params = new ArrayList<RPCParam>();
+            params
+                    .add(new RPCParam(new QName("http://www.fedora.info/definitions/1/0/types/#FieldSearchResult"),
+                                      newResultFields));
+            params.add(new RPCParam(Constants.XSD_NONNEGATIVEINTEGER,
+                                    maxResults));
+            params
+                    .add(new RPCParam(new QName("http://www.fedora.info/definitions/1/0/types/#FieldSearchQuery"),
+                                      fieldSearchQuery));
+            setSOAPRequestObjects(context, params);
+
+            LogUtil.statLog(context.getUsername(),
+                            fedora.common.Constants.ACTION.FIND_OBJECTS
+                                    .getURI().toASCIIString(),
+                            "FedoraRepository",
+                            null);
+        } catch (AxisFault af) {
+            throw new OperationHandlerException("Error filtering objects.", af);
+        }
+
+        return resultHandler.handleRequest(context);
+    }
 }

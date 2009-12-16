@@ -27,30 +27,30 @@ import fedora.common.Constants;
  * returns responses.
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
 public interface MelcoePDP {
-	public static File PDP_HOME = new File(Constants.FEDORA_HOME, "pdp/");
-	
-	/**
-	 * This method evaluates an XACML request and returns an XACML response.
-	 * 
-	 * @param request
-	 *            the XACML request
-	 * @return the XACML response
-	 * @throws EvaluationException
-	 */
-	public String evaluate(String request) throws EvaluationException;
 
-	/**
-	 * A convenience function designed for reducing the number of WS calls made.
-	 * This function takes an array of requests and evaluates them and returns a
-	 * single response that contains all the resource id's and results.
-	 * 
-	 * @param requests
-	 *            the String array of XACML requests
-	 * @return the XACML response
-	 * @throws EvaluationException
-	 */
-	public String evaluateBatch(String[] requests) throws EvaluationException;
+    public static File PDP_HOME = new File(Constants.FEDORA_HOME, "pdp/");
+
+    /**
+     * This method evaluates an XACML request and returns an XACML response.
+     * 
+     * @param request
+     *        the XACML request
+     * @return the XACML response
+     * @throws EvaluationException
+     */
+    public String evaluate(String request) throws EvaluationException;
+
+    /**
+     * A convenience function designed for reducing the number of WS calls made.
+     * This function takes an array of requests and evaluates them and returns a
+     * single response that contains all the resource id's and results.
+     * 
+     * @param requests
+     *        the String array of XACML requests
+     * @return the XACML response
+     * @throws EvaluationException
+     */
+    public String evaluateBatch(String[] requests) throws EvaluationException;
 }

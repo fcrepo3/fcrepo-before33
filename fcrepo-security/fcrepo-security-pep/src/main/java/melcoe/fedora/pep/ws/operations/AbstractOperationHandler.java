@@ -48,364 +48,384 @@ import com.sun.xacml.attr.StringAttribute;
 import fedora.common.Constants;
 
 /**
- * This is the AbstractHandler class which provides generic functionality for all
- * operation handlers. All operation handlers should extend this class.
+ * This is the AbstractHandler class which provides generic functionality for
+ * all operation handlers. All operation handlers should extend this class.
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public abstract class AbstractOperationHandler implements OperationHandler
-{
-	private static Logger log = Logger.getLogger(AbstractOperationHandler.class.getName());
+public abstract class AbstractOperationHandler
+        implements OperationHandler {
 
-	protected static final String XACML_RESOURCE_ID = "urn:oasis:names:tc:xacml:1.0:resource:resource-id";
-	protected static final String SUBJECT_ID = "urn:oasis:names:tc:xacml:1.0:subject:subject-id";
-	protected static final String FEDORA_ROLE = "urn:fedora:names:fedora:2.1:subject:role";
+    private static Logger log =
+            Logger.getLogger(AbstractOperationHandler.class.getName());
 
-	private static ContextHandler contextHandlerImpl;
+    protected static final String XACML_RESOURCE_ID =
+            "urn:oasis:names:tc:xacml:1.0:resource:resource-id";
 
-	/**
-	 * Default constructor that obtains an instance of the ContextHandler.
-	 * 
-	 * @throws PEPException
-	 */
-	public AbstractOperationHandler() throws PEPException
-	{
-		contextHandlerImpl = ContextHandlerImpl.getInstance();
-	}
+    protected static final String SUBJECT_ID =
+            "urn:oasis:names:tc:xacml:1.0:subject:subject-id";
 
-	/**
-	 * Extracts the request parameters as objects from the context.
-	 * 
-	 * @param context the message context.
-	 * @return list of Objects
-	 * @throws AxisFault
-	 */
-	protected List<Object> getSOAPRequestObjects(MessageContext context) throws AxisFault
-	{
-		// return result
-		List<Object> result = new ArrayList<Object>();
+    protected static final String FEDORA_ROLE =
+            "urn:fedora:names:fedora:2.1:subject:role";
 
-		// Obtain the operation details and message type
-		OperationDesc operation = context.getOperation();
+    private static ContextHandler contextHandlerImpl;
 
-		// Extract the SOAP Message
-		Message message = context.getRequestMessage();
+    /**
+     * Default constructor that obtains an instance of the ContextHandler.
+     * 
+     * @throws PEPException
+     */
+    public AbstractOperationHandler()
+            throws PEPException {
+        contextHandlerImpl = ContextHandlerImpl.getInstance();
+    }
 
-		// Extract the SOAP Envelope from the Message
-		SOAPEnvelope envelope = message.getSOAPEnvelope();
+    /**
+     * Extracts the request parameters as objects from the context.
+     * 
+     * @param context
+     *        the message context.
+     * @return list of Objects
+     * @throws AxisFault
+     */
+    protected List<Object> getSOAPRequestObjects(MessageContext context)
+            throws AxisFault {
+        // return result
+        List<Object> result = new ArrayList<Object>();
 
-		// Get the envelope body
-		SOAPBodyElement body = envelope.getFirstBody();
+        // Obtain the operation details and message type
+        OperationDesc operation = context.getOperation();
 
-		// Make sure that the body element is an RPCElement.
-		if (body instanceof RPCElement)
-		{
-			// Get all the parameters from the Body Element.
-			List params = null;
-			try
-			{
-				params = ((RPCElement) body).getParams();
-				log.debug("Number of params: " + params.size());
-			}
-			catch (Exception e)
-			{
-				log.error("Problem obtaining params", e);
-				throw AxisFault.makeFault(e);
-			}
+        // Extract the SOAP Message
+        Message message = context.getRequestMessage();
 
-			if (params.size() > 0)
-			{
-				log.info("Operation returnType: " + operation.getReturnType().getNamespaceURI() + " "
-						+ operation.getReturnType().getLocalPart());
+        // Extract the SOAP Envelope from the Message
+        SOAPEnvelope envelope = message.getSOAPEnvelope();
 
-				for (int x = 0; x < params.size(); x++)
-				{
-					RPCParam param = (RPCParam) params.get(x);
-					result.add(param.getObjectValue());
-					log.info("Obtained object: (" + x + ") " + param.getQName().toString());
-				}
-			}
-		}
+        // Get the envelope body
+        SOAPBodyElement body = envelope.getFirstBody();
 
-		return result;
-	}
+        // Make sure that the body element is an RPCElement.
+        if (body instanceof RPCElement) {
+            // Get all the parameters from the Body Element.
+            List params = null;
+            try {
+                params = ((RPCElement) body).getParams();
+                log.debug("Number of params: " + params.size());
+            } catch (Exception e) {
+                log.error("Problem obtaining params", e);
+                throw AxisFault.makeFault(e);
+            }
 
-	/**
-	 * Extracts the return object from the context.
-	 * 
-	 * @param context the message context.
-	 * @return the return object for the message.
-	 * @throws AxisFault
-	 */
-	protected Object getSOAPResponseObject(MessageContext context) throws AxisFault
-	{
-		// return result
-		Object result = null;
+            if (params.size() > 0) {
+                log.info("Operation returnType: "
+                        + operation.getReturnType().getNamespaceURI() + " "
+                        + operation.getReturnType().getLocalPart());
 
-		// Obtain the operation details and message type
-		OperationDesc operation = context.getOperation();
+                for (int x = 0; x < params.size(); x++) {
+                    RPCParam param = (RPCParam) params.get(x);
+                    result.add(param.getObjectValue());
+                    log.info("Obtained object: (" + x + ") "
+                            + param.getQName().toString());
+                }
+            }
+        }
 
-		// Extract the SOAP Message
-		Message message = context.getPastPivot() ? context.getResponseMessage() : context.getRequestMessage();
+        return result;
+    }
 
-		// Extract the SOAP Envelope from the Message
-		SOAPEnvelope envelope = message.getSOAPEnvelope();
+    /**
+     * Extracts the return object from the context.
+     * 
+     * @param context
+     *        the message context.
+     * @return the return object for the message.
+     * @throws AxisFault
+     */
+    protected Object getSOAPResponseObject(MessageContext context)
+            throws AxisFault {
+        // return result
+        Object result = null;
 
-		// Get the envelope body
-		SOAPBodyElement body = envelope.getFirstBody();
+        // Obtain the operation details and message type
+        OperationDesc operation = context.getOperation();
 
-		// Make sure that the body element is an RPCElement.
-		if (body instanceof RPCElement)
-		{
-			// Get all the parameters from the Body Element.
-			List params = null;
-			try
-			{
-				params = ((RPCElement) body).getParams();
-				if (log.isDebugEnabled())
-					log.debug("Number of params: " + params.size());
-			}
-			catch (Exception e)
-			{
-				log.error("Problem obtaining params", e);
-				throw AxisFault.makeFault(e);
-			}
+        // Extract the SOAP Message
+        Message message =
+                context.getPastPivot() ? context.getResponseMessage() : context
+                        .getRequestMessage();
 
-			if (params != null && params.size() > 0)
-			{
-				log.info("Operation returnType: " + operation.getReturnType().getNamespaceURI() + " "
-						+ operation.getReturnType().getLocalPart());
+        // Extract the SOAP Envelope from the Message
+        SOAPEnvelope envelope = message.getSOAPEnvelope();
 
-				for (int x = 0; result == null && x < params.size(); x++)
-				{
-					RPCParam param = (RPCParam) params.get(x);
-					if (param.getQName().equals(operation.getReturnQName()))
-					{
-						log.info("Obtained object: (" + x + ") " + param.getQName().toString());
-						result = param.getObjectValue();
-					}
-				}
-			}
-		}
+        // Get the envelope body
+        SOAPBodyElement body = envelope.getFirstBody();
 
-		if (result == null)
-			throw AxisFault.makeFault(new Exception("Could not obtain Object from SOAP Response"));
+        // Make sure that the body element is an RPCElement.
+        if (body instanceof RPCElement) {
+            // Get all the parameters from the Body Element.
+            List params = null;
+            try {
+                params = ((RPCElement) body).getParams();
+                if (log.isDebugEnabled()) {
+                    log.debug("Number of params: " + params.size());
+                }
+            } catch (Exception e) {
+                log.error("Problem obtaining params", e);
+                throw AxisFault.makeFault(e);
+            }
 
-		return result;
-	}
+            if (params != null && params.size() > 0) {
+                log.info("Operation returnType: "
+                        + operation.getReturnType().getNamespaceURI() + " "
+                        + operation.getReturnType().getLocalPart());
 
-	/**
-	 * Sets the request parameters for a request.
-	 * 
-	 * @param context the message context
-	 * @param params list of parameters to set in order
-	 * @throws AxisFault
-	 */
-	protected void setSOAPRequestObjects(MessageContext context, List<RPCParam> params) throws AxisFault
-	{
-		// Extract the SOAP Message
-		Message message = context.getPastPivot() ? context.getResponseMessage() : context.getRequestMessage();
+                for (int x = 0; result == null && x < params.size(); x++) {
+                    RPCParam param = (RPCParam) params.get(x);
+                    if (param.getQName().equals(operation.getReturnQName())) {
+                        log.info("Obtained object: (" + x + ") "
+                                + param.getQName().toString());
+                        result = param.getObjectValue();
+                    }
+                }
+            }
+        }
 
-		// Extract the SOAP Envelope from the Message
-		SOAPEnvelope envelope = message.getSOAPEnvelope();
+        if (result == null) {
+            throw AxisFault
+                    .makeFault(new Exception("Could not obtain Object from SOAP Response"));
+        }
 
-		// Get the envelope body
-		SOAPBodyElement body = envelope.getFirstBody();
+        return result;
+    }
 
-		try
-		{
-			body.removeContents();
-			for (RPCParam p : params)
-				body.addChild(p);
-		}
-		catch (Exception e)
-		{
-			log.fatal("Problem changing SOAP message contents", e);
-			throw AxisFault.makeFault(e);
-		}
-	}
+    /**
+     * Sets the request parameters for a request.
+     * 
+     * @param context
+     *        the message context
+     * @param params
+     *        list of parameters to set in order
+     * @throws AxisFault
+     */
+    protected void setSOAPRequestObjects(MessageContext context,
+                                         List<RPCParam> params)
+            throws AxisFault {
+        // Extract the SOAP Message
+        Message message =
+                context.getPastPivot() ? context.getResponseMessage() : context
+                        .getRequestMessage();
 
-	/**
-	 * Sets the return object for a response as the param.
-	 * 
-	 * @param context the message context
-	 * @param param the object to set as the return object
-	 * @throws AxisFault
-	 */
-	protected void setSOAPResponseObject(MessageContext context, RPCParam param) throws AxisFault
-	{
-		// Extract the SOAP Message
-		Message message = context.getPastPivot() ? context.getResponseMessage() : context.getRequestMessage();
+        // Extract the SOAP Envelope from the Message
+        SOAPEnvelope envelope = message.getSOAPEnvelope();
 
-		// Extract the SOAP Envelope from the Message
-		SOAPEnvelope envelope = message.getSOAPEnvelope();
+        // Get the envelope body
+        SOAPBodyElement body = envelope.getFirstBody();
 
-		// Get the envelope body
-		SOAPBodyElement body = envelope.getFirstBody();
+        try {
+            body.removeContents();
+            for (RPCParam p : params) {
+                body.addChild(p);
+            }
+        } catch (Exception e) {
+            log.fatal("Problem changing SOAP message contents", e);
+            throw AxisFault.makeFault(e);
+        }
+    }
 
-		try
-		{
-			body.removeContents();
-			body.addChild(param);
-		}
-		catch (Exception e)
-		{
-			log.fatal("Problem changing SOAP message contents", e);
-			throw AxisFault.makeFault(e);
-		}
-	}
+    /**
+     * Sets the return object for a response as the param.
+     * 
+     * @param context
+     *        the message context
+     * @param param
+     *        the object to set as the return object
+     * @throws AxisFault
+     */
+    protected void setSOAPResponseObject(MessageContext context, RPCParam param)
+            throws AxisFault {
+        // Extract the SOAP Message
+        Message message =
+                context.getPastPivot() ? context.getResponseMessage() : context
+                        .getRequestMessage();
 
-	/**
-	 * Sets the return object for a response as a sequence of params.
-	 * 
-	 * @param context the message context
-	 * @param param the object to set as the return object
-	 * @throws AxisFault
-	 */
-	protected void setSOAPResponseObject(MessageContext context, RPCParam[] params) throws AxisFault
-	{
-		// Extract the SOAP Message
-		Message message = context.getPastPivot() ? context.getResponseMessage() : context.getRequestMessage();
+        // Extract the SOAP Envelope from the Message
+        SOAPEnvelope envelope = message.getSOAPEnvelope();
 
-		// Extract the SOAP Envelope from the Message
-		SOAPEnvelope envelope = message.getSOAPEnvelope();
+        // Get the envelope body
+        SOAPBodyElement body = envelope.getFirstBody();
 
-		// Get the envelope body
-		SOAPBodyElement body = envelope.getFirstBody();
+        try {
+            body.removeContents();
+            body.addChild(param);
+        } catch (Exception e) {
+            log.fatal("Problem changing SOAP message contents", e);
+            throw AxisFault.makeFault(e);
+        }
+    }
 
-		try
-		{
-			body.removeContents();
-			if (params != null)
-				for (RPCParam param : params)
-					body.addChild(param);
-		}
-		catch (Exception e)
-		{
-			log.fatal("Problem changing SOAP message contents", e);
-			throw AxisFault.makeFault(e);
-		}
-	}
+    /**
+     * Sets the return object for a response as a sequence of params.
+     * 
+     * @param context
+     *        the message context
+     * @param param
+     *        the object to set as the return object
+     * @throws AxisFault
+     */
+    protected void setSOAPResponseObject(MessageContext context,
+                                         RPCParam[] params) throws AxisFault {
+        // Extract the SOAP Message
+        Message message =
+                context.getPastPivot() ? context.getResponseMessage() : context
+                        .getRequestMessage();
 
-	/**
-	 * Extracts the list of Subjects from the given context.
-	 * 
-	 * @param context the message context
-	 * @return a list of Subjects
-	 * @throws AxisFault
-	 */
-	protected List<Map<URI, List<AttributeValue>>> getSubjects(MessageContext context) throws AxisFault
-	{
-		// setup the id and value for the requesting subject
-		List<Map<URI, List<AttributeValue>>> subjects = new ArrayList<Map<URI, List<AttributeValue>>>();
+        // Extract the SOAP Envelope from the Message
+        SOAPEnvelope envelope = message.getSOAPEnvelope();
 
-		if (context.getUsername() == null || "".equals(context.getUsername().trim()))
-			return subjects;
+        // Get the envelope body
+        SOAPBodyElement body = envelope.getFirstBody();
 
-		String[] fedoraRole = getUserRoles(context);
+        try {
+            body.removeContents();
+            if (params != null) {
+                for (RPCParam param : params) {
+                    body.addChild(param);
+                }
+            }
+        } catch (Exception e) {
+            log.fatal("Problem changing SOAP message contents", e);
+            throw AxisFault.makeFault(e);
+        }
+    }
 
-		Map<URI, List<AttributeValue>> subAttr = null;
-		List<AttributeValue> attrList = null;
-		try
-		{
-			subAttr = new HashMap<URI, List<AttributeValue>>();
-			attrList = new ArrayList<AttributeValue>();
-			attrList.add(new StringAttribute(context.getUsername()));
-			subAttr.put(Constants.SUBJECT.LOGIN_ID.getURI(), attrList);
-			if (fedoraRole != null && fedoraRole.length > 0)
-			{
-				attrList = new ArrayList<AttributeValue>();
-				for (String r : fedoraRole)
-					attrList.add(new StringAttribute(r));
-				subAttr.put(new URI(FEDORA_ROLE), attrList);
-			}
-			subjects.add(subAttr);
+    /**
+     * Extracts the list of Subjects from the given context.
+     * 
+     * @param context
+     *        the message context
+     * @return a list of Subjects
+     * @throws AxisFault
+     */
+    protected List<Map<URI, List<AttributeValue>>> getSubjects(MessageContext context)
+            throws AxisFault {
+        // setup the id and value for the requesting subject
+        List<Map<URI, List<AttributeValue>>> subjects =
+                new ArrayList<Map<URI, List<AttributeValue>>>();
 
-			subAttr = new HashMap<URI, List<AttributeValue>>();
-			attrList = new ArrayList<AttributeValue>();
-			attrList.add(new StringAttribute(context.getUsername()));
-			subAttr.put(Constants.SUBJECT.USER_REPRESENTED.getURI(), attrList);
-			if (fedoraRole != null && fedoraRole.length > 0)
-			{
-				attrList = new ArrayList<AttributeValue>();
-				for (String r : fedoraRole)
-					attrList.add(new StringAttribute(r));
-				subAttr.put(new URI(FEDORA_ROLE), attrList);
-			}
-			subjects.add(subAttr);
+        if (context.getUsername() == null
+                || "".equals(context.getUsername().trim())) {
+            return subjects;
+        }
 
-			subAttr = new HashMap<URI, List<AttributeValue>>();
-			attrList = new ArrayList<AttributeValue>();
-			attrList.add(new StringAttribute(context.getUsername()));
-			subAttr.put(new URI(SUBJECT_ID), attrList);
-			if (fedoraRole != null && fedoraRole.length > 0)
-			{
-				attrList = new ArrayList<AttributeValue>();
-				for (String r : fedoraRole)
-					attrList.add(new StringAttribute(r));
-				subAttr.put(new URI(FEDORA_ROLE), attrList);
-			}
-			subjects.add(subAttr);
-		}
-		catch (URISyntaxException use)
-		{
-			log.error(use.getMessage(), use);
-			throw AxisFault.makeFault(use);
-		}
+        String[] fedoraRole = getUserRoles(context);
 
-		return subjects;
-	}
+        Map<URI, List<AttributeValue>> subAttr = null;
+        List<AttributeValue> attrList = null;
+        try {
+            subAttr = new HashMap<URI, List<AttributeValue>>();
+            attrList = new ArrayList<AttributeValue>();
+            attrList.add(new StringAttribute(context.getUsername()));
+            subAttr.put(Constants.SUBJECT.LOGIN_ID.getURI(), attrList);
+            if (fedoraRole != null && fedoraRole.length > 0) {
+                attrList = new ArrayList<AttributeValue>();
+                for (String r : fedoraRole) {
+                    attrList.add(new StringAttribute(r));
+                }
+                subAttr.put(new URI(FEDORA_ROLE), attrList);
+            }
+            subjects.add(subAttr);
 
-	/**
-	 * Obtains a list of environment Attributes.
-	 * 
-	 * @param context the message context
-	 * @return list of environment Attributes
-	 */
-	protected Map<URI, AttributeValue> getEnvironment(MessageContext context)
-	{
-		Map<URI, AttributeValue> envAttr = new HashMap<URI, AttributeValue>();
+            subAttr = new HashMap<URI, List<AttributeValue>>();
+            attrList = new ArrayList<AttributeValue>();
+            attrList.add(new StringAttribute(context.getUsername()));
+            subAttr.put(Constants.SUBJECT.USER_REPRESENTED.getURI(), attrList);
+            if (fedoraRole != null && fedoraRole.length > 0) {
+                attrList = new ArrayList<AttributeValue>();
+                for (String r : fedoraRole) {
+                    attrList.add(new StringAttribute(r));
+                }
+                subAttr.put(new URI(FEDORA_ROLE), attrList);
+            }
+            subjects.add(subAttr);
 
-		String ip = (String) context.getProperty("remoteaddr");
+            subAttr = new HashMap<URI, List<AttributeValue>>();
+            attrList = new ArrayList<AttributeValue>();
+            attrList.add(new StringAttribute(context.getUsername()));
+            subAttr.put(new URI(SUBJECT_ID), attrList);
+            if (fedoraRole != null && fedoraRole.length > 0) {
+                attrList = new ArrayList<AttributeValue>();
+                for (String r : fedoraRole) {
+                    attrList.add(new StringAttribute(r));
+                }
+                subAttr.put(new URI(FEDORA_ROLE), attrList);
+            }
+            subjects.add(subAttr);
+        } catch (URISyntaxException use) {
+            log.error(use.getMessage(), use);
+            throw AxisFault.makeFault(use);
+        }
 
-		if (ip != null && !"".equals(ip))
-			envAttr.put(Constants.HTTP_REQUEST.CLIENT_IP_ADDRESS.getURI(), new StringAttribute(ip));
+        return subjects;
+    }
 
-		return envAttr;
-	}
+    /**
+     * Obtains a list of environment Attributes.
+     * 
+     * @param context
+     *        the message context
+     * @return list of environment Attributes
+     */
+    protected Map<URI, AttributeValue> getEnvironment(MessageContext context) {
+        Map<URI, AttributeValue> envAttr = new HashMap<URI, AttributeValue>();
 
-	/**
-	 * @return the Context Handler
-	 */
-	protected ContextHandler getContextHandler()
-	{
-		return contextHandlerImpl;
-	}
-	
-	/**
-	 * Returns the roles that the user has.
-	 * 
-	 * @param context the message context
-	 * @return a String array of roles
-	 */
-	@SuppressWarnings("unchecked")
-	protected String[] getUserRoles(MessageContext context)
-	{
-		HttpServletRequest request = (HttpServletRequest) context.getProperty("transport.http.servletRequest");
+        String ip = (String) context.getProperty("remoteaddr");
 
-		Map<String, Set<String>> reqAttr = null;
-		reqAttr = (Map<String, Set<String>>) request.getAttribute("FEDORA_AUX_SUBJECT_ATTRIBUTES");
-		
-		if (reqAttr == null)
-			return null;
-		
-		Set<String> fedoraRoles = reqAttr.get("fedoraRole");
-		if (fedoraRoles == null || fedoraRoles.size() == 0)
-			return null;
-		
-		String[] fedoraRole = fedoraRoles.toArray(new String[fedoraRoles.size()]);
-		
-		return fedoraRole;
-	}
+        if (ip != null && !"".equals(ip)) {
+            envAttr.put(Constants.HTTP_REQUEST.CLIENT_IP_ADDRESS.getURI(),
+                        new StringAttribute(ip));
+        }
+
+        return envAttr;
+    }
+
+    /**
+     * @return the Context Handler
+     */
+    protected ContextHandler getContextHandler() {
+        return contextHandlerImpl;
+    }
+
+    /**
+     * Returns the roles that the user has.
+     * 
+     * @param context
+     *        the message context
+     * @return a String array of roles
+     */
+    @SuppressWarnings("unchecked")
+    protected String[] getUserRoles(MessageContext context) {
+        HttpServletRequest request =
+                (HttpServletRequest) context
+                        .getProperty("transport.http.servletRequest");
+
+        Map<String, Set<String>> reqAttr = null;
+        reqAttr =
+                (Map<String, Set<String>>) request
+                        .getAttribute("FEDORA_AUX_SUBJECT_ATTRIBUTES");
+
+        if (reqAttr == null) {
+            return null;
+        }
+
+        Set<String> fedoraRoles = reqAttr.get("fedoraRole");
+        if (fedoraRoles == null || fedoraRoles.size() == 0) {
+            return null;
+        }
+
+        String[] fedoraRole =
+                fedoraRoles.toArray(new String[fedoraRoles.size()]);
+
+        return fedoraRole;
+    }
 }

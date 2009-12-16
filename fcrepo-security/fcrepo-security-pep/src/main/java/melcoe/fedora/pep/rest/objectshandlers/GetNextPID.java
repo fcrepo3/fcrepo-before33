@@ -45,83 +45,94 @@ import fedora.common.Constants;
  * Handles the GetNextPID operation.
  * 
  * @author nish.naidoo@gmail.com
- * 
  */
-public class GetNextPID extends AbstractFilter
-{
-	private static Logger log = Logger.getLogger(GetNextPID.class.getName());
+public class GetNextPID
+        extends AbstractFilter {
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @throws PEPException
-	 */
-	public GetNextPID() throws PEPException
-	{
-		super();
-	}
+    private static Logger log = Logger.getLogger(GetNextPID.class.getName());
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet
-	 * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleRequest(HttpServletRequest request, HttpServletResponse response)
-	    throws IOException, ServletException
-	{
-		if (log.isDebugEnabled())
-			log.debug(this.getClass().getName() + "/handleRequest!");
+    /**
+     * Default constructor.
+     * 
+     * @throws PEPException
+     */
+    public GetNextPID()
+            throws PEPException {
+        super();
+    }
 
-		int numPids = -1;
-		String numPidsStr = request.getParameter("numPIDs");
-		if (numPidsStr != null && !"".equals(numPidsStr))
-			numPids = Integer.valueOf(numPidsStr);
-		String pidNamespace = request.getParameter("namespace");
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleRequest(HttpServletRequest request,
+                                    HttpServletResponse response)
+            throws IOException, ServletException {
+        if (log.isDebugEnabled()) {
+            log.debug(this.getClass().getName() + "/handleRequest!");
+        }
 
-		RequestCtx req = null;
-		Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
-		Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
-		try
-		{
-			resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute("FedoraRepository"));
-			resAttr.put(new URI(XACML_RESOURCE_ID), new AnyURIAttribute(new URI("FedoraRepository")));
-			if (numPids > 0)
-				resAttr.put(Constants.OBJECT.N_PIDS.getURI(), new IntegerAttribute(numPids));
-			if (pidNamespace != null && !"".equals(pidNamespace))
-				resAttr.put(Constants.OBJECT.NAMESPACE.getURI(), new StringAttribute(pidNamespace));
+        int numPids = -1;
+        String numPidsStr = request.getParameter("numPIDs");
+        if (numPidsStr != null && !"".equals(numPidsStr)) {
+            numPids = Integer.valueOf(numPidsStr);
+        }
+        String pidNamespace = request.getParameter("namespace");
 
-			actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(Constants.ACTION.GET_NEXT_PID
-			    .getURI().toASCIIString()));
-			actions.put(Constants.ACTION.API.getURI(), new StringAttribute(Constants.ACTION.APIM.getURI()
-			    .toASCIIString()));
+        RequestCtx req = null;
+        Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
+        Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
+        try {
+            resAttr.put(Constants.OBJECT.PID.getURI(),
+                        new StringAttribute("FedoraRepository"));
+            resAttr.put(new URI(XACML_RESOURCE_ID),
+                        new AnyURIAttribute(new URI("FedoraRepository")));
+            if (numPids > 0) {
+                resAttr.put(Constants.OBJECT.N_PIDS.getURI(),
+                            new IntegerAttribute(numPids));
+            }
+            if (pidNamespace != null && !"".equals(pidNamespace)) {
+                resAttr.put(Constants.OBJECT.NAMESPACE.getURI(),
+                            new StringAttribute(pidNamespace));
+            }
 
-			req = getContextHandler().buildRequest(getSubjects(request), actions, resAttr,
-			    getEnvironment(request));
+            actions.put(Constants.ACTION.ID.getURI(),
+                        new StringAttribute(Constants.ACTION.GET_NEXT_PID
+                                .getURI().toASCIIString()));
+            actions.put(Constants.ACTION.API.getURI(),
+                        new StringAttribute(Constants.ACTION.APIM.getURI()
+                                .toASCIIString()));
 
-			LogUtil.statLog(request.getRemoteUser(), Constants.ACTION.GET_NEXT_PID.getURI().toASCIIString(),
-			    "FedoraRepository", null);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			throw new ServletException(e.getMessage(), e);
-		}
+            req =
+                    getContextHandler().buildRequest(getSubjects(request),
+                                                     actions,
+                                                     resAttr,
+                                                     getEnvironment(request));
 
-		return req;
-	}
+            LogUtil.statLog(request.getRemoteUser(),
+                            Constants.ACTION.GET_NEXT_PID.getURI()
+                                    .toASCIIString(),
+                            "FedoraRepository",
+                            null);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new ServletException(e.getMessage(), e);
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet
-	 * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleResponse(HttpServletRequest request, HttpServletResponse response)
-	    throws IOException, ServletException
-	{
-		return null;
-	}
+        return req;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleResponse(HttpServletRequest request,
+                                     HttpServletResponse response)
+            throws IOException, ServletException {
+        return null;
+    }
 }

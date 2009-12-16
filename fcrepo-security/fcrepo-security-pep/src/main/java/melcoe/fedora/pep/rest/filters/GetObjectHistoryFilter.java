@@ -44,90 +44,101 @@ import fedora.common.Constants;
  * Handles the getObjectHistory operation.
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public class GetObjectHistoryFilter extends AbstractFilter
-{
-	private static Logger log = Logger.getLogger(GetObjectHistoryFilter.class.getName());
+public class GetObjectHistoryFilter
+        extends AbstractFilter {
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @throws PEPException
-	 */
-	public GetObjectHistoryFilter() throws PEPException
-	{
-		super();
-	}
+    private static Logger log =
+            Logger.getLogger(GetObjectHistoryFilter.class.getName());
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException,
-			ServletException
-	{
-		if (request.getPathInfo() == null)
-		{
-			log.error("Bad request: " + request.getRequestURI());
-			throw new ServletException("Bad request: " + request.getRequestURI());
-		}
+    /**
+     * Default constructor.
+     * 
+     * @throws PEPException
+     */
+    public GetObjectHistoryFilter()
+            throws PEPException {
+        super();
+    }
 
-		String[] parts = request.getPathInfo().split("/");
-		if (parts.length < 2)
-		{
-			log.info("Not enough path components on the URI.");
-			throw new ServletException("Not enough path components on the URI.");
-		}
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleRequest(HttpServletRequest request,
+                                    HttpServletResponse response)
+            throws IOException, ServletException {
+        if (request.getPathInfo() == null) {
+            log.error("Bad request: " + request.getRequestURI());
+            throw new ServletException("Bad request: "
+                    + request.getRequestURI());
+        }
 
-		RequestCtx req = null;
+        String[] parts = request.getPathInfo().split("/");
+        if (parts.length < 2) {
+            log.info("Not enough path components on the URI.");
+            throw new ServletException("Not enough path components on the URI.");
+        }
 
-		String pid = null;
+        RequestCtx req = null;
 
-		pid = parts[1];
+        String pid = null;
 
-		Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
-		Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
+        pid = parts[1];
 
-		try
-		{
-			if (pid != null && !"".equals(pid))
-				resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute(pid));
-			// XACML 1.0 conformance. resource-id is mandatory. Remove when
-			// switching to 2.0
-			if (pid != null && !"".equals(pid))
-				resAttr.put(new URI("urn:oasis:names:tc:xacml:1.0:resource:resource-id"), new AnyURIAttribute(new URI(
-						pid)));
+        Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
+        Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
 
-			actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(Constants.ACTION.GET_OBJECT_HISTORY.getURI()
-					.toASCIIString()));
-			actions.put(Constants.ACTION.API.getURI(), new StringAttribute(Constants.ACTION.APIA.getURI()
-					.toASCIIString()));
+        try {
+            if (pid != null && !"".equals(pid)) {
+                resAttr.put(Constants.OBJECT.PID.getURI(),
+                            new StringAttribute(pid));
+            }
+            // XACML 1.0 conformance. resource-id is mandatory. Remove when
+            // switching to 2.0
+            if (pid != null && !"".equals(pid)) {
+                resAttr
+                        .put(new URI("urn:oasis:names:tc:xacml:1.0:resource:resource-id"),
+                             new AnyURIAttribute(new URI(pid)));
+            }
 
-			req = getContextHandler().buildRequest(getSubjects(request), actions, resAttr, getEnvironment(request));
+            actions.put(Constants.ACTION.ID.getURI(),
+                        new StringAttribute(Constants.ACTION.GET_OBJECT_HISTORY
+                                .getURI().toASCIIString()));
+            actions.put(Constants.ACTION.API.getURI(),
+                        new StringAttribute(Constants.ACTION.APIA.getURI()
+                                .toASCIIString()));
 
-			LogUtil.statLog(request.getRemoteUser(), Constants.ACTION.GET_OBJECT_HISTORY.getURI().toASCIIString(), pid, null);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			throw AxisFault.makeFault(e);
-		}
+            req =
+                    getContextHandler().buildRequest(getSubjects(request),
+                                                     actions,
+                                                     resAttr,
+                                                     getEnvironment(request));
 
-		return req;
-	}
+            LogUtil.statLog(request.getRemoteUser(),
+                            Constants.ACTION.GET_OBJECT_HISTORY.getURI()
+                                    .toASCIIString(),
+                            pid,
+                            null);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw AxisFault.makeFault(e);
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleResponse(HttpServletRequest request, HttpServletResponse response) throws IOException,
-			ServletException
-	{
-		return null;
-	}
+        return req;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleResponse(HttpServletRequest request,
+                                     HttpServletResponse response)
+            throws IOException, ServletException {
+        return null;
+    }
 }

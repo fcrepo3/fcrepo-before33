@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-
 package melcoe.fedora.pep.ws.operations;
 
 import java.net.URI;
@@ -41,75 +40,90 @@ import fedora.common.Constants;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- *
  */
-public class GetObjectProfileHandler extends AbstractOperationHandler
-{
-	private static Logger log = Logger.getLogger(GetObjectProfileHandler.class.getName());
+public class GetObjectProfileHandler
+        extends AbstractOperationHandler {
 
-	public GetObjectProfileHandler() throws PEPException
-	{
-		super();
-	}
+    private static Logger log =
+            Logger.getLogger(GetObjectProfileHandler.class.getName());
 
-	public RequestCtx handleResponse(MessageContext context) throws OperationHandlerException
-	{
-		return null;
-	}
+    public GetObjectProfileHandler()
+            throws PEPException {
+        super();
+    }
 
-	public RequestCtx handleRequest(MessageContext context) throws OperationHandlerException
-	{
-		log.debug("GetObjectProfileHandler/handleRequest!");
+    public RequestCtx handleResponse(MessageContext context)
+            throws OperationHandlerException {
+        return null;
+    }
 
-		RequestCtx req = null;
-		List<Object> oMap = null;
+    public RequestCtx handleRequest(MessageContext context)
+            throws OperationHandlerException {
+        log.debug("GetObjectProfileHandler/handleRequest!");
 
-		String pid = null;
-		String asOfDateTime = null;
+        RequestCtx req = null;
+        List<Object> oMap = null;
 
-		try
-		{
-			oMap = getSOAPRequestObjects(context);
-			log.debug("Retrieved SOAP Request Objects");
-		}
-		catch (AxisFault af)
-		{
-			log.error("Error obtaining SOAP Request Objects", af);
-			throw new OperationHandlerException("Error obtaining SOAP Request Objects", af);
-		}
+        String pid = null;
+        String asOfDateTime = null;
 
-		try
-		{
-			pid = (String) oMap.get(0);
-			asOfDateTime = (String) oMap.get(1);
-		}
-		catch (Exception e)
-		{
-			log.error("Error obtaining parameters", e);
-			throw new OperationHandlerException("Error obtaining parameters.", e);
-		}
+        try {
+            oMap = getSOAPRequestObjects(context);
+            log.debug("Retrieved SOAP Request Objects");
+        } catch (AxisFault af) {
+            log.error("Error obtaining SOAP Request Objects", af);
+            throw new OperationHandlerException("Error obtaining SOAP Request Objects",
+                                                af);
+        }
 
-		Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
-		Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
+        try {
+            pid = (String) oMap.get(0);
+            asOfDateTime = (String) oMap.get(1);
+        } catch (Exception e) {
+            log.error("Error obtaining parameters", e);
+            throw new OperationHandlerException("Error obtaining parameters.",
+                                                e);
+        }
 
-		try
-		{
-			if (pid != null && !"".equals(pid)) resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute(pid));
-			if (pid != null && !"".equals(pid)) resAttr.put(new URI(XACML_RESOURCE_ID), new AnyURIAttribute(new URI(pid)));
-			if (asOfDateTime != null && !"".equals(asOfDateTime)) resAttr.put(Constants.DATASTREAM.AS_OF_DATETIME.getURI(), DateTimeAttribute.getInstance(asOfDateTime));
+        Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
+        Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
 
-			actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(Constants.ACTION.GET_OBJECT_PROFILE.getURI().toASCIIString()));
-			actions.put(Constants.ACTION.API.getURI(), new StringAttribute(Constants.ACTION.APIA.getURI().toASCIIString()));
+        try {
+            if (pid != null && !"".equals(pid)) {
+                resAttr.put(Constants.OBJECT.PID.getURI(),
+                            new StringAttribute(pid));
+            }
+            if (pid != null && !"".equals(pid)) {
+                resAttr.put(new URI(XACML_RESOURCE_ID),
+                            new AnyURIAttribute(new URI(pid)));
+            }
+            if (asOfDateTime != null && !"".equals(asOfDateTime)) {
+                resAttr.put(Constants.DATASTREAM.AS_OF_DATETIME.getURI(),
+                            DateTimeAttribute.getInstance(asOfDateTime));
+            }
 
-			req = getContextHandler().buildRequest(getSubjects(context), actions, resAttr, getEnvironment(context));
+            actions.put(Constants.ACTION.ID.getURI(),
+                        new StringAttribute(Constants.ACTION.GET_OBJECT_PROFILE
+                                .getURI().toASCIIString()));
+            actions.put(Constants.ACTION.API.getURI(),
+                        new StringAttribute(Constants.ACTION.APIA.getURI()
+                                .toASCIIString()));
 
-			LogUtil.statLog(context.getUsername(), Constants.ACTION.GET_OBJECT_PROFILE.getURI().toASCIIString(), pid, null);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			throw new OperationHandlerException(e.getMessage(), e);
-		}
-		return req;
-	}
+            req =
+                    getContextHandler().buildRequest(getSubjects(context),
+                                                     actions,
+                                                     resAttr,
+                                                     getEnvironment(context));
+
+            LogUtil.statLog(context.getUsername(),
+                            Constants.ACTION.GET_OBJECT_PROFILE.getURI()
+                                    .toASCIIString(),
+                            pid,
+                            null);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new OperationHandlerException(e.getMessage(), e);
+        }
+        return req;
+    }
 }

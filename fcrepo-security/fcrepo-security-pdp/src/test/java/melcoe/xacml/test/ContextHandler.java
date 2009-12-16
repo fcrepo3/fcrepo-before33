@@ -33,55 +33,57 @@ import com.sun.xacml.ctx.ResponseCtx;
  * @author nishen@melcoe.mq.edu.au
  */
 public class ContextHandler {
-	private static Logger log = Logger
-			.getLogger(ContextHandler.class.getName());
-	private static final ContextHandler contextHandler;
-	private static final ContextUtil contextUtil = ContextUtil.getInstance();
 
-	private static MelcoePDP melcoePDPImpl;
+    private static Logger log =
+            Logger.getLogger(ContextHandler.class.getName());
 
-	static {
-		contextHandler = new ContextHandler();
-	}
+    private static final ContextHandler contextHandler;
 
-	private ContextHandler() {
-		try {
-			melcoePDPImpl = new MelcoePDPImpl();
-			log.debug("created new PDP");
-		} catch (Exception e) {
-			// test code...
-		}
-	}
+    private static final ContextUtil contextUtil = ContextUtil.getInstance();
 
-	public static ContextHandler getInstance() {
-		return contextHandler;
-	}
+    private static MelcoePDP melcoePDPImpl;
 
-	/**
-	 * @param reqCtx
-	 *            an XACML request context for resolution.
-	 * 
-	 * @return an XACML response context based on the evaluation of the request
-	 *         context.
-	 */
-	public ResponseCtx evaluate(RequestCtx reqCtx) throws Exception {
-		log.debug("Resolving RequestCtx request!");
+    static {
+        contextHandler = new ContextHandler();
+    }
 
-		String request = contextUtil.makeRequestCtx(reqCtx);
-		String response = evaluate(request);
-		ResponseCtx resCtx = contextUtil.makeResponseCtx(response);
+    private ContextHandler() {
+        try {
+            melcoePDPImpl = new MelcoePDPImpl();
+            log.debug("created new PDP");
+        } catch (Exception e) {
+            // test code...
+        }
+    }
 
-		return resCtx;
-	}
+    public static ContextHandler getInstance() {
+        return contextHandler;
+    }
 
-	/**
-	 * @param req
-	 *            an XACML request context for resolution.
-	 * @return an XACML response context based on the evaluation of the request
-	 *         context.
-	 */
-	public String evaluate(String req) throws Exception {
-		String res = melcoePDPImpl.evaluate(req);
-		return res;
-	}
+    /**
+     * @param reqCtx
+     *        an XACML request context for resolution.
+     * @return an XACML response context based on the evaluation of the request
+     *         context.
+     */
+    public ResponseCtx evaluate(RequestCtx reqCtx) throws Exception {
+        log.debug("Resolving RequestCtx request!");
+
+        String request = contextUtil.makeRequestCtx(reqCtx);
+        String response = evaluate(request);
+        ResponseCtx resCtx = contextUtil.makeResponseCtx(response);
+
+        return resCtx;
+    }
+
+    /**
+     * @param req
+     *        an XACML request context for resolution.
+     * @return an XACML response context based on the evaluation of the request
+     *         context.
+     */
+    public String evaluate(String req) throws Exception {
+        String res = melcoePDPImpl.evaluate(req);
+        return res;
+    }
 }

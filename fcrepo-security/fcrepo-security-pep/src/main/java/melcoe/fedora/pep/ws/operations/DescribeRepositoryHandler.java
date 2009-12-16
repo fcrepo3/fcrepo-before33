@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-
 package melcoe.fedora.pep.ws.operations;
 
 import java.net.URI;
@@ -38,49 +37,62 @@ import fedora.common.Constants;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- *
  */
-public class DescribeRepositoryHandler extends AbstractOperationHandler
-{
-	private static Logger log = Logger.getLogger(DescribeRepositoryHandler.class.getName());
-	
-	public DescribeRepositoryHandler() throws PEPException
-	{
-		super();
-	}
+public class DescribeRepositoryHandler
+        extends AbstractOperationHandler {
 
-	public RequestCtx handleResponse(MessageContext context) throws OperationHandlerException
-	{
-		return null;
-	}
+    private static Logger log =
+            Logger.getLogger(DescribeRepositoryHandler.class.getName());
 
-	public RequestCtx handleRequest(MessageContext context)  throws OperationHandlerException
-	{
-		log.debug("DescribeRepositoryHandler/handleRequest!");
+    public DescribeRepositoryHandler()
+            throws PEPException {
+        super();
+    }
 
-		RequestCtx req = null;
+    public RequestCtx handleResponse(MessageContext context)
+            throws OperationHandlerException {
+        return null;
+    }
 
-		Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
-		Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
+    public RequestCtx handleRequest(MessageContext context)
+            throws OperationHandlerException {
+        log.debug("DescribeRepositoryHandler/handleRequest!");
 
-		try
-		{
-			resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute("FedoraRepository"));
-			resAttr.put(new URI(XACML_RESOURCE_ID), new AnyURIAttribute(new URI("FedoraRepository")));
-			
-			actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(Constants.ACTION.DESCRIBE_REPOSITORY.getURI().toASCIIString()));
-			actions.put(Constants.ACTION.API.getURI(), new StringAttribute(Constants.ACTION.APIA.getURI().toASCIIString()));
-			
-			req = getContextHandler().buildRequest(getSubjects(context), actions, resAttr, getEnvironment(context));
+        RequestCtx req = null;
 
-			LogUtil.statLog(context.getUsername(), Constants.ACTION.DESCRIBE_REPOSITORY.getURI().toASCIIString(), "FedoraRepository", null);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			throw new OperationHandlerException(e.getMessage(), e);
-		}
-		
-		return req;
-	}
+        Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
+        Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
+
+        try {
+            resAttr.put(Constants.OBJECT.PID.getURI(),
+                        new StringAttribute("FedoraRepository"));
+            resAttr.put(new URI(XACML_RESOURCE_ID),
+                        new AnyURIAttribute(new URI("FedoraRepository")));
+
+            actions
+                    .put(Constants.ACTION.ID.getURI(),
+                         new StringAttribute(Constants.ACTION.DESCRIBE_REPOSITORY
+                                 .getURI().toASCIIString()));
+            actions.put(Constants.ACTION.API.getURI(),
+                        new StringAttribute(Constants.ACTION.APIA.getURI()
+                                .toASCIIString()));
+
+            req =
+                    getContextHandler().buildRequest(getSubjects(context),
+                                                     actions,
+                                                     resAttr,
+                                                     getEnvironment(context));
+
+            LogUtil.statLog(context.getUsername(),
+                            Constants.ACTION.DESCRIBE_REPOSITORY.getURI()
+                                    .toASCIIString(),
+                            "FedoraRepository",
+                            null);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new OperationHandlerException(e.getMessage(), e);
+        }
+
+        return req;
+    }
 }

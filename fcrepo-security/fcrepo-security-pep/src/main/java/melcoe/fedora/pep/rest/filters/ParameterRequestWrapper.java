@@ -38,117 +38,116 @@ import fedora.server.security.servletfilters.ExtendedHttpServletRequestWrapper;
  * @author nishen@melcoe.mq.edu.au
  */
 
-public class ParameterRequestWrapper extends ExtendedHttpServletRequestWrapper
-{
-	private static Logger log = Logger.getLogger(ParameterRequestWrapper.class.getName());
+public class ParameterRequestWrapper
+        extends ExtendedHttpServletRequestWrapper {
 
-	private Map<String, String[]> params = null;
-	private List<String> localParams = null;
+    private static Logger log =
+            Logger.getLogger(ParameterRequestWrapper.class.getName());
 
-	private String[] format = null;
+    private Map<String, String[]> params = null;
 
-	/**
-	 * Default constructor that duplicates a request.
-	 * 
-	 * @param request the request to duplicate
-	 */
-	@SuppressWarnings("unchecked")
-	public ParameterRequestWrapper(HttpServletRequest request) throws Exception
-	{
-		super(request);
-		params = new HashMap<String, String[]>(request.getParameterMap());
-		localParams = new ArrayList<String>();
+    private List<String> localParams = null;
 
-		if (request.getRequestURI() != null && request.getRequestURI().endsWith("/search"))
-		{
-			if (params.size() > 0 && params.get("pid") == null)
-			{
-				params.put("pid", new String[] { "true" });
-				localParams.add("pid");
-			}
-		}
-		else if (request.getRequestURI() != null && request.getRequestURI().endsWith("/objects"))
-		{
-			if (params.size() > 0 && params.get("pid") == null)
-			{
-				params.put("pid", new String[] { "true" });
-				localParams.add("pid");
-			}
-		}
-		else if (request.getRequestURI() != null && request.getRequestURI().endsWith("/risearch"))
-		{
-			if (log.isDebugEnabled())
-				log.debug("Entered format check");
+    private String[] format = null;
 
-			format = params.get("format");
-			
-			if (log.isDebugEnabled())
-			{
-				if (format != null)
-					for (String f : format)
-						log.debug("Format: " + f);
-			}
-			
-			if (format != null && !Arrays.asList(format).contains("RDF/XML"))
-			{
-				if (log.isDebugEnabled())
-					log.debug("Setting format to: RDF/XML");
+    /**
+     * Default constructor that duplicates a request.
+     * 
+     * @param request
+     *        the request to duplicate
+     */
+    @SuppressWarnings("unchecked")
+    public ParameterRequestWrapper(HttpServletRequest request)
+            throws Exception {
+        super(request);
+        params = new HashMap<String, String[]>(request.getParameterMap());
+        localParams = new ArrayList<String>();
 
-				params.put("format", new String[] { "RDF/XML" });
-			}
-		}
-	}
+        if (request.getRequestURI() != null
+                && request.getRequestURI().endsWith("/search")) {
+            if (params.size() > 0 && params.get("pid") == null) {
+                params.put("pid", new String[] {"true"});
+                localParams.add("pid");
+            }
+        } else if (request.getRequestURI() != null
+                && request.getRequestURI().endsWith("/objects")) {
+            if (params.size() > 0 && params.get("pid") == null) {
+                params.put("pid", new String[] {"true"});
+                localParams.add("pid");
+            }
+        } else if (request.getRequestURI() != null
+                && request.getRequestURI().endsWith("/risearch")) {
+            if (log.isDebugEnabled()) {
+                log.debug("Entered format check");
+            }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.ServletRequestWrapper#getParameter(java.lang.String)
-	 */
-	public String getParameter(String name)
-	{
-		String[] param = params.get(name);
-		
-		if (param == null || param.length == 0)
-			return null;
-		
-		return param[0];
-	}
+            format = params.get("format");
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.ServletRequestWrapper#getParameterMap()
-	 */
-	public Map<?, ?> getParameterMap()
-	{
-		return Collections.unmodifiableMap(params);
-	}
+            if (log.isDebugEnabled()) {
+                if (format != null) {
+                    for (String f : format) {
+                        log.debug("Format: " + f);
+                    }
+                }
+            }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.ServletRequestWrapper#getParameterNames()
-	 */
-	public Enumeration<?> getParameterNames()
-	{
-		return Collections.enumeration(params.keySet());
-	}
+            if (format != null && !Arrays.asList(format).contains("RDF/XML")) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Setting format to: RDF/XML");
+                }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.ServletRequestWrapper#getParameterValues(java.lang.String)
-	 */
-	public String[] getParameterValues(String name)
-	{
-		return params.get(name);
-	}
+                params.put("format", new String[] {"RDF/XML"});
+            }
+        }
+    }
 
-	/**
-	 * @return the format
-	 */
-	public String[] getFormat()
-	{
-		return format;
-	}
+    /*
+     * (non-Javadoc)
+     * @see javax.servlet.ServletRequestWrapper#getParameter(java.lang.String)
+     */
+    @Override
+    public String getParameter(String name) {
+        String[] param = params.get(name);
+
+        if (param == null || param.length == 0) {
+            return null;
+        }
+
+        return param[0];
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see javax.servlet.ServletRequestWrapper#getParameterMap()
+     */
+    @Override
+    public Map<?, ?> getParameterMap() {
+        return Collections.unmodifiableMap(params);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see javax.servlet.ServletRequestWrapper#getParameterNames()
+     */
+    @Override
+    public Enumeration<?> getParameterNames() {
+        return Collections.enumeration(params.keySet());
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * javax.servlet.ServletRequestWrapper#getParameterValues(java.lang.String)
+     */
+    @Override
+    public String[] getParameterValues(String name) {
+        return params.get(name);
+    }
+
+    /**
+     * @return the format
+     */
+    public String[] getFormat() {
+        return format;
+    }
 }

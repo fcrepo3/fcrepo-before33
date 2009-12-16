@@ -30,41 +30,39 @@ import com.sun.xacml.ctx.Subject;
  * Class to compare two Subjects.
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public class SubjectComparator implements Comparator<Subject>
-{
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-	 */
-	@SuppressWarnings("unchecked")
-	public int compare(Subject a, Subject b)
-	{
-		int result = 0;
+public class SubjectComparator
+        implements Comparator<Subject> {
 
-		Comparator cmp = new AttributeComparator();
-		Set<Attribute> setA = new TreeSet<Attribute>(cmp);
-		setA.addAll(a.getAttributes());
+    /*
+     * (non-Javadoc)
+     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     */
+    @SuppressWarnings("unchecked")
+    public int compare(Subject a, Subject b) {
+        int result = 0;
 
-		Set<Attribute> setB = new TreeSet<Attribute>(cmp);
-		setB.addAll(b.getAttributes());
+        Comparator cmp = new AttributeComparator();
+        Set<Attribute> setA = new TreeSet<Attribute>(cmp);
+        setA.addAll(a.getAttributes());
 
-		Iterator<Attribute> iterA = setA.iterator();
-		Iterator<Attribute> iterB = setB.iterator();
-		while (iterA.hasNext() && iterB.hasNext())
-		{
-			Attribute attrA = iterA.next();
-			Attribute attrB = iterB.next();
-			result = cmp.compare(attrA, attrB);
+        Set<Attribute> setB = new TreeSet<Attribute>(cmp);
+        setB.addAll(b.getAttributes());
 
-			if (result != 0)
-				return result;
-		}
+        Iterator<Attribute> iterA = setA.iterator();
+        Iterator<Attribute> iterB = setB.iterator();
+        while (iterA.hasNext() && iterB.hasNext()) {
+            Attribute attrA = iterA.next();
+            Attribute attrB = iterB.next();
+            result = cmp.compare(attrA, attrB);
 
-		result = setA.size() - setB.size();
+            if (result != 0) {
+                return result;
+            }
+        }
 
-		return result;
-	}
+        result = setA.size() - setB.size();
+
+        return result;
+    }
 }

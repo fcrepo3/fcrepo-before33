@@ -22,23 +22,27 @@ import org.apache.axis.MessageContext;
 
 import com.sun.xacml.ctx.RequestCtx;
 
-public interface OperationHandler
-{
-	/**
-	 * Method to handle requests.
-	 * 
-	 * @param context the message context
-	 * @return a RequestCtx if necessary or else null
-	 * @throws OperationHandlerException
-	 */
-	public RequestCtx handleRequest(MessageContext context) throws OperationHandlerException;
+public interface OperationHandler {
 
-	/**
-	 * Method to handle responses.
-	 * 
-	 * @param context the message context
-	 * @return a RequestCtx if necessary or else null
-	 * @throws OperationHandlerException
-	 */
-	public RequestCtx handleResponse(MessageContext context) throws OperationHandlerException;
+    /**
+     * Method to handle requests.
+     * 
+     * @param context
+     *        the message context
+     * @return a RequestCtx if necessary or else null
+     * @throws OperationHandlerException
+     */
+    public RequestCtx handleRequest(MessageContext context)
+            throws OperationHandlerException;
+
+    /**
+     * Method to handle responses.
+     * 
+     * @param context
+     *        the message context
+     * @return a RequestCtx if necessary or else null
+     * @throws OperationHandlerException
+     */
+    public RequestCtx handleResponse(MessageContext context)
+            throws OperationHandlerException;
 }

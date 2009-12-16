@@ -7,17 +7,22 @@
 
 package melcoe.fedora.pdp.client;
 
-public class Exception  implements java.io.Serializable {
+public class Exception
+        implements java.io.Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     private java.lang.Object exception;
 
     public Exception() {
     }
 
-    public Exception(
-           java.lang.Object exception) {
-           this.exception = exception;
+    public Exception(java.lang.Object exception) {
+        this.exception = exception;
     }
-
 
     /**
      * Gets the exception value for this Exception.
@@ -27,7 +32,6 @@ public class Exception  implements java.io.Serializable {
     public java.lang.Object getException() {
         return exception;
     }
-
 
     /**
      * Sets the exception value for this Exception.
@@ -39,25 +43,34 @@ public class Exception  implements java.io.Serializable {
     }
 
     private java.lang.Object __equalsCalc = null;
+
+    @Override
     public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof Exception)) return false;
+        if (!(obj instanceof Exception)) {
+            return false;
+        }
         Exception other = (Exception) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
         if (__equalsCalc != null) {
-            return (__equalsCalc == obj);
+            return __equalsCalc == obj;
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true && 
-            ((this.exception==null && other.getException()==null) || 
-             (this.exception!=null &&
-              this.exception.equals(other.getException())));
+        _equals =
+                true && (exception == null && other.getException() == null || exception != null
+                        && exception.equals(other.getException()));
         __equalsCalc = null;
         return _equals;
     }
 
     private boolean __hashCodeCalc = false;
+
+    @Override
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -73,14 +86,21 @@ public class Exception  implements java.io.Serializable {
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(Exception.class, true);
+            new org.apache.axis.description.TypeDesc(Exception.class, true);
 
     static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("http://pdp.xacml.melcoe/xsd", "Exception"));
-        org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
+        typeDesc
+                .setXmlType(new javax.xml.namespace.QName("http://pdp.xacml.melcoe/xsd",
+                                                          "Exception"));
+        org.apache.axis.description.ElementDesc elemField =
+                new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("exception");
-        elemField.setXmlName(new javax.xml.namespace.QName("http://pdp.xacml.melcoe/xsd", "Exception"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "anyType"));
+        elemField
+                .setXmlName(new javax.xml.namespace.QName("http://pdp.xacml.melcoe/xsd",
+                                                          "Exception"));
+        elemField
+                .setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema",
+                                                          "anyType"));
         elemField.setMinOccurs(0);
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
@@ -96,25 +116,23 @@ public class Exception  implements java.io.Serializable {
     /**
      * Get Custom Serializer
      */
-    public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+    public static org.apache.axis.encoding.Serializer getSerializer(java.lang.String mechType,
+                                                                    java.lang.Class _javaType,
+                                                                    javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanSerializer(_javaType,
+                                                               _xmlType,
+                                                               typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
-    public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+    public static org.apache.axis.encoding.Deserializer getDeserializer(java.lang.String mechType,
+                                                                        java.lang.Class _javaType,
+                                                                        javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanDeserializer(_javaType,
+                                                                 _xmlType,
+                                                                 typeDesc);
     }
 
 }

@@ -27,68 +27,81 @@ import javax.security.auth.Subject;
 
 import org.apache.log4j.Logger;
 
-public class SubjectUtils
-{
-	private static final Logger log = Logger.getLogger(SubjectUtils.class);
+public class SubjectUtils {
 
-	private static final String CLASS_OBJECT = "java.util.HashMap";
-	private static final String KEY_OBJECT = "java.lang.String";
-	private static final String VALUE_OBJECT = "java.util.HashSet";
-	
-	@SuppressWarnings("unchecked")
-	public static Map<String, Set<String>> getAttributes(Subject subject)
-	{
-		Map<String, Set<String>> attributes = null;
-		
-		if (subject.getPublicCredentials() == null)
-			return new HashMap<String, Set<String>>();
+    private static final Logger log = Logger.getLogger(SubjectUtils.class);
 
-		Iterator<?> i = subject.getPublicCredentials().iterator();
-		while (attributes == null && i.hasNext())
-		{
-			Map<String, Set<String>> tmp = null;
-			Object o = i.next();
-			
-			if (log.isDebugEnabled())
-				log.debug("checking for attributes (class name): " + o.getClass().getName());
-			
-			if (!o.getClass().getName().equals(CLASS_OBJECT))
-				continue;
+    private static final String CLASS_OBJECT = "java.util.HashMap";
 
-			tmp = (Map) o;
-			Object tObject = null;
-			Iterator<?> t = null;
-			
-			t = tmp.keySet().iterator();
-			if (!t.hasNext())
-				continue;
-			
-			tObject = t.next();
+    private static final String KEY_OBJECT = "java.lang.String";
 
-			if (log.isDebugEnabled())
-				log.debug("checking for attributes (key object name): " + tObject.getClass().getName());
+    private static final String VALUE_OBJECT = "java.util.HashSet";
 
-			if (!tObject.getClass().getName().equals(KEY_OBJECT))
-				continue;
-			
-			t = tmp.values().iterator();
-			if (!t.hasNext())
-				continue;
+    @SuppressWarnings("unchecked")
+    public static Map<String, Set<String>> getAttributes(Subject subject) {
+        Map<String, Set<String>> attributes = null;
 
-			tObject = t.next();
+        if (subject.getPublicCredentials() == null) {
+            return new HashMap<String, Set<String>>();
+        }
 
-			if (log.isDebugEnabled())
-				log.debug("checking for attributes (value object name): " + tObject.getClass().getName());
+        Iterator<?> i = subject.getPublicCredentials().iterator();
+        while (attributes == null && i.hasNext()) {
+            Map<String, Set<String>> tmp = null;
+            Object o = i.next();
 
-			if (!tObject.getClass().getName().equals(VALUE_OBJECT))
-				continue;
-			
-			attributes = (Map) o;
-		}
+            if (log.isDebugEnabled()) {
+                log.debug("checking for attributes (class name): "
+                        + o.getClass().getName());
+            }
 
-		if (attributes == null)
-			return new HashMap<String, Set<String>>();
-		
-		return attributes;
-	}
+            if (!o.getClass().getName().equals(CLASS_OBJECT)) {
+                continue;
+            }
+
+            tmp = (Map) o;
+            Object tObject = null;
+            Iterator<?> t = null;
+
+            t = tmp.keySet().iterator();
+            if (!t.hasNext()) {
+                continue;
+            }
+
+            tObject = t.next();
+
+            if (log.isDebugEnabled()) {
+                log.debug("checking for attributes (key object name): "
+                        + tObject.getClass().getName());
+            }
+
+            if (!tObject.getClass().getName().equals(KEY_OBJECT)) {
+                continue;
+            }
+
+            t = tmp.values().iterator();
+            if (!t.hasNext()) {
+                continue;
+            }
+
+            tObject = t.next();
+
+            if (log.isDebugEnabled()) {
+                log.debug("checking for attributes (value object name): "
+                        + tObject.getClass().getName());
+            }
+
+            if (!tObject.getClass().getName().equals(VALUE_OBJECT)) {
+                continue;
+            }
+
+            attributes = (Map) o;
+        }
+
+        if (attributes == null) {
+            return new HashMap<String, Set<String>>();
+        }
+
+        return attributes;
+    }
 }

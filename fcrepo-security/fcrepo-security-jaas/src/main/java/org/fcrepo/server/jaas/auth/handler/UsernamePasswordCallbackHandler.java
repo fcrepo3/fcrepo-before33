@@ -30,41 +30,35 @@ import javax.security.auth.callback.UnsupportedCallbackException;
  * A basic callback handler that supports name and password callbacks.
  * 
  * @author nish.naidoo@gmail.com
- * 
  */
-public class UsernamePasswordCallbackHandler implements CallbackHandler
-{
-	private String username;
-	private String password;
+public class UsernamePasswordCallbackHandler
+        implements CallbackHandler {
 
-	public UsernamePasswordCallbackHandler(String username, String password)
-	{
-		this.username = username;
-		this.password = password;
-	}
+    private final String username;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * javax.security.auth.callback.CallbackHandler#handle(javax.security.auth.callback.Callback[])
-	 */
-	public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException
-	{
-		for (Callback c : callbacks)
-		{
-			if (c instanceof NameCallback)
-			{
-				((NameCallback) c).setName(username);
-			}
-			else if (c instanceof PasswordCallback)
-			{
-				((PasswordCallback) c).setPassword(password.toCharArray());
-			}
-			else
-			{
-				throw new UnsupportedCallbackException(c);
-			}
-		}
-	}
+    private final String password;
+
+    public UsernamePasswordCallbackHandler(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * javax.security.auth.callback.CallbackHandler#handle(javax.security.auth
+     * .callback.Callback[])
+     */
+    public void handle(Callback[] callbacks) throws IOException,
+            UnsupportedCallbackException {
+        for (Callback c : callbacks) {
+            if (c instanceof NameCallback) {
+                ((NameCallback) c).setName(username);
+            } else if (c instanceof PasswordCallback) {
+                ((PasswordCallback) c).setPassword(password.toCharArray());
+            } else {
+                throw new UnsupportedCallbackException(c);
+            }
+        }
+    }
 }

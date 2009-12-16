@@ -7,20 +7,27 @@
 
 package melcoe.fedora.pdp.client;
 
-public class EvaluationExceptionType0  extends org.apache.axis.AxisFault  implements java.io.Serializable {
+public class EvaluationExceptionType0
+        extends org.apache.axis.AxisFault
+        implements java.io.Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     private melcoe.fedora.pdp.client.EvaluationException evaluationException;
 
     public EvaluationExceptionType0() {
     }
 
-    public EvaluationExceptionType0(
-           melcoe.fedora.pdp.client.EvaluationException evaluationException) {
+    public EvaluationExceptionType0(melcoe.fedora.pdp.client.EvaluationException evaluationException) {
         this.evaluationException = evaluationException;
     }
 
-
     /**
-     * Gets the evaluationException value for this EvaluationExceptionType0_Element.
+     * Gets the evaluationException value for this
+     * EvaluationExceptionType0_Element.
      * 
      * @return evaluationException
      */
@@ -28,9 +35,9 @@ public class EvaluationExceptionType0  extends org.apache.axis.AxisFault  implem
         return evaluationException;
     }
 
-
     /**
-     * Sets the evaluationException value for this EvaluationExceptionType0_Element.
+     * Sets the evaluationException value for this
+     * EvaluationExceptionType0_Element.
      * 
      * @param evaluationException
      */
@@ -39,25 +46,36 @@ public class EvaluationExceptionType0  extends org.apache.axis.AxisFault  implem
     }
 
     private java.lang.Object __equalsCalc = null;
+
+    @Override
     public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof EvaluationExceptionType0)) return false;
+        if (!(obj instanceof EvaluationExceptionType0)) {
+            return false;
+        }
         EvaluationExceptionType0 other = (EvaluationExceptionType0) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
         if (__equalsCalc != null) {
-            return (__equalsCalc == obj);
+            return __equalsCalc == obj;
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true && 
-            ((this.evaluationException==null && other.getEvaluationException()==null) || 
-             (this.evaluationException!=null &&
-              this.evaluationException.equals(other.getEvaluationException())));
+        _equals =
+                true && (evaluationException == null
+                        && other.getEvaluationException() == null || evaluationException != null
+                        && evaluationException.equals(other
+                                .getEvaluationException()));
         __equalsCalc = null;
         return _equals;
     }
 
     private boolean __hashCodeCalc = false;
+
+    @Override
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -73,14 +91,22 @@ public class EvaluationExceptionType0  extends org.apache.axis.AxisFault  implem
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(EvaluationExceptionType0.class, true);
+            new org.apache.axis.description.TypeDesc(EvaluationExceptionType0.class,
+                                                     true);
 
     static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("http://pdp.xacml.melcoe/xsd", ">EvaluationException"));
-        org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
+        typeDesc
+                .setXmlType(new javax.xml.namespace.QName("http://pdp.xacml.melcoe/xsd",
+                                                          ">EvaluationException"));
+        org.apache.axis.description.ElementDesc elemField =
+                new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("evaluationException");
-        elemField.setXmlName(new javax.xml.namespace.QName("http://pdp.xacml.melcoe/xsd", "EvaluationException"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://pdp.xacml.melcoe/xsd", "EvaluationException"));
+        elemField
+                .setXmlName(new javax.xml.namespace.QName("http://pdp.xacml.melcoe/xsd",
+                                                          "EvaluationException"));
+        elemField
+                .setXmlType(new javax.xml.namespace.QName("http://pdp.xacml.melcoe/xsd",
+                                                          "EvaluationException"));
         elemField.setMinOccurs(0);
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
@@ -96,32 +122,32 @@ public class EvaluationExceptionType0  extends org.apache.axis.AxisFault  implem
     /**
      * Get Custom Serializer
      */
-    public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+    public static org.apache.axis.encoding.Serializer getSerializer(java.lang.String mechType,
+                                                                    java.lang.Class _javaType,
+                                                                    javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanSerializer(_javaType,
+                                                               _xmlType,
+                                                               typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
-    public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+    public static org.apache.axis.encoding.Deserializer getDeserializer(java.lang.String mechType,
+                                                                        java.lang.Class _javaType,
+                                                                        javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanDeserializer(_javaType,
+                                                                 _xmlType,
+                                                                 typeDesc);
     }
-
 
     /**
      * Writes the exception data to the faultDetails
      */
-    public void writeDetails(javax.xml.namespace.QName qname, org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {
+    @Override
+    public void writeDetails(javax.xml.namespace.QName qname,
+                             org.apache.axis.encoding.SerializationContext context)
+            throws java.io.IOException {
         context.serialize(qname, null, this);
     }
 }

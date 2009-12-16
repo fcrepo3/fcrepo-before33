@@ -28,49 +28,46 @@ import javax.servlet.ServletOutputStream;
  * Output stream class that is required when creating a HttpResponseWrapper.
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public class DataServletOutputStream extends ServletOutputStream
-{
-	private DataOutputStream stream = null;
+public class DataServletOutputStream
+        extends ServletOutputStream {
 
-	/**
-	 * Contructor that sets the output stream.
-	 * 
-	 * @param out the output stream to capture
-	 */
-	public DataServletOutputStream(OutputStream out)
-	{
-		stream = new DataOutputStream(out);
-	}
+    private DataOutputStream stream = null;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.io.OutputStream#write(int)
-	 */
-	public void write(int i) throws IOException
-	{
-		stream.write(i);
-	}
+    /**
+     * Contructor that sets the output stream.
+     * 
+     * @param out
+     *        the output stream to capture
+     */
+    public DataServletOutputStream(OutputStream out) {
+        stream = new DataOutputStream(out);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.io.OutputStream#write(byte[])
-	 */
-	public void write(byte[] b) throws IOException
-	{
-		stream.write(b);
-	}
+    /*
+     * (non-Javadoc)
+     * @see java.io.OutputStream#write(int)
+     */
+    @Override
+    public void write(int i) throws IOException {
+        stream.write(i);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.io.OutputStream#write(byte[], int, int)
-	 */
-	public void write(byte[] b, int off, int len) throws IOException
-	{
-		stream.write(b, off, len);
-	}
+    /*
+     * (non-Javadoc)
+     * @see java.io.OutputStream#write(byte[])
+     */
+    @Override
+    public void write(byte[] b) throws IOException {
+        stream.write(b);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see java.io.OutputStream#write(byte[], int, int)
+     */
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+        stream.write(b, off, len);
+    }
 }

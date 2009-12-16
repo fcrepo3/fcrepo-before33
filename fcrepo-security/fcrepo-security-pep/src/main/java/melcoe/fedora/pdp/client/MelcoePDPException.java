@@ -7,24 +7,37 @@
 
 package melcoe.fedora.pdp.client;
 
-public class MelcoePDPException  extends melcoe.fedora.pdp.client.Exception  implements java.io.Serializable {
+public class MelcoePDPException
+        extends melcoe.fedora.pdp.client.Exception
+        implements java.io.Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public MelcoePDPException() {
     }
 
-    public MelcoePDPException(
-           java.lang.Object exception) {
-        super(
-            exception);
+    public MelcoePDPException(java.lang.Object exception) {
+        super(exception);
     }
 
     private java.lang.Object __equalsCalc = null;
+
+    @Override
     public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof MelcoePDPException)) return false;
-        MelcoePDPException other = (MelcoePDPException) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
+        if (!(obj instanceof MelcoePDPException)) {
+            return false;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
         if (__equalsCalc != null) {
-            return (__equalsCalc == obj);
+            return __equalsCalc == obj;
         }
         __equalsCalc = obj;
         boolean _equals;
@@ -34,6 +47,8 @@ public class MelcoePDPException  extends melcoe.fedora.pdp.client.Exception  imp
     }
 
     private boolean __hashCodeCalc = false;
+
+    @Override
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -46,10 +61,13 @@ public class MelcoePDPException  extends melcoe.fedora.pdp.client.Exception  imp
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(MelcoePDPException.class, true);
+            new org.apache.axis.description.TypeDesc(MelcoePDPException.class,
+                                                     true);
 
     static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("http://pdp.xacml.melcoe/xsd", "MelcoePDPException"));
+        typeDesc
+                .setXmlType(new javax.xml.namespace.QName("http://pdp.xacml.melcoe/xsd",
+                                                          "MelcoePDPException"));
     }
 
     /**
@@ -62,25 +80,23 @@ public class MelcoePDPException  extends melcoe.fedora.pdp.client.Exception  imp
     /**
      * Get Custom Serializer
      */
-    public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+    public static org.apache.axis.encoding.Serializer getSerializer(java.lang.String mechType,
+                                                                    java.lang.Class _javaType,
+                                                                    javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanSerializer(_javaType,
+                                                               _xmlType,
+                                                               typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
-    public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+    public static org.apache.axis.encoding.Deserializer getDeserializer(java.lang.String mechType,
+                                                                        java.lang.Class _javaType,
+                                                                        javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanDeserializer(_javaType,
+                                                                 _xmlType,
+                                                                 typeDesc);
     }
 
 }

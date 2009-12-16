@@ -22,24 +22,30 @@ import org.apache.log4j.Logger;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public class AttributeFinderException extends Exception {
-	private static final Logger log = Logger
-			.getLogger(AttributeFinderException.class.getName());
+public class AttributeFinderException
+        extends Exception {
 
-	public AttributeFinderException() {
-		super();
-		log.error("No message provided");
-	}
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	public AttributeFinderException(String msg) {
-		super(msg);
-		log.error(msg);
-	}
+    private static final Logger log =
+            Logger.getLogger(AttributeFinderException.class.getName());
 
-	public AttributeFinderException(String msg, Throwable t) {
-		super(msg);
-		log.error(msg, t);
-	}
+    public AttributeFinderException() {
+        super();
+        log.error("No message provided");
+    }
+
+    public AttributeFinderException(String msg) {
+        super(msg);
+        log.error(msg);
+    }
+
+    public AttributeFinderException(String msg, Throwable t) {
+        super(msg);
+        log.error(msg, t);
+    }
 }

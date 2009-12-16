@@ -23,11 +23,12 @@ import java.io.FileFilter;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public class PolicyFileFilter implements FileFilter {
-	public boolean accept(File f) {
-		return (f.isFile() && f.exists() && !f.isHidden() && f.getName()
-				.endsWith(".xml"));
-	}
+public class PolicyFileFilter
+        implements FileFilter {
+
+    public boolean accept(File f) {
+        return f.isFile() && f.exists() && !f.isHidden()
+                && f.getName().endsWith(".xml");
+    }
 }

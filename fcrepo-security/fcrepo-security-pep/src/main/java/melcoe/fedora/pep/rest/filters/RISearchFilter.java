@@ -71,339 +71,365 @@ import fedora.common.Constants;
  * Handles the risearch operation.
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public class RISearchFilter extends AbstractFilter
-{
-	private static Logger log = Logger.getLogger(RISearchFilter.class.getName());
-	private static final String XACML_RESOURCE_ID = "urn:oasis:names:tc:xacml:1.0:resource:resource-id";
+public class RISearchFilter
+        extends AbstractFilter {
 
-	private Map<String, Transformer> transformers = null;
-	private Map<String, String> mimeType = null;
+    private static Logger log =
+            Logger.getLogger(RISearchFilter.class.getName());
 
-	private ContextUtil contextUtil = null;
-	private Tidy tidy = null;
+    private static final String XACML_RESOURCE_ID =
+            "urn:oasis:names:tc:xacml:1.0:resource:resource-id";
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @throws PEPException
-	 */
-	public RISearchFilter() throws PEPException
-	{
-		super();
-		contextUtil = new ContextUtil();
+    private Map<String, Transformer> transformers = null;
 
-		tidy = new Tidy();
-		tidy.setShowWarnings(false);
-		tidy.setQuiet(true);
+    private Map<String, String> mimeType = null;
 
-		transformers = new HashMap<String, Transformer>();
-		mimeType = new HashMap<String, String>();
-		TransformerFactory xFormerFactory = TransformerFactory.newInstance();
+    private ContextUtil contextUtil = null;
 
-		try
-		{
-			Transformer transformer = xFormerFactory.newTransformer();
-			transformers.put("RDF/XML", transformer);
-			mimeType.put("RDF/XML", "text/xml");
-		}
-		catch (TransformerConfigurationException tce)
-		{
-			log.warn("Error loading the rdfxml2nTriples.xsl stylesheet", tce);
-			throw new PEPException("Error loading the rdfxml2nTriples.xsl stylesheet", tce);
-		}
+    private Tidy tidy = null;
 
-		try
-		{
-			String stylesheetLocation = "melcoe/fedora/pep/rest/filters/rdfxml2nTriples.xsl";
-			InputStream stylesheet = this.getClass().getClassLoader().getResourceAsStream(stylesheetLocation);
-			if (stylesheet == null)
-				throw new FileNotFoundException("Could not find file: rdfxml2nTriples.xsl");
+    /**
+     * Default constructor.
+     * 
+     * @throws PEPException
+     */
+    public RISearchFilter()
+            throws PEPException {
+        super();
+        contextUtil = new ContextUtil();
 
-			Transformer transformer = xFormerFactory.newTransformer(new StreamSource(stylesheet));
-			transformers.put("N-Triples", transformer);
-			mimeType.put("N-Triples", "text/plain");
-		}
-		catch (TransformerConfigurationException tce)
-		{
-			log.warn("Error loading the rdfxml2n3.xsl stylesheet", tce);
-			throw new PEPException("Error loading the rdfxml2n3.xsl stylesheet", tce);
-		}
-		catch (FileNotFoundException fnfe)
-		{
-			log.warn(fnfe.getMessage());
-			throw new PEPException(fnfe.getMessage());
-		}
-	}
+        tidy = new Tidy();
+        tidy.setShowWarnings(false);
+        tidy.setQuiet(true);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException,
-			ServletException
-	{
-		LogUtil.statLog(request.getRemoteUser(), Constants.ACTION.RI_FIND_OBJECTS.getURI().toASCIIString(),
-						"FedoraResposoty:ResourceIndex", null);
+        transformers = new HashMap<String, Transformer>();
+        mimeType = new HashMap<String, String>();
+        TransformerFactory xFormerFactory = TransformerFactory.newInstance();
 
-		return null;
-	}
+        try {
+            Transformer transformer = xFormerFactory.newTransformer();
+            transformers.put("RDF/XML", transformer);
+            mimeType.put("RDF/XML", "text/xml");
+        } catch (TransformerConfigurationException tce) {
+            log.warn("Error loading the rdfxml2nTriples.xsl stylesheet", tce);
+            throw new PEPException("Error loading the rdfxml2nTriples.xsl stylesheet",
+                                   tce);
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse)
-	 */
-	public RequestCtx handleResponse(HttpServletRequest request, HttpServletResponse response) throws IOException,
-			ServletException
-	{
-		ParameterRequestWrapper req = (ParameterRequestWrapper) request;
-		DataResponseWrapper res = (DataResponseWrapper) response;
+        try {
+            String stylesheetLocation =
+                    "melcoe/fedora/pep/rest/filters/rdfxml2nTriples.xsl";
+            InputStream stylesheet =
+                    this.getClass().getClassLoader()
+                            .getResourceAsStream(stylesheetLocation);
+            if (stylesheet == null) {
+                throw new FileNotFoundException("Could not find file: rdfxml2nTriples.xsl");
+            }
 
-		String body = new String(res.getData());
+            Transformer transformer =
+                    xFormerFactory.newTransformer(new StreamSource(stylesheet));
+            transformers.put("N-Triples", transformer);
+            mimeType.put("N-Triples", "text/plain");
+        } catch (TransformerConfigurationException tce) {
+            log.warn("Error loading the rdfxml2n3.xsl stylesheet", tce);
+            throw new PEPException("Error loading the rdfxml2n3.xsl stylesheet",
+                                   tce);
+        } catch (FileNotFoundException fnfe) {
+            log.warn(fnfe.getMessage());
+            throw new PEPException(fnfe.getMessage());
+        }
+    }
 
-		if (body.startsWith("<html>"))
-			return null;
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleRequest(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleRequest(HttpServletRequest request,
+                                    HttpServletResponse response)
+            throws IOException, ServletException {
+        LogUtil.statLog(request.getRemoteUser(),
+                        Constants.ACTION.RI_FIND_OBJECTS.getURI()
+                                .toASCIIString(),
+                        "FedoraResposoty:ResourceIndex",
+                        null);
 
-		DocumentBuilder docBuilder = null;
-		Document doc = null;
+        return null;
+    }
 
-		try
-		{
-			docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			doc = docBuilder.parse(new ByteArrayInputStream(res.getData()));
-		}
-		catch (Exception e)
-		{
-			throw new ServletException(e);
-		}
+    /*
+     * (non-Javadoc)
+     * @see
+     * melcoe.fedora.pep.rest.filters.RESTFilter#handleResponse(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public RequestCtx handleResponse(HttpServletRequest request,
+                                     HttpServletResponse response)
+            throws IOException, ServletException {
+        ParameterRequestWrapper req = (ParameterRequestWrapper) request;
+        DataResponseWrapper res = (DataResponseWrapper) response;
 
-		Map<String, List<Node>> nodeMap = new HashMap<String, List<Node>>();
+        String body = new String(res.getData());
 
-		NodeList nodes = doc.getElementsByTagName("rdf:Description");
-		for (int x = 0; x < nodes.getLength(); x++)
-		{
-			String pid = nodes.item(x).getAttributes().getNamedItem("rdf:about").getNodeValue();
-			if (log.isDebugEnabled())
-				log.debug("RISearchIndexFilter PID: " + pid);
+        if (body.startsWith("<html>")) {
+            return null;
+        }
 
-			List<Node> nodeList = nodeMap.get(pid);
-			if (nodeList == null)
-			{
-				nodeList = new ArrayList<Node>();
-				nodeMap.put(pid, nodeList);
-			}
+        DocumentBuilder docBuilder = null;
+        Document doc = null;
 
-			nodeList.add(nodes.item(x));
-		}
+        try {
+            docBuilder =
+                    DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            doc = docBuilder.parse(new ByteArrayInputStream(res.getData()));
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
 
-		if (nodeMap.keySet().size() > 0)
-		{
-			Map<String, List<String>> resultMap = new HashMap<String, List<String>>();
-			Set<Result> results = evaluatePids(nodeMap.keySet(), resultMap, request, res);
+        Map<String, List<Node>> nodeMap = new HashMap<String, List<Node>>();
 
-			for (Result r : results)
-			{
-				String rid = r.getResource();
-				if (rid == null || "".equals(rid))
-					log.warn("This resource has no resource identifier in the xacml response results!");
-				else if (log.isDebugEnabled())
-					log.debug("Checking: " + rid);
+        NodeList nodes = doc.getElementsByTagName("rdf:Description");
+        for (int x = 0; x < nodes.getLength(); x++) {
+            String pid =
+                    nodes.item(x).getAttributes().getNamedItem("rdf:about")
+                            .getNodeValue();
+            if (log.isDebugEnabled()) {
+                log.debug("RISearchIndexFilter PID: " + pid);
+            }
 
-				if (r.getStatus().getCode().contains(Status.STATUS_OK) && r.getDecision() != Result.DECISION_PERMIT)
-				{
-					List<String> pids = resultMap.get(rid);
-					for (String pid : pids)
-					{
-						List<Node> nodeList = nodeMap.get(pid);
-						
-						for (Node node : nodeList)
-						{
-							if (node != null && node.getParentNode() != null)
-							{
-								node.getParentNode().removeChild(node);
-								if (log.isDebugEnabled())
-									log.debug("Removing: " + pid + " [" + rid + "]");
-							}
-							else
-							{
-								log.warn("Could not locate and/or remove: " + pid + " [" + rid + "]");
-							}
-						}
-					}
-				}
-			}
-		}
+            List<Node> nodeList = nodeMap.get(pid);
+            if (nodeList == null) {
+                nodeList = new ArrayList<Node>();
+                nodeMap.put(pid, nodeList);
+            }
 
-		String[] formats = req.getFormat();
-		String format = null;
-		if (formats != null && formats.length > 0 && ("RDF/XML".equals(formats[0]) || "N-Triples".equals(formats[0])))
-			format = formats[0];
-		else
-			format = "RDF/XML";
+            nodeList.add(nodes.item(x));
+        }
 
-		Source src = new DOMSource(doc);
-		ByteArrayOutputStream os = null;
-		new ByteArrayOutputStream();
-		javax.xml.transform.Result dst = null;
-		new StreamResult(os);
-		if (log.isDebugEnabled())
-		{
-			os = new ByteArrayOutputStream();
-			dst = new StreamResult(os);
+        if (nodeMap.keySet().size() > 0) {
+            Map<String, List<String>> resultMap =
+                    new HashMap<String, List<String>>();
+            Set<Result> results =
+                    evaluatePids(nodeMap.keySet(), resultMap, request, res);
 
-			Transformer xFormer = transformers.get("RDF/XML");
-			try
-			{
-				xFormer.transform(src, dst);
-			}
-			catch (Exception e)
-			{
-				log.error(e.getMessage());
-			}
+            for (Result r : results) {
+                String rid = r.getResource();
+                if (rid == null || "".equals(rid)) {
+                    log
+                            .warn("This resource has no resource identifier in the xacml response results!");
+                } else if (log.isDebugEnabled()) {
+                    log.debug("Checking: " + rid);
+                }
 
-			log.debug("RDF/XML:\n" + new String(os.toByteArray()));
-		}
+                if (r.getStatus().getCode().contains(Status.STATUS_OK)
+                        && r.getDecision() != Result.DECISION_PERMIT) {
+                    List<String> pids = resultMap.get(rid);
+                    for (String pid : pids) {
+                        List<Node> nodeList = nodeMap.get(pid);
 
-		os = new ByteArrayOutputStream();
-		dst = new StreamResult(os);
-		try
-		{
-			if (log.isDebugEnabled())
-				log.debug("Transforming format: " + format);
-			Transformer xFormer = transformers.get(format);
-			xFormer.transform(src, dst);
-		}
-		catch (TransformerException te)
-		{
-			throw new ServletException("error generating output", te);
-		}
+                        for (Node node : nodeList) {
+                            if (node != null && node.getParentNode() != null) {
+                                node.getParentNode().removeChild(node);
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Removing: " + pid + " [" + rid
+                                            + "]");
+                                }
+                            } else {
+                                log.warn("Could not locate and/or remove: "
+                                        + pid + " [" + rid + "]");
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-		if (log.isDebugEnabled())
-			log.debug("RDF/XML:\n" + new String(os.toByteArray()));
+        String[] formats = req.getFormat();
+        String format = null;
+        if (formats != null
+                && formats.length > 0
+                && ("RDF/XML".equals(formats[0]) || "N-Triples"
+                        .equals(formats[0]))) {
+            format = formats[0];
+        } else {
+            format = "RDF/XML";
+        }
 
-		res.setData(os.toByteArray());
-		res.setContentType(mimeType.get(format));
+        Source src = new DOMSource(doc);
+        ByteArrayOutputStream os = null;
+        new ByteArrayOutputStream();
+        javax.xml.transform.Result dst = null;
+        new StreamResult(os);
+        if (log.isDebugEnabled()) {
+            os = new ByteArrayOutputStream();
+            dst = new StreamResult(os);
 
-		return null;
-	}
+            Transformer xFormer = transformers.get("RDF/XML");
+            try {
+                xFormer.transform(src, dst);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
 
-	/**
-	 * Takes a given list of PID's and evaluates them.
-	 * 
-	 * @param pids the list of pids to check
-	 * @param resultMap the map of pid's to rest based pids from contextUtil
-	 * @param request the http servlet request
-	 * @param response the http servlet resposne
-	 * @return a set of XACML results
-	 * @throws ServletException
-	 */
-	private Set<Result> evaluatePids(Set<String> pids, Map<String, List<String>> resultMap, HttpServletRequest request,
-			DataResponseWrapper response) throws ServletException
-	{
-		Set<String> requests = new HashSet<String>();
-		for (String pidDN : pids)
-		{
-			if (log.isDebugEnabled())
-				log.debug("Checking: " + pidDN);
+            log.debug("RDF/XML:\n" + new String(os.toByteArray()));
+        }
 
-			Map<URI, AttributeValue> actions = new HashMap<URI, AttributeValue>();
-			Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
+        os = new ByteArrayOutputStream();
+        dst = new StreamResult(os);
+        try {
+            if (log.isDebugEnabled()) {
+                log.debug("Transforming format: " + format);
+            }
+            Transformer xFormer = transformers.get(format);
+            xFormer.transform(src, dst);
+        } catch (TransformerException te) {
+            throw new ServletException("error generating output", te);
+        }
 
-			String[] components = pidDN.split("\\/");
-			String pid = components[1];
-			String dsID = null;
+        if (log.isDebugEnabled()) {
+            log.debug("RDF/XML:\n" + new String(os.toByteArray()));
+        }
 
-			if (components.length == 3)
-				dsID = components[2];
+        res.setData(os.toByteArray());
+        res.setContentType(mimeType.get(format));
 
-			try
-			{
-				actions.put(Constants.ACTION.ID.getURI(), new StringAttribute(
-						Constants.ACTION.LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS.getURI().toASCIIString()));
+        return null;
+    }
 
-				// Modification to uniquely identify datastreams
+    /**
+     * Takes a given list of PID's and evaluates them.
+     * 
+     * @param pids
+     *        the list of pids to check
+     * @param resultMap
+     *        the map of pid's to rest based pids from contextUtil
+     * @param request
+     *        the http servlet request
+     * @param response
+     *        the http servlet resposne
+     * @return a set of XACML results
+     * @throws ServletException
+     */
+    private Set<Result> evaluatePids(Set<String> pids,
+                                     Map<String, List<String>> resultMap,
+                                     HttpServletRequest request,
+                                     DataResponseWrapper response)
+            throws ServletException {
+        Set<String> requests = new HashSet<String>();
+        for (String pidDN : pids) {
+            if (log.isDebugEnabled()) {
+                log.debug("Checking: " + pidDN);
+            }
 
-				if (pid != null && !"".equals(pid))
-					resAttr.put(Constants.OBJECT.PID.getURI(), new StringAttribute(pid));
-				if (pid != null && !"".equals(pid))
-					resAttr.put(new URI(XACML_RESOURCE_ID), new AnyURIAttribute(new URI(pid)));
-				if (dsID != null && !"".equals(dsID))
-					resAttr.put(Constants.DATASTREAM.ID.getURI(), new StringAttribute(dsID));
-					
-				RequestCtx req = contextUtil.buildRequest(getSubjects(request), actions, resAttr,
-															getEnvironment(request));
+            Map<URI, AttributeValue> actions =
+                    new HashMap<URI, AttributeValue>();
+            Map<URI, AttributeValue> resAttr =
+                    new HashMap<URI, AttributeValue>();
 
-				String xacmlResourceId = getXacmlResourceId(req);
-				if (xacmlResourceId != null)
-				{
-					if (log.isDebugEnabled())
-						log.debug("Extracted XacmlResourceId: " + xacmlResourceId);
-	
-					List<String> resultPid = resultMap.get(xacmlResourceId);
-					if (resultPid == null)
-					{
-						resultPid = new ArrayList<String>();
-						resultMap.put(xacmlResourceId, resultPid);
-					}
-					resultPid.add(pidDN);
-				}
-				
-				String r = contextUtil.makeRequestCtx(req);
-				if (log.isDebugEnabled())
-					log.debug(r);
+            String[] components = pidDN.split("\\/");
+            String pid = components[1];
+            String dsID = null;
 
-				requests.add(r);
-			}
-			catch (Exception e)
-			{
-				log.error(e.getMessage(), e);
-				throw new ServletException(e.getMessage(), e);
-			}
-		}
+            if (components.length == 3) {
+                dsID = components[2];
+            }
 
-		String res = null;
-		ResponseCtx resCtx = null;
-		try
-		{
-			if (log.isDebugEnabled())
-				log.debug("Number of requests: " + requests.size());
+            try {
+                actions
+                        .put(Constants.ACTION.ID.getURI(),
+                             new StringAttribute(Constants.ACTION.LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS
+                                     .getURI().toASCIIString()));
 
-			res = getContextHandler().evaluateBatch(requests.toArray(new String[requests.size()]));
+                // Modification to uniquely identify datastreams
 
-			if (log.isDebugEnabled())
-				log.debug("Response: " + res);
+                if (pid != null && !"".equals(pid)) {
+                    resAttr.put(Constants.OBJECT.PID.getURI(),
+                                new StringAttribute(pid));
+                }
+                if (pid != null && !"".equals(pid)) {
+                    resAttr.put(new URI(XACML_RESOURCE_ID),
+                                new AnyURIAttribute(new URI(pid)));
+                }
+                if (dsID != null && !"".equals(dsID)) {
+                    resAttr.put(Constants.DATASTREAM.ID.getURI(),
+                                new StringAttribute(dsID));
+                }
 
-			resCtx = contextUtil.makeResponseCtx(res);
-		}
-		catch (MelcoeXacmlException pe)
-		{
-			throw new ServletException("Error evaluating pids: " + pe.getMessage(), pe);
-		}
+                RequestCtx req =
+                        contextUtil.buildRequest(getSubjects(request),
+                                                 actions,
+                                                 resAttr,
+                                                 getEnvironment(request));
 
-		@SuppressWarnings("unchecked")
-		Set<Result> results = resCtx.getResults();
+                String xacmlResourceId = getXacmlResourceId(req);
+                if (xacmlResourceId != null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Extracted XacmlResourceId: "
+                                + xacmlResourceId);
+                    }
 
-		return results;
-	}
+                    List<String> resultPid = resultMap.get(xacmlResourceId);
+                    if (resultPid == null) {
+                        resultPid = new ArrayList<String>();
+                        resultMap.put(xacmlResourceId, resultPid);
+                    }
+                    resultPid.add(pidDN);
+                }
 
-	private String getXacmlResourceId(RequestCtx req)
-	{
-		@SuppressWarnings("unchecked")
-		Set<Attribute> attributes = req.getResource();
+                String r = contextUtil.makeRequestCtx(req);
+                if (log.isDebugEnabled()) {
+                    log.debug(r);
+                }
 
-		for (Attribute attr : attributes)
-		{
-			if (log.isDebugEnabled())
-				log.debug("Attribute: " + attr.getId().toString());
-			if (attr.getId().toString().equals(XACML_RESOURCE_ID))
-				return attr.getValue().encode();
-		}
+                requests.add(r);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                throw new ServletException(e.getMessage(), e);
+            }
+        }
 
-		return null;
-	}
+        String res = null;
+        ResponseCtx resCtx = null;
+        try {
+            if (log.isDebugEnabled()) {
+                log.debug("Number of requests: " + requests.size());
+            }
+
+            res =
+                    getContextHandler().evaluateBatch(requests
+                            .toArray(new String[requests.size()]));
+
+            if (log.isDebugEnabled()) {
+                log.debug("Response: " + res);
+            }
+
+            resCtx = contextUtil.makeResponseCtx(res);
+        } catch (MelcoeXacmlException pe) {
+            throw new ServletException("Error evaluating pids: "
+                    + pe.getMessage(), pe);
+        }
+
+        @SuppressWarnings("unchecked")
+        Set<Result> results = resCtx.getResults();
+
+        return results;
+    }
+
+    private String getXacmlResourceId(RequestCtx req) {
+        @SuppressWarnings("unchecked")
+        Set<Attribute> attributes = req.getResource();
+
+        for (Attribute attr : attributes) {
+            if (log.isDebugEnabled()) {
+                log.debug("Attribute: " + attr.getId().toString());
+            }
+            if (attr.getId().toString().equals(XACML_RESOURCE_ID)) {
+                return attr.getValue().encode();
+            }
+        }
+
+        return null;
+    }
 }

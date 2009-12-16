@@ -61,325 +61,313 @@ import fedora.common.Constants;
  * This is the PEP for the REST interface.
  * 
  * @author nishen@melcoe.mq.edu.au
- * 
  */
-public final class PEP implements Filter
-{
-	private static Logger log = Logger.getLogger(PEP.class.getName());
-	private FilterConfig filterConfig = null;
+public final class PEP
+        implements Filter {
 
-	private Map<String, RESTFilter> filters = null;
-	private ContextHandler ctxHandler = null;
+    private static Logger log = Logger.getLogger(PEP.class.getName());
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest,
-	 *      javax.servlet.ServletResponse, javax.servlet.FilterChain)
-	 */
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-			ServletException
-	{
-		// if a response has already been committed, bypass this filter...
-		if (response.isCommitted())
-		{
-			if (log.isDebugEnabled())
-				log.debug("Response has already been committed. Bypassing PEP.");
-			// continuing the chain once auth has failed causes errors. Short
-			// circuiting the path here.
-			// remove this if it causes problems
-			// chain.doFilter(request, response);
-			return;
-		}
+    private FilterConfig filterConfig = null;
 
-		// Need to make sure we are dealing with HttpServlets
-		if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse))
-		{
-			log.error("Servlets are not HttpServlets!");
-			throw new ServletException("Servlets are not HttpServlets!");
-		}
+    private Map<String, RESTFilter> filters = null;
 
-		ServletOutputStream out = null;
-		ParameterRequestWrapper req = null;
-		DataResponseWrapper res = null;
-		
-		// the request and response context
-		RequestCtx reqCtx = null;
-		ResponseCtx resCtx = null;
+    private ContextHandler ctxHandler = null;
 
-		String uri = ((HttpServletRequest) request).getRequestURI();
+    /*
+     * (non-Javadoc)
+     * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest,
+     * javax.servlet.ServletResponse, javax.servlet.FilterChain)
+     */
+    public void doFilter(ServletRequest request,
+                         ServletResponse response,
+                         FilterChain chain) throws IOException,
+            ServletException {
+        // if a response has already been committed, bypass this filter...
+        if (response.isCommitted()) {
+            if (log.isDebugEnabled()) {
+                log
+                        .debug("Response has already been committed. Bypassing PEP.");
+            }
+            // continuing the chain once auth has failed causes errors. Short
+            // circuiting the path here.
+            // remove this if it causes problems
+            // chain.doFilter(request, response);
+            return;
+        }
 
-		if (log.isDebugEnabled())
-			log.debug("Incoming URI: " + uri);
+        // Need to make sure we are dealing with HttpServlets
+        if (!(request instanceof HttpServletRequest)
+                || !(response instanceof HttpServletResponse)) {
+            log.error("Servlets are not HttpServlets!");
+            throw new ServletException("Servlets are not HttpServlets!");
+        }
 
-		// get the filter (or null if no filter)
-		RESTFilter filter = getFilter(uri);
-		try
-		{
-			// handle the request if we have a filter
-			if (filter != null)
-			{
-				// get a handle for the original OutputStream
-				out = response.getOutputStream();
-				
-				// substitute our own request object that manages parameters
-				try
-				{
-					req = new ParameterRequestWrapper((HttpServletRequest) request);
-				}
-				catch (Exception e)
-				{
-					throw new PEPException(e);
-				}
-				
-				// substitute our own response object that captures the data
-				res = new DataResponseWrapper(((HttpServletResponse) response));
-				
-				if (log.isDebugEnabled())
-					log.debug("Filtering URI: [" + req.getRequestURI() + "] with: [" + filter.getClass().getName() + "]");
+        ServletOutputStream out = null;
+        ParameterRequestWrapper req = null;
+        DataResponseWrapper res = null;
 
-				reqCtx = filter.handleRequest(req, res);
-				if (reqCtx != null)
-				{
-					resCtx = ctxHandler.evaluate(reqCtx);
-					enforce(resCtx);
-				}
+        // the request and response context
+        RequestCtx reqCtx = null;
+        ResponseCtx resCtx = null;
 
-				// pass the request along to the next chain...
-				chain.doFilter(req, res);
-			}
-			else
-			{
-				// no filter, just use the original request/response...
-				chain.doFilter(request, response);
-			}
-				
-			// handle the response if we have a filter
-			if (filter != null)
-			{
-				reqCtx = filter.handleResponse(req, res);
-				if (reqCtx != null)
-				{
-					resCtx = ctxHandler.evaluate(reqCtx);
-					enforce(resCtx);
-				}
+        String uri = ((HttpServletRequest) request).getRequestURI();
 
-				out.write(res.getData());
-				out.flush();
-				out.close();
-			}
-		}
-		catch (AuthzDeniedException ae)
-		{
-			if (!res.isCommitted() && (req.getRemoteUser() == null || "".equals(req.getRemoteUser().trim())))
-				loginForm(res);
-			else
-				denyAccess((HttpServletResponse) response, ae.getMessage());
-		}
-		catch (PEPException pe)
-		{
-			throw new ServletException("Error evaluating request", pe);
-		}
-	}
+        if (log.isDebugEnabled()) {
+            log.debug("Incoming URI: " + uri);
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
-	 */
-	public void init(FilterConfig filterCfg) throws ServletException
-	{
-		try
-		{
-			this.ctxHandler = ContextHandlerImpl.getInstance();
-		}
-		catch (PEPException pe)
-		{
-			log.error("Error obtaining ContextHandler", pe);
-			throw new ServletException("Error obtaining ContextHandler", pe);
-		}
+        // get the filter (or null if no filter)
+        RESTFilter filter = getFilter(uri);
+        try {
+            // handle the request if we have a filter
+            if (filter != null) {
+                // get a handle for the original OutputStream
+                out = response.getOutputStream();
 
-		log.info("Initialising Servlet Filter: " + PEP.class.getName());
-		this.filterConfig = filterCfg;
+                // substitute our own request object that manages parameters
+                try {
+                    req =
+                            new ParameterRequestWrapper((HttpServletRequest) request);
+                } catch (Exception e) {
+                    throw new PEPException(e);
+                }
 
-		// exit if no config. Should always have a config.
-		if (this.filterConfig == null)
-		{
-			log.error("No config found!");
-			throw new ServletException("No config found for filter (filterConfig)");
-		}
-		
-		loadFilters();
-	}
+                // substitute our own response object that captures the data
+                res = new DataResponseWrapper(((HttpServletResponse) response));
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.Filter#destroy()
-	 */
-	public void destroy()
-	{
-		log.info("Destroying Servlet Filter: " + PEP.class.getName());
-		filterConfig = null;
-		filters = null;
-		ctxHandler = null;
-	}
+                if (log.isDebugEnabled()) {
+                    log.debug("Filtering URI: [" + req.getRequestURI()
+                            + "] with: [" + filter.getClass().getName() + "]");
+                }
 
-	private void loadFilters() throws ServletException
-	{
-		filters = new HashMap<String, RESTFilter>();
+                reqCtx = filter.handleRequest(req, res);
+                if (reqCtx != null) {
+                    resCtx = ctxHandler.evaluate(reqCtx);
+                    enforce(resCtx);
+                }
 
-		try
-		{
-			// get the PEP configuration
-			File configPEPFile = new File(Constants.FEDORA_HOME, 
-					"server/config/config-melcoe-pep.xml");
-			InputStream is = new FileInputStream(configPEPFile);
-			if (is == null)
-				throw new PEPException("Could not locate config file: config-melcoe-pep.xml");
+                // pass the request along to the next chain...
+                chain.doFilter(req, res);
+            } else {
+                // no filter, just use the original request/response...
+                chain.doFilter(request, response);
+            }
 
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = factory.newDocumentBuilder();
-			Document doc = docBuilder.parse(is);
+            // handle the response if we have a filter
+            if (filter != null) {
+                reqCtx = filter.handleResponse(req, res);
+                if (reqCtx != null) {
+                    resCtx = ctxHandler.evaluate(reqCtx);
+                    enforce(resCtx);
+                }
 
-			Node node = doc.getElementsByTagName("handlers-rest").item(0);
-			NodeList nodes = node.getChildNodes();
-			for (int x = 0; x < nodes.getLength(); x++)
-			{
-				Node n = nodes.item(x);
-				if (n.getNodeType() == Node.ELEMENT_NODE && "handler".equals(n.getNodeName()))
-				{
-					String opn = n.getAttributes().getNamedItem("operation").getNodeValue();
-					String cls = n.getAttributes().getNamedItem("class").getNodeValue();
+                out.write(res.getData());
+                out.flush();
+                out.close();
+            }
+        } catch (AuthzDeniedException ae) {
+            if (!res.isCommitted()
+                    && (req.getRemoteUser() == null || "".equals(req
+                            .getRemoteUser().trim()))) {
+                loginForm(res);
+            } else {
+                denyAccess((HttpServletResponse) response, ae.getMessage());
+            }
+        } catch (PEPException pe) {
+            throw new ServletException("Error evaluating request", pe);
+        }
+    }
 
-					if (opn == null || "".equals(opn))
-						throw new PEPException("Cannot have a missing or empty operation attribute");
-					
-					if (cls == null || "".equals(cls))
-						throw new PEPException("Cannot have a missing or empty class attribute");
-					
-					try
-					{
-						Class<?> filterClass = Class.forName(cls);
-						RESTFilter filter = (RESTFilter) filterClass.newInstance();
-						filters.put(opn, filter);
-						if (log.isDebugEnabled())
-							log.debug("filter added to filter map: " + opn + "/" + cls);
-					}
-					catch (ClassNotFoundException e)
-					{
-						if (log.isDebugEnabled())
-							log.debug("filterClass not found for: " + cls);
-					}
-					catch (InstantiationException ie)
-					{
-						log.error("Could not instantiate filter: " + cls);
-						throw new ServletException(ie.getMessage(), ie);
-					}
-					catch (IllegalAccessException iae)
-					{
-						log.error("Could not instantiate filter: " + cls);
-						throw new ServletException(iae.getMessage(), iae);
-					}
-				}
-			}
-		}
-		catch (Exception e)
-		{
-			log.fatal("Failed to initialse the PEP for REST");
-			log.fatal(e.getMessage(), e);
-			throw new ServletException(e.getMessage(), e);
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
+     */
+    public void init(FilterConfig filterCfg) throws ServletException {
+        try {
+            ctxHandler = ContextHandlerImpl.getInstance();
+        } catch (PEPException pe) {
+            log.error("Error obtaining ContextHandler", pe);
+            throw new ServletException("Error obtaining ContextHandler", pe);
+        }
 
-	/**
-	 * Obtains a filter from the filter map. If the filter does not exist in the
-	 * filter map, then an attempt to create the required filter is made and if
-	 * successful it is added to the filter map.
-	 * 
-	 * @param uri the uri used to determine which filter to use
-	 * @return the filter to use
-	 * @throws ServletException
-	 */
-	private RESTFilter getFilter(String uri) throws ServletException
-	{
-		String[] parts = uri.split("/");
-		// parts[0] = ""
-		// parts[1] = "fedora"
-		// parts[2] = operation (e.g. "get", "describe", "getObjectHistory" etc.)
+        log.info("Initialising Servlet Filter: " + PEP.class.getName());
+        filterConfig = filterCfg;
 
-		if (parts.length < 3)
-		{
-			log.info("Not enough components on the URI.");
-			throw new ServletException("Not enough components on the URI.");
-		}
+        // exit if no config. Should always have a config.
+        if (filterConfig == null) {
+            log.error("No config found!");
+            throw new ServletException("No config found for filter (filterConfig)");
+        }
 
-		RESTFilter filter = filters.get(parts[2]);
+        loadFilters();
+    }
 
-		return filter;
-	}
+    /*
+     * (non-Javadoc)
+     * @see javax.servlet.Filter#destroy()
+     */
+    public void destroy() {
+        log.info("Destroying Servlet Filter: " + PEP.class.getName());
+        filterConfig = null;
+        filters = null;
+        ctxHandler = null;
+    }
 
-	/**
-	 * Enforces a decision returned from the PDP.
-	 * 
-	 * @param res the XACML response
-	 * @throws AuthzDeniedException
-	 */
-	private void enforce(ResponseCtx res) throws AuthzDeniedException
-	{
-		@SuppressWarnings("unchecked")
-		Set<Result> results = res.getResults();
-		for (Result r : results)
-		{
-			if (r.getDecision() != Result.DECISION_PERMIT)
-			{
-				log.debug("Denying access: " + r.getDecision());
-				switch (r.getDecision())
-				{
-					case Result.DECISION_DENY:
-						throw new AuthzDeniedException("Deny");
-					case Result.DECISION_INDETERMINATE:
-						throw new AuthzDeniedException("Indeterminate");
-					case Result.DECISION_NOT_APPLICABLE:
-						throw new AuthzDeniedException("NotApplicable");
-					default:
-				}
-			}
-		}
-		log.debug("Permitting access!");
-	}
+    private void loadFilters() throws ServletException {
+        filters = new HashMap<String, RESTFilter>();
 
-	/**
-	 * Outputs an access denied message.
-	 * 
-	 * @param out the output stream to send the message to
-	 * @param message the message to send
-	 */
-	private void denyAccess(HttpServletResponse response, String message) throws IOException
-	{
-		StringBuilder sb = new StringBuilder();
-		sb.append("<html>");
-		sb.append("<head><title>Authorization Denied</title></head>");
-		sb.append("<body>");
-		sb.append("<h2 style=\"text-align: center\">Authorization Denied</h2>");
-		sb.append("<h3 style=\"text-align: center\">" + message + "</h3>");
-		sb.append("</body>");
-		sb.append("</html>");
+        try {
+            // get the PEP configuration
+            File configPEPFile =
+                    new File(Constants.FEDORA_HOME,
+                             "server/config/config-melcoe-pep.xml");
+            InputStream is = new FileInputStream(configPEPFile);
+            if (is == null) {
+                throw new PEPException("Could not locate config file: config-melcoe-pep.xml");
+            }
 
-		ServletOutputStream out = response.getOutputStream();
-		out.write(sb.toString().getBytes());
-	}
+            DocumentBuilderFactory factory =
+                    DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = factory.newDocumentBuilder();
+            Document doc = docBuilder.parse(is);
 
-	/**
-	 * Sends a 401 error to the browser. This forces a login screen to be
-	 * displayed allowing the user to login.
-	 * 
-	 * @param response the response to set the headers and status
-	 */
-	private void loginForm(HttpServletResponse response)
-	{
-		response.reset();
-		response.addHeader("WWW-Authenticate", "Basic realm=\"!!Fedora Repository Server\"");
-		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	}
+            Node node = doc.getElementsByTagName("handlers-rest").item(0);
+            NodeList nodes = node.getChildNodes();
+            for (int x = 0; x < nodes.getLength(); x++) {
+                Node n = nodes.item(x);
+                if (n.getNodeType() == Node.ELEMENT_NODE
+                        && "handler".equals(n.getNodeName())) {
+                    String opn =
+                            n.getAttributes().getNamedItem("operation")
+                                    .getNodeValue();
+                    String cls =
+                            n.getAttributes().getNamedItem("class")
+                                    .getNodeValue();
+
+                    if (opn == null || "".equals(opn)) {
+                        throw new PEPException("Cannot have a missing or empty operation attribute");
+                    }
+
+                    if (cls == null || "".equals(cls)) {
+                        throw new PEPException("Cannot have a missing or empty class attribute");
+                    }
+
+                    try {
+                        Class<?> filterClass = Class.forName(cls);
+                        RESTFilter filter =
+                                (RESTFilter) filterClass.newInstance();
+                        filters.put(opn, filter);
+                        if (log.isDebugEnabled()) {
+                            log.debug("filter added to filter map: " + opn
+                                    + "/" + cls);
+                        }
+                    } catch (ClassNotFoundException e) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("filterClass not found for: " + cls);
+                        }
+                    } catch (InstantiationException ie) {
+                        log.error("Could not instantiate filter: " + cls);
+                        throw new ServletException(ie.getMessage(), ie);
+                    } catch (IllegalAccessException iae) {
+                        log.error("Could not instantiate filter: " + cls);
+                        throw new ServletException(iae.getMessage(), iae);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.fatal("Failed to initialse the PEP for REST");
+            log.fatal(e.getMessage(), e);
+            throw new ServletException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Obtains a filter from the filter map. If the filter does not exist in the
+     * filter map, then an attempt to create the required filter is made and if
+     * successful it is added to the filter map.
+     * 
+     * @param uri
+     *        the uri used to determine which filter to use
+     * @return the filter to use
+     * @throws ServletException
+     */
+    private RESTFilter getFilter(String uri) throws ServletException {
+        String[] parts = uri.split("/");
+        // parts[0] = ""
+        // parts[1] = "fedora"
+        // parts[2] = operation (e.g. "get", "describe", "getObjectHistory" etc.)
+
+        if (parts.length < 3) {
+            log.info("Not enough components on the URI.");
+            throw new ServletException("Not enough components on the URI.");
+        }
+
+        RESTFilter filter = filters.get(parts[2]);
+
+        return filter;
+    }
+
+    /**
+     * Enforces a decision returned from the PDP.
+     * 
+     * @param res
+     *        the XACML response
+     * @throws AuthzDeniedException
+     */
+    private void enforce(ResponseCtx res) throws AuthzDeniedException {
+        @SuppressWarnings("unchecked")
+        Set<Result> results = res.getResults();
+        for (Result r : results) {
+            if (r.getDecision() != Result.DECISION_PERMIT) {
+                log.debug("Denying access: " + r.getDecision());
+                switch (r.getDecision()) {
+                    case Result.DECISION_DENY:
+                        throw new AuthzDeniedException("Deny");
+                    case Result.DECISION_INDETERMINATE:
+                        throw new AuthzDeniedException("Indeterminate");
+                    case Result.DECISION_NOT_APPLICABLE:
+                        throw new AuthzDeniedException("NotApplicable");
+                    default:
+                }
+            }
+        }
+        log.debug("Permitting access!");
+    }
+
+    /**
+     * Outputs an access denied message.
+     * 
+     * @param out
+     *        the output stream to send the message to
+     * @param message
+     *        the message to send
+     */
+    private void denyAccess(HttpServletResponse response, String message)
+            throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<html>");
+        sb.append("<head><title>Authorization Denied</title></head>");
+        sb.append("<body>");
+        sb.append("<h2 style=\"text-align: center\">Authorization Denied</h2>");
+        sb.append("<h3 style=\"text-align: center\">" + message + "</h3>");
+        sb.append("</body>");
+        sb.append("</html>");
+
+        ServletOutputStream out = response.getOutputStream();
+        out.write(sb.toString().getBytes());
+    }
+
+    /**
+     * Sends a 401 error to the browser. This forces a login screen to be
+     * displayed allowing the user to login.
+     * 
+     * @param response
+     *        the response to set the headers and status
+     */
+    private void loginForm(HttpServletResponse response) {
+        response.reset();
+        response.addHeader("WWW-Authenticate",
+                           "Basic realm=\"!!Fedora Repository Server\"");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    }
 }

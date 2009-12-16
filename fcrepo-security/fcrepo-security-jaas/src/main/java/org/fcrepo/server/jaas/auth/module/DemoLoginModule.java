@@ -34,146 +34,135 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
 import org.apache.log4j.Logger;
-
 import org.fcrepo.server.jaas.auth.UserPrincipal;
 
-public class DemoLoginModule implements LoginModule
-{
-	private static final Logger log = Logger.getLogger(DemoLoginModule.class);
+public class DemoLoginModule
+        implements LoginModule {
 
-	private Subject subject = null;
-	private CallbackHandler handler = null;
-	private Map<String, ?> sharedState = null;
-	private Map<String, ?> options = null;
+    private static final Logger log = Logger.getLogger(DemoLoginModule.class);
 
-	private String username = null;
+    private Subject subject = null;
 
-	private Map<String, Set<String>> attributes = null;
+    private CallbackHandler handler = null;
 
-	private boolean debug = false;
-	
-	private boolean successLogin = false;
+    private Map<String, ?> sharedState = null;
 
-	public void initialize(Subject subject, CallbackHandler handler, Map<String, ?> sharedState, Map<String, ?> options)
-	{
-		this.subject = subject;
-		this.handler = handler;
-		this.sharedState = sharedState;
-		this.options = options;
+    private Map<String, ?> options = null;
 
-		String debugOption = (String) this.options.get("debug");
-		if (debugOption != null && "true".equalsIgnoreCase(debugOption))
-			debug = true;
+    private String username = null;
 
-		attributes = new HashMap<String, Set<String>>();
+    private Map<String, Set<String>> attributes = null;
 
-		if (debug)
-			log.debug("login module initialised: " + this.getClass().getName());
-	}
+    private boolean debug = false;
 
-	public boolean login() throws LoginException
-	{
-		if (debug)
-		{
-			log.debug("DemoLoginModule login called.");
-			for (String key : sharedState.keySet())
-			{
-				String value = sharedState.get(key).toString();
-				log.debug(key + ": " + value);
-			}
-		}
+    private boolean successLogin = false;
 
-		Callback[] callbacks = new Callback[2];
-		callbacks[0] = new NameCallback("username");
-		callbacks[1] = new PasswordCallback("password", false);
+    public void initialize(Subject subject,
+                           CallbackHandler handler,
+                           Map<String, ?> sharedState,
+                           Map<String, ?> options) {
+        this.subject = subject;
+        this.handler = handler;
+        this.sharedState = sharedState;
+        this.options = options;
 
-		try
-		{
-			handler.handle(callbacks);
-			username = ((NameCallback) callbacks[0]).getName();
-			char[] passwordCharArray = ((PasswordCallback) callbacks[1]).getPassword();
-			String password = new String(passwordCharArray);
+        String debugOption = (String) this.options.get("debug");
+        if (debugOption != null && "true".equalsIgnoreCase(debugOption)) {
+            debug = true;
+        }
 
-			successLogin = username.equals(password);
-		}
-		catch (IOException ioe)
-		{
-			ioe.printStackTrace();
-			throw new LoginException("IOException occured: " + ioe.getMessage());
-		}
-		catch (UnsupportedCallbackException ucbe)
-		{
-			ucbe.printStackTrace();
-			throw new LoginException("UnsupportedCallbackException encountered: " + ucbe.getMessage());
-		}
+        attributes = new HashMap<String, Set<String>>();
 
-		return successLogin;
-	}
+        if (debug) {
+            log.debug("login module initialised: " + this.getClass().getName());
+        }
+    }
 
-	public boolean commit() throws LoginException
-	{
-		if (!successLogin)
-			return false;
-		
-		try
-		{
-			UserPrincipal p = new UserPrincipal(username);
-			Set<String> roles = attributes.get("role");
-			if (roles == null)
-			{
-				roles = new HashSet<String>();
-				attributes.put("role", roles);
-			}
+    public boolean login() throws LoginException {
+        if (debug) {
+            log.debug("DemoLoginModule login called.");
+            for (String key : sharedState.keySet()) {
+                String value = sharedState.get(key).toString();
+                log.debug(key + ": " + value);
+            }
+        }
 
-			roles.add("test1");
-			roles.add("test2");
-			roles.add("test3");
+        Callback[] callbacks = new Callback[2];
+        callbacks[0] = new NameCallback("username");
+        callbacks[1] = new PasswordCallback("password", false);
 
-			subject.getPrincipals().add(p);
-			subject.getPublicCredentials().add(attributes);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			return false;
-		}
+        try {
+            handler.handle(callbacks);
+            username = ((NameCallback) callbacks[0]).getName();
+            char[] passwordCharArray =
+                    ((PasswordCallback) callbacks[1]).getPassword();
+            String password = new String(passwordCharArray);
 
-		return true;
-	}
+            successLogin = username.equals(password);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            throw new LoginException("IOException occured: " + ioe.getMessage());
+        } catch (UnsupportedCallbackException ucbe) {
+            ucbe.printStackTrace();
+            throw new LoginException("UnsupportedCallbackException encountered: "
+                    + ucbe.getMessage());
+        }
 
-	public boolean abort() throws LoginException
-	{
-		try
-		{
-			subject.getPrincipals().clear();
-			subject.getPublicCredentials().clear();
-			subject.getPrivateCredentials().clear();
-			username = null;
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			return false;
-		}
+        return successLogin;
+    }
 
-		return true;
-	}
+    public boolean commit() throws LoginException {
+        if (!successLogin) {
+            return false;
+        }
 
-	public boolean logout() throws LoginException
-	{
-		try
-		{
-			subject.getPrincipals().clear();
-			subject.getPublicCredentials().clear();
-			subject.getPrivateCredentials().clear();
-			username = null;
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			return false;
-		}
+        try {
+            UserPrincipal p = new UserPrincipal(username);
+            Set<String> roles = attributes.get("role");
+            if (roles == null) {
+                roles = new HashSet<String>();
+                attributes.put("role", roles);
+            }
 
-		return true;
-	}
+            roles.add("test1");
+            roles.add("test2");
+            roles.add("test3");
+
+            subject.getPrincipals().add(p);
+            subject.getPublicCredentials().add(attributes);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean abort() throws LoginException {
+        try {
+            subject.getPrincipals().clear();
+            subject.getPublicCredentials().clear();
+            subject.getPrivateCredentials().clear();
+            username = null;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean logout() throws LoginException {
+        try {
+            subject.getPrincipals().clear();
+            subject.getPublicCredentials().clear();
+            subject.getPrivateCredentials().clear();
+            username = null;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return false;
+        }
+
+        return true;
+    }
 }

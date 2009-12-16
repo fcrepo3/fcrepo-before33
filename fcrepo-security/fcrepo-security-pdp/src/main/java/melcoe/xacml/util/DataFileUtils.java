@@ -1,3 +1,4 @@
+
 package melcoe.xacml.util;
 
 import java.io.BufferedReader;
@@ -22,167 +23,170 @@ import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 public class DataFileUtils {
-	public static final Logger log = Logger.getLogger(DataFileUtils.class);
 
-	public static Document getDocumentFromFile(File file) throws Exception {
-		byte[] document = loadFile(file);
-		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
-				.newInstance();
-		documentBuilderFactory.setNamespaceAware(true);
-		DocumentBuilder docBuilder = documentBuilderFactory
-				.newDocumentBuilder();
+    public static final Logger log = Logger.getLogger(DataFileUtils.class);
 
-		Document doc = docBuilder.parse(new ByteArrayInputStream(document));
+    public static Document getDocumentFromFile(File file) throws Exception {
+        byte[] document = loadFile(file);
+        DocumentBuilderFactory documentBuilderFactory =
+                DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
+        DocumentBuilder docBuilder =
+                documentBuilderFactory.newDocumentBuilder();
 
-		return doc;
-	}
+        Document doc = docBuilder.parse(new ByteArrayInputStream(document));
 
-	public static byte[] loadFile(String filename) throws Exception {
-		File file = new File(filename.trim());
-		return loadFile(file);
-	}
+        return doc;
+    }
 
-	public static byte[] loadFile(File file) throws Exception {
-		if (!file.exists() || !file.canRead()) {
-			String message = "Cannot read file: " + file.getCanonicalPath();
-			System.err.println(message);
-			throw new Exception(message);
-		}
+    public static byte[] loadFile(String filename) throws Exception {
+        File file = new File(filename.trim());
+        return loadFile(file);
+    }
 
-		FileInputStream fis = new FileInputStream(file);
-		ByteArrayOutputStream data = new ByteArrayOutputStream();
-		int len = 0;
-		byte[] buf = new byte[1024];
-		while ((len = fis.read(buf)) >= 0)
-			data.write(buf, 0, len);
+    public static byte[] loadFile(File file) throws Exception {
+        if (!file.exists() || !file.canRead()) {
+            String message = "Cannot read file: " + file.getCanonicalPath();
+            System.err.println(message);
+            throw new Exception(message);
+        }
 
-		return data.toByteArray();
-	}
+        FileInputStream fis = new FileInputStream(file);
+        ByteArrayOutputStream data = new ByteArrayOutputStream();
+        int len = 0;
+        byte[] buf = new byte[1024];
+        while ((len = fis.read(buf)) >= 0) {
+            data.write(buf, 0, len);
+        }
 
-	public static void saveDocument(String filename, byte[] document)
-			throws Exception {
-		try {
-			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
-					.newInstance();
-			documentBuilderFactory.setNamespaceAware(true);
-			DocumentBuilder docBuilder = documentBuilderFactory
-					.newDocumentBuilder();
+        return data.toByteArray();
+    }
 
-			Document doc = docBuilder.parse(new ByteArrayInputStream(document));
-			saveDocument(filename, doc);
-		} catch (Exception e) {
-			String message = "Unable to save file: " + filename;
-			System.err.println(message);
-			e.printStackTrace();
-			throw new Exception(message, e);
-		}
-	}
+    public static void saveDocument(String filename, byte[] document)
+            throws Exception {
+        try {
+            DocumentBuilderFactory documentBuilderFactory =
+                    DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.setNamespaceAware(true);
+            DocumentBuilder docBuilder =
+                    documentBuilderFactory.newDocumentBuilder();
 
-	public static void saveDocument(String filename, Document doc)
-			throws Exception {
-		try {
-			File file = new File(filename.trim());
-			String data = format(doc);
-			PrintWriter writer = new PrintWriter(file, "UTF-8");
-			writer.print(data);
-			writer.flush();
-			writer.close();
-		} catch (Exception e) {
-			String message = "Unable to save file: " + filename;
-			System.err.println(message);
-			e.printStackTrace();
-			throw new Exception(message, e);
-		}
-	}
+            Document doc = docBuilder.parse(new ByteArrayInputStream(document));
+            saveDocument(filename, doc);
+        } catch (Exception e) {
+            String message = "Unable to save file: " + filename;
+            System.err.println(message);
+            e.printStackTrace();
+            throw new Exception(message, e);
+        }
+    }
 
-	public static String format(Document doc) {
-		OutputFormat format = new OutputFormat(doc);
-		format.setEncoding("UTF-8");
-		format.setIndenting(true);
-		format.setIndent(2);
-		format.setOmitXMLDeclaration(true);
+    public static void saveDocument(String filename, Document doc)
+            throws Exception {
+        try {
+            File file = new File(filename.trim());
+            String data = format(doc);
+            PrintWriter writer = new PrintWriter(file, "UTF-8");
+            writer.print(data);
+            writer.flush();
+            writer.close();
+        } catch (Exception e) {
+            String message = "Unable to save file: " + filename;
+            System.err.println(message);
+            e.printStackTrace();
+            throw new Exception(message, e);
+        }
+    }
 
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		Writer output = new OutputStreamWriter(out);
+    public static String format(Document doc) {
+        OutputFormat format = new OutputFormat(doc);
+        format.setEncoding("UTF-8");
+        format.setIndenting(true);
+        format.setIndent(2);
+        format.setOmitXMLDeclaration(true);
 
-		XMLSerializer serializer = new XMLSerializer(output, format);
-		String result = null;
-		try {
-			serializer.serialize(doc);
-			result = new String(out.toByteArray(), "UTF-8");
-		} catch (Exception e) {
-			log.error("Failed to format document.", e);
-		}
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Writer output = new OutputStreamWriter(out);
 
-		return result;
-	}
+        XMLSerializer serializer = new XMLSerializer(output, format);
+        String result = null;
+        try {
+            serializer.serialize(doc);
+            result = new String(out.toByteArray(), "UTF-8");
+        } catch (Exception e) {
+            log.error("Failed to format document.", e);
+        }
 
-	public static String format(byte[] document) throws Exception {
-		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
-				.newInstance();
-		documentBuilderFactory.setNamespaceAware(true);
-		DocumentBuilder docBuilder = documentBuilderFactory
-				.newDocumentBuilder();
+        return result;
+    }
 
-		Document doc = docBuilder.parse(new ByteArrayInputStream(document));
+    public static String format(byte[] document) throws Exception {
+        DocumentBuilderFactory documentBuilderFactory =
+                DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
+        DocumentBuilder docBuilder =
+                documentBuilderFactory.newDocumentBuilder();
 
-		return format(doc);
-	}
+        Document doc = docBuilder.parse(new ByteArrayInputStream(document));
 
-	public static byte[] fedoraXMLHashFormat(byte[] data) throws Exception {
-		OutputFormat format = new OutputFormat("XML", "UTF-8", false);
-		format.setIndent(0);
-		format.setLineWidth(0);
-		format.setPreserveSpace(false);
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		XMLSerializer serializer = new XMLSerializer(outStream, format);
+        return format(doc);
+    }
 
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true);
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		Document doc = builder.parse(new ByteArrayInputStream(data));
-		serializer.serialize(doc);
+    public static byte[] fedoraXMLHashFormat(byte[] data) throws Exception {
+        OutputFormat format = new OutputFormat("XML", "UTF-8", false);
+        format.setIndent(0);
+        format.setLineWidth(0);
+        format.setPreserveSpace(false);
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        XMLSerializer serializer = new XMLSerializer(outStream, format);
 
-		ByteArrayInputStream in = new ByteArrayInputStream(outStream
-				.toByteArray());
-		BufferedReader br = new BufferedReader(new InputStreamReader(in,
-				"UTF-8"));
-		String line = null;
-		StringBuffer sb = new StringBuffer();
-		while ((line = br.readLine()) != null) {
-			line = line.trim();
-			sb = sb.append(line);
-		}
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new ByteArrayInputStream(data));
+        serializer.serialize(doc);
 
-		return sb.toString().getBytes("UTF-8");
-	}
+        ByteArrayInputStream in =
+                new ByteArrayInputStream(outStream.toByteArray());
+        BufferedReader br =
+                new BufferedReader(new InputStreamReader(in, "UTF-8"));
+        String line = null;
+        StringBuffer sb = new StringBuffer();
+        while ((line = br.readLine()) != null) {
+            line = line.trim();
+            sb = sb.append(line);
+        }
 
-	public static String getHash(byte[] data) throws NoSuchAlgorithmException {
-		MessageDigest digest = MessageDigest.getInstance("MD5");
-		byte[] hash = digest.digest(data);
+        return sb.toString().getBytes("UTF-8");
+    }
 
-		String hexHash = byte2hex(hash);
+    public static String getHash(byte[] data) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("MD5");
+        byte[] hash = digest.digest(data);
 
-		return hexHash;
-	}
+        String hexHash = byte2hex(hash);
 
-	/**
-	 * Converts a hash into its hexadecimal string representation.
-	 * 
-	 * @param bytes
-	 *            the byte array to convert
-	 * @return the hexadecimal string representation
-	 */
-	private static String byte2hex(byte[] bytes) {
-		char[] hexChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'a', 'b', 'c', 'd', 'e', 'f' };
+        return hexHash;
+    }
 
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < bytes.length; i++) {
-			sb.append(hexChars[(bytes[i] >> 4) & 0xf]);
-			sb.append(hexChars[bytes[i] & 0xf]);
-		}
+    /**
+     * Converts a hash into its hexadecimal string representation.
+     * 
+     * @param bytes
+     *        the byte array to convert
+     * @return the hexadecimal string representation
+     */
+    private static String byte2hex(byte[] bytes) {
+        char[] hexChars =
+                {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b',
+                        'c', 'd', 'e', 'f'};
 
-		return new String(sb);
-	}
+        StringBuffer sb = new StringBuffer();
+        for (byte b : bytes) {
+            sb.append(hexChars[b >> 4 & 0xf]);
+            sb.append(hexChars[b & 0xf]);
+        }
+
+        return new String(sb);
+    }
 }
