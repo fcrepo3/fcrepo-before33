@@ -302,7 +302,11 @@ public final class PEP
             throw new ServletException("Not enough components on the URI.");
         }
 
-        RESTFilter filter = filters.get(parts[2]);
+        String operation = parts[2];
+        for (int x = 3; x < parts.length; x++)
+        	operation += "/" + parts[x];
+        	
+        RESTFilter filter = filters.get(operation);
 
         return filter;
     }
@@ -345,16 +349,16 @@ public final class PEP
     private void denyAccess(HttpServletResponse response, String message)
             throws IOException {
         StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append("<head><title>Authorization Denied</title></head>");
-        sb.append("<body>");
-        sb.append("<h2 style=\"text-align: center\">Authorization Denied</h2>");
-        sb.append("<h3 style=\"text-align: center\">" + message + "</h3>");
-        sb.append("</body>");
-        sb.append("</html>");
+        sb.append("Fedora: 403 " + message.toUpperCase());
 
+        response.reset();
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setContentType("text/plain");
+        response.setContentLength(sb.length());
         ServletOutputStream out = response.getOutputStream();
         out.write(sb.toString().getBytes());
+        out.flush();
+        out.close();
     }
 
     /**
