@@ -207,25 +207,23 @@ public class RelationshipResolverImpl implements RelationshipResolver {
 		return fedoraCtx;
 	}
 	
-	private PID getNormalizedPID(String pid) {
-		// evidently, we are to expect strings that only begin with pids
-		String pidDN = pid;
-		if (pid.startsWith("/")) {
-			String[] parts = pid.split("\\/");
-			if (parts.length > 2) {
-				if (parts[parts.length - 1].indexOf(':') != -1) {
-					// is an object, not a datastream
-					pidDN = parts[parts.length - 1];
-				} else {
-					// is a datastream
-					pidDN = parts[parts.length - 2] + "/"
-							+ parts[parts.length - 1];
-				}
-			}
+	/**
+	 * Returns a PID object for the requested String.
+	 * 
+	 * This method will return a PID for a variety of pid permutations, e.g.
+	 * demo:1, info:fedora/demo:1, demo:1/DS1, 
+	 * info:fedora/demo:1/sdef:foo/sdep:bar/methodBaz.
+	 * 
+	 * @param pid 
+	 * @return a PID object
+	 */
+	protected PID getNormalizedPID(String pid) {
+		// strip the leading "info:fedora/" if any
+		if (pid.startsWith(Constants.FEDORA.uri)) {
+			pid = pid.substring(Constants.FEDORA.uri.length());
+        }
+		// should be left with "demo:foo" or "demo:foo/demo:bar"
 
-			if (pidDN.startsWith("/"))
-				pidDN = pidDN.substring(1);
-		}
-		return PID.getInstance(pidDN);
+		return PID.getInstance(pid.split("\\/")[0]);
 	}
 }
