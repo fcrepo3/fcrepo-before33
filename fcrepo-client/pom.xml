@@ -10,7 +10,7 @@
 
   <artifactId>fcrepo-client</artifactId>
   <packaging>pom</packaging>
-  <name>All Fedora Client Libraries</name>
+  <name>All Fedora Clients</name>
 
   <modules>
     <module>fcrepo-client-admin</module>

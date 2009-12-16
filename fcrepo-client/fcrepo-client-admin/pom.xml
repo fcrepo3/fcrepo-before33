@@ -10,7 +10,7 @@
 
   <artifactId>fcrepo-client-admin</artifactId>
   <packaging>jar</packaging>
-  <name>Fedora Admin Client Library</name>
+  <name>Fedora Admin Client (Swing)</name>
 
   <build>
 
