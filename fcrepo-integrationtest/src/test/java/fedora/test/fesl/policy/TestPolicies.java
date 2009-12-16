@@ -59,7 +59,7 @@ public class TestPolicies {
 
             LoadDataset.main(null);
 
-            httpUtils.get("/fedora/risearch?flush=true");
+            // httpUtils.get("/fedora/risearch?flush=true");
 
             // Now that objects are loaded, remove the policy
             delPolicy(policyId);

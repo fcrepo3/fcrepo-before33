@@ -241,7 +241,7 @@ public class HttpUtils {
             }
 
             body = new String(res.toByteArray());
-            if (body.contains("Authorization Denied")) {
+            if (body.contains("Fedora: 403")) {
                 throw new AuthorizationDeniedException("Authorization Denied");
             }
         }

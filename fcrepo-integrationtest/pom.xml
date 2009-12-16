@@ -518,7 +518,7 @@
                     <include>**/TestAPIM.class</include>
                     <include>**/TestAPIMLite.class</include>
                     <include>**/TestAuthentication.class</include>
-                    <include>**/TestHTTPStatusCodes.class</include>
+                    <include>**/TestHTTPStatusCodesConfigC.class</include>
 					<!--
                     <include>**/TestHTTPStatusCodesConfigB.class</include>
                     -->
