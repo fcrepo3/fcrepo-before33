@@ -59,7 +59,8 @@
 		on a datastream dissemination.  Value is space separated list of label: use the datastream label;
 		id: use the datastream ID; rels: use the value defined in RELS-INT.  Each
 		source is checked in order, and the first containing a value is used.  Omit
-		any of the sources if that source is never to be used.</comment>
+		any of the sources if that source is never to be used.  If no sources are to be used,
+		and just the default filename and extension below are to be used, specify " ".</comment>
 	</param>
 	<param name="datastreamExtensionMappingLabel" value="always">
 		<comment>Controls filename extension mapping when the datastream label is used
