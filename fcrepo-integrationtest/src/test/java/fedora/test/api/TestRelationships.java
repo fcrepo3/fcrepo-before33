@@ -6,35 +6,27 @@ package fedora.test.api;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-
 import java.net.URLEncoder;
-
 import java.rmi.RemoteException;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import org.custommonkey.xmlunit.NamespaceContext;
-import org.custommonkey.xmlunit.SimpleNamespaceContext;
-import org.custommonkey.xmlunit.XMLUnit;
-
-import org.trippi.TripleIterator;
-import org.trippi.io.RIOTripleIterator;
-
-import org.openrdf.rio.ntriples.NTriplesParser;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import fedora.client.FedoraClient;
+import org.custommonkey.xmlunit.NamespaceContext;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.openrdf.rio.ntriples.NTriplesParser;
+import org.trippi.TripleIterator;
+import org.trippi.io.RIOTripleIterator;
 
+import fedora.client.FedoraClient;
 import fedora.common.Constants;
 import fedora.common.Models;
 import fedora.common.PID;
-
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.RelationshipTuple;
-
 import fedora.test.FedoraServerTestCase;
 
 /**
@@ -80,9 +72,7 @@ public class TestRelationships
             "demo:888", // deprecated
             "info:fedora/demo:888",
             "info:fedora/demo:888/DS1",
-            "info:fedora/demo:888/DS2" };
-
-
+            "info:fedora/demo:888/DS2"};
 
     static {
         // Test FOXML object with RELS-EXT and RELS-INT datastream
@@ -206,7 +196,6 @@ public class TestRelationships
             o = MULTIBYTE_UTF8;
             addRelationship(s, p, o, true, null);
         }
-
     }
 
     public void testValidation() {
@@ -278,6 +267,16 @@ public class TestRelationships
         } catch (RemoteException e) {
         }
 
+        // Valid PID & datastream ID, but invalid subject URI
+        // should be: info:fedora/demo:888/DS1
+        s = "demo:888/DS1";
+        p = "urn:foo";
+        o = "urn:quux";
+        try {
+            apim.addRelationship(s, p, o, false, null);
+            fail("Adding relationship with invalid short URI should have failed");
+        } catch (RemoteException e) {
+        }
     }
 
     public void testGetRelationships() throws Exception {
@@ -303,7 +302,6 @@ public class TestRelationships
             o = MULTIBYTE_UTF8;
             getRelationship(s, p, o, true, null);
         }
-
     }
 
     public void testGetAllRelationships() throws Exception {
@@ -319,22 +317,6 @@ public class TestRelationships
                                            Constants.MODEL.HAS_MODEL.uri,
                                            Models.FEDORA_OBJECT_CURRENT.uri);
         }
-    }
-
-    private void checkExistsViaGetRelationships(String subject,
-                                                String predicate,
-                                                String object) throws Exception {
-        boolean found = false;
-
-        for (RelationshipTuple tuple : apim.getRelationships(subject, predicate)) {
-            if (tuple.getSubject().equals(subjectAsURI(subject))
-                    && tuple.getPredicate().equals(predicate)
-                    && tuple.getObject().equals(object)) {
-                found = true;
-            }
-        }
-        assertTrue("Relationship not found via getRelationships (subject=" + subject
-                   + ", predicate=" + predicate + ", object=" + object, found);
     }
 
     public void testPurgeRelationships() throws Exception {
@@ -363,6 +345,22 @@ public class TestRelationships
             assertFalse("Purging non-existant relation should have failed", apim
                 .purgeRelationship(s, "urn:asdf", "867-5309", true, null));
         }
+    }
+
+    private void checkExistsViaGetRelationships(String subject,
+                                                String predicate,
+                                                String object) throws Exception {
+        boolean found = false;
+
+        for (RelationshipTuple tuple : apim.getRelationships(subject, predicate)) {
+            if (tuple.getSubject().equals(subjectAsURI(subject))
+                    && tuple.getPredicate().equals(predicate)
+                    && tuple.getObject().equals(object)) {
+                found = true;
+            }
+        }
+        assertTrue("Relationship not found via getRelationships (subject=" + subject
+                   + ", predicate=" + predicate + ", object=" + object, found);
     }
 
     // note: queries resource index by predicate and object, and then checks subject is ok
