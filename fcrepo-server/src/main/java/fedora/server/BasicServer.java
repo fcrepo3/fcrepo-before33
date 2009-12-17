@@ -59,15 +59,18 @@ public class BasicServer
                     + "not given, but it's required.");
         }
 
-        LOG.info("Fedora Version: " + VERSION_MAJOR + "." + VERSION_MINOR);
-        LOG.info("Fedora Build: " + BUILD_NUMBER);
+        LOG.info("Fedora Version: " + Server.VERSION);
+        LOG.info("Fedora Build Date: " + Server.BUILD_DATE);
+        LOG.info("Fedora Build Number: " + Server.BUILD_NUMBER);
 
         ServerStatusFile status = getStatusFile();
         try {
-            status.append(ServerState.STARTING, "Fedora Version: "
-                    + VERSION_MAJOR + "." + VERSION_MINOR);
-            status.append(ServerState.STARTING, "Fedora Build: "
-                    + BUILD_NUMBER);
+            status.append(ServerState.STARTING,
+                    "Fedora Version: " + Server.VERSION);
+            status.append(ServerState.STARTING,
+                    "Fedora Build Date: " + Server.BUILD_DATE);
+            status.append(ServerState.STARTING,
+                    "Fedora Build Number: " + Server.BUILD_NUMBER);
             status.append(ServerState.STARTING, "Server Host Name: "
                     + fedoraServerHost);
             status.append(ServerState.STARTING, "Server Port: "

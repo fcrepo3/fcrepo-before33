@@ -127,15 +127,15 @@ public class ObjectEditorFrame
         //setFrameIcon(openIcon);
         pack();
         Dimension dims = getSize();
-        if (dims.height < 545) {
-            dims.height = 545;
-        } else if (dims.height > 580) {
-            dims.height = 580;
+        if (dims.height < 675) {
+            dims.height = 675;
+        } else if (dims.height > 700) {
+            dims.height = 700;
         }
-        if (dims.width < 740) {
-            dims.width = 740;
-        } else if (dims.width > 820) {
-            dims.width = 820;
+        if (dims.width < 925) {
+            dims.width = 925;
+        } else if (dims.width > 950) {
+            dims.width = 950;
         }
         setSize(dims);
         show();

@@ -14,16 +14,7 @@
 
   <build>
 
-    <!-- 
-      Note: Need to filter following variables:
-              filter token="version" value="${fedora.version}"
-              filter token="releaseDate" value="${fedora.releaseDate}"
-    -->
     <resources>
-      <resource>
-        <directory>../resources/server</directory>
-        <filtering>true</filtering>
-      </resource>
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>

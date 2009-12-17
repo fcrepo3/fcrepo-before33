@@ -701,8 +701,7 @@ public class DefaultAccess
         repositoryInfo.repositoryBaseURL =
                 reposBaseURL + "/" + context.getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME);
 
-        repositoryInfo.repositoryVersion =
-                Server.VERSION_MAJOR + "." + Server.VERSION_MINOR;
+        repositoryInfo.repositoryVersion = Server.VERSION;
         Module domgr = getServer().getModule("fedora.server.storage.DOManager");
         repositoryInfo.repositoryPIDNamespace =
                 domgr.getParameter("pidNamespace");

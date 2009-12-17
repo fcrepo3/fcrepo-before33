@@ -82,15 +82,14 @@ public abstract class Server
     private static ResourceBundle s_const =
             ResourceBundle.getBundle("fedora.server.resources.Server");
 
-    /** The major version of this release. */
-    public static String VERSION_MAJOR = s_const.getString("version.major");
+    /** The version of this release. */
+    public static String VERSION = s_const.getString("version");
 
-    /** The minor version of this release. */
-    public static String VERSION_MINOR = s_const.getString("version.minor");
+    /** The build date of this release. */
+    public static String BUILD_DATE = s_const.getString("buildDate");
 
     /** The build number of this release. */
-    public static String BUILD_NUMBER =
-            s_const.getString("version.buildNumber");
+    public static String BUILD_NUMBER = s_const.getString("buildNumber");
 
     /** The name of the property that tells the server where it's based. */
     public static String HOME_PROPERTY = s_const.getString("home.property");
@@ -123,7 +122,6 @@ public abstract class Server
      */
     public static String NAMESPACE_PREFIX =
             MessageFormat.format(s_const.getString("namespace.prefix"),
-            //new Object[] {VERSION_MAJOR, VERSION_MINOR});
                                  new Object[] {"1", "0"}); // so config namespace uses 1/0/
 
     /** The configuration file elements' namespace. 0={namespace.prefix} */

@@ -34,7 +34,6 @@ public class MessagingImpl implements Messaging {
     private final Map<String, List<String>> mdMap;
     private final JMSManager jmsMgr;
     private final String fedoraBaseUrl;
-    private final static String serverVersion = Server.VERSION_MAJOR + Server.VERSION_MINOR;
     private final static String messageFormat = Constants.ATOM_APIM1_0.uri;
 
     /**
@@ -94,7 +93,7 @@ public class MessagingImpl implements Messaging {
     public void send(FedoraMethod method) throws MessagingException {
         if (Management.class == method.getMethod().getDeclaringClass()) {
 
-            APIMMessage message = new AtomAPIMMessage(method, fedoraBaseUrl, serverVersion, messageFormat);
+            APIMMessage message = new AtomAPIMMessage(method, fedoraBaseUrl, Server.VERSION, messageFormat);
 
             String methodName = method.getName();
             if (methodName.startsWith("ingest")

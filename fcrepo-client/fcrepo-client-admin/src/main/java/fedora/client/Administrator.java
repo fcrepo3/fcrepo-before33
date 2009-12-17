@@ -150,7 +150,9 @@ public class Administrator
 
     public static String VERSION = s_const.getString("version");
 
-    public static String RELEASE_DATE = s_const.getString("releaseDate");
+    public static String BUILD_DATE = s_const.getString("buildDate");
+
+    public static String BUILD_NUMBER = s_const.getString("buildNumber");
 
     public static final void showErrorDialog(Component parent,
                                              String title,
@@ -231,6 +233,7 @@ public class Administrator
         m_aboutPic = new JLabel(aboutIcon);
         m_aboutText =
                 new JLabel("<html>"
+                        + "<p>Copyright 2009, DuraSpace</p>"
                         + "<p>Copyright 2008-2009, Fedora Commons, Inc.</p>"
                         + "<p>Copyright 2002-2007, The Rector and Visitors of the</p>"
                         + "<p>University of Virginia and Cornell University.</p><p></p>"
@@ -243,13 +246,11 @@ public class Administrator
                         + "<p>basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.</p>"
                         + "<p>See the License for the specific language governing rights and</p>"
                         + "<p>limitations under the License.</p><p></p>"
-                        + "<p>Version: "
-                        + VERSION
-                        + "</p>"
-                        + "<p>Release Date: "
-                        + RELEASE_DATE
-                        + "</p>"
-                        + "<p>See http://www.fedora-commons.org/ for more information.</p></html>");
+                        + "<p><b>Version: </b>" + VERSION + "</p>"
+                        + "<p><b>Build Date: </b>" + BUILD_DATE + "</p>"
+                        + "<p><b>Build Number: </b>" + BUILD_NUMBER + "</p>"
+                        + "<p></p>"
+                        + "<p>See http://fedora-commons.org/ for more information.</p></html>");
 
         m_aboutText.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         JPanel splashPicAndText = new JPanel();
@@ -303,8 +304,8 @@ public class Administrator
         splashScreen.setVisible(false);
         s_instance = this;
 
-        int xs = 850;
-        int ys = 655;
+        int xs = 1000;
+        int ys = 744;
         Dimension sz = getToolkit().getScreenSize();
         int xl = sz.width / 2 - xs / 2;
         int yl = sz.height / 2 - ys / 2;
