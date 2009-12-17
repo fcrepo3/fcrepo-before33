@@ -20,15 +20,25 @@
       </Action> 
     </Actions> 
   </Target>
-  <!-- uncomment (and change the deny rule id) if access via the file protocol is desired. The regular expression determines the locations and files 
-       allowed for retrieval.
+  <!-- uncomment (and change the deny rule id) if access via the file protocol is desired.
+   The regular expression determines the locations and files allowed for retrieval; it must match the canonical file URI for a resource.
+   Restricting access to administrators will allow datastreams in control group 'M' to be ingested from the file system.
+   Restricting access by URI only will allow datastreams in control group 'E' to be located on the file system.
+  -->
+<!--    
   <Rule RuleId="1" Effect="Permit">
-    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:regexp-string-match">
-       <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">^file:/allowed/.*$</AttributeValue>
-       <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
-        <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:fileUri" 
+    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+      <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:regexp-string-match">
+        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">^file:/allowed/.*$</AttributeValue>
+        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+          <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:fileUri" 
             DataType="http://www.w3.org/2001/XMLSchema#string"/>
-       </Apply> 
+        </Apply>
+      </Apply> 
+      <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-is-in">
+        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">administrator</AttributeValue>         
+        <SubjectAttributeDesignator AttributeId="fedoraRole" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+      </Apply>    
     </Condition>
   </Rule>
   -->

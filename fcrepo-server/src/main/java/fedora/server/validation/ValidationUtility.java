@@ -39,18 +39,18 @@ public abstract class ValidationUtility {
      * Validates the candidate URL. The result of the validation also depends on the
      * control group of the datastream in question. Managed datastreams may be ingested
      * using the file URI scheme, other datastreams may not.
-     * 
+     *
      * @param url
      *            The URL to validate.
      * @param controlGroup
      *            The control group of the datastream the URL belongs to.
-     * 
+     *
      * @throws ValidationException
      *             if the URL is malformed.
      */
     public static void validateURL(String url, String controlGroup)
             throws ValidationException {
-        if (!controlGroup.equalsIgnoreCase("M") && url.startsWith("file:")) {
+        if (!(controlGroup.equalsIgnoreCase("M") || controlGroup.equalsIgnoreCase("E")) && url.startsWith("file:")) {
             throw new ValidationException(
                     "Malformed URL (file: not allowed for control group "
                             + controlGroup + ") " + url);

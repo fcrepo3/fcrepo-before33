@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
@@ -91,6 +92,8 @@ public class DefaultDOManager
     /** Logger for this class. */
     private static final Logger LOG =
             Logger.getLogger(DefaultDOManager.class.getName());
+
+    private static final Pattern URL_PROTOCOL = Pattern.compile("^\\w+:\\/.*$");
 
     private String m_pidNamespace;
 
@@ -1148,7 +1151,7 @@ public class DefaultDOManager
                     {
                         // iterate over all versions of this dsID
                         for (Datastream dmc : obj.datastreams(dsID)) {
-                            if (dmc.DSLocation.indexOf("//") != -1) {
+                            if (URL_PROTOCOL.matcher(dmc.DSLocation).matches()) {
                                 // if it's a url, we need to grab content for this version
                                 MIMETypedStream mimeTypedStream;
                                 if (dmc.DSLocation.startsWith(DatastreamManagedContent.UPLOADED_SCHEME)) {
@@ -1235,6 +1238,12 @@ public class DefaultDOManager
                                 if(mimeTypedStream != null) {
                                     mimeTypedStream.close();
                                 }
+                            }
+                            else {
+                                String id =
+                                    obj.getPid() + "+" + dmc.DatastreamID
+                                            + "+" + dmc.DSVersionID;
+                                LOG.warn("Inoperable DSLocation \"" + dmc.DSLocation + "\" given for " + id);
                             }
                         }
                     }
