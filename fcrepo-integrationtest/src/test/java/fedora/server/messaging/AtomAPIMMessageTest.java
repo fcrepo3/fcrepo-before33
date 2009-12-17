@@ -49,9 +49,6 @@ public class AtomAPIMMessageTest extends FedoraTestCase {
         entry = sb.toString();
     }
 
-    private final String serverVersion =
-            Server.VERSION_MAJOR + Server.VERSION_MINOR;
-
     private final String messageFormat = Constants.ATOM_APIM1_0.uri;
 
     /**
@@ -91,7 +88,7 @@ public class AtomAPIMMessageTest extends FedoraTestCase {
                                 boolean.class}), new Object[] {c, "demo:foo",
                         "a log message", false}, "blah");
         message =
-                new AtomAPIMMessage(fm, baseURL, serverVersion, messageFormat);
+                new AtomAPIMMessage(fm, baseURL, Server.VERSION, messageFormat);
         assertNotNull(message.getDate());
         assertEquals("purgeObject", message.getMethodName());
         assertEquals("demo:foo", message.getPID().toString());
@@ -122,8 +119,7 @@ public class AtomAPIMMessageTest extends FedoraTestCase {
                                          "A", "none", "n/a", "a log message"},
                                  "asdf");
 
-        message =
-                new AtomAPIMMessage(fm, baseURL, serverVersion, messageFormat);
+        message = new AtomAPIMMessage(fm, baseURL, Server.VERSION, messageFormat);
         assertNotNull(message.getDate());
         assertEquals("addDatastream", message.getMethodName());
         assertEquals("demo:foo", message.getPID().toString());
@@ -142,8 +138,7 @@ public class AtomAPIMMessageTest extends FedoraTestCase {
                                 Date.class}), new Object[] {c, "demo:foo",
                         "DS1", new Date()}, ds);
 
-        message =
-                new AtomAPIMMessage(fm, baseURL, serverVersion, messageFormat);
+        message = new AtomAPIMMessage(fm, baseURL, Server.VERSION, messageFormat);
         assertNotNull(message.getDate());
         assertEquals("getDatastream", message.getMethodName());
         assertEquals("demo:foo", message.getPID().toString());
@@ -164,8 +159,7 @@ public class AtomAPIMMessageTest extends FedoraTestCase {
                                                                     String.class}),
                                  new Object[] {c, "demo:foo", "urn:foo"},
                                  new RelationshipTuple[] {tuple});
-        message =
-                new AtomAPIMMessage(fm, baseURL, serverVersion, messageFormat);
+        message = new AtomAPIMMessage(fm, baseURL, Server.VERSION, messageFormat);
     }
 
     @Test
@@ -184,7 +178,7 @@ public class AtomAPIMMessageTest extends FedoraTestCase {
         FedoraMethod fm = new FedoraMethod(method, parameters, returnValue);
 
         APIMMessage message =
-                new AtomAPIMMessage(fm, baseURL, serverVersion, messageFormat);
+                new AtomAPIMMessage(fm, baseURL, Server.VERSION, messageFormat);
         String messageText = message.toString();
         APIMMessage messageFromText = new AtomAPIMMessage(messageText);
 
@@ -202,8 +196,7 @@ public class AtomAPIMMessageTest extends FedoraTestCase {
         parameters = new Object[] {context, "demo:foo", logMessage, false};
         fm = new FedoraMethod(method, parameters, returnValue);
 
-        message =
-                new AtomAPIMMessage(fm, baseURL, serverVersion, messageFormat);
+        message = new AtomAPIMMessage(fm, baseURL, Server.VERSION, messageFormat);
         messageText = message.toString();
         messageFromText = new AtomAPIMMessage(messageText);
         assertEquals(normalize(messageText), normalize(messageFromText
