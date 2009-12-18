@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.utilities.install;
@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import java.util.Properties;
 
 public class OptionDefinition {
@@ -69,10 +68,10 @@ public class OptionDefinition {
         String description = _PROPS.getProperty(id + ".description");
         String[] validValues = getArray(id + ".validValues");
         String defaultValue = _PROPS.getProperty(id + ".defaultValue");
-        
+
         // If label, description, validValues and defaultValue are all null,
         // assume that no definition for the id exists.
-        //if (label == null && description == null && validValues == null && 
+        //if (label == null && description == null && validValues == null &&
         // 		defaultValue == null) {
         // 	return null;
         //}
@@ -97,7 +96,7 @@ public class OptionDefinition {
                                 + File.separator + "tomcat";
             }
         }
-        
+
         // USE DBXML_HOME as the default, if defined
         if (id.equals(InstallOptions.FESL_DBXML_HOME)) {
             String eDH = System.getenv("DBXML_HOME");
@@ -105,7 +104,7 @@ public class OptionDefinition {
                 defaultValue = eDH;
             }
         }
-        
+
         return new OptionDefinition(id,
                                     label,
                                     description,
@@ -174,7 +173,7 @@ public class OptionDefinition {
                     	String lcOSName = System.getProperty("os.name").toLowerCase();
                     	boolean MAC_OS_X = lcOSName.startsWith("mac os x");
                     	File dsStore = new File(dir, ".DS_Store");
-                    	
+
                         if (unattended) {
                             System.out
                                     .println("WARNING: Overwriting existing directory: "
@@ -247,8 +246,15 @@ public class OptionDefinition {
             	printEnvWarning("DBXML_HOME", value);
                 File dir = new File(value);
                 if (dir.exists()) {
-                    // must have lib subdir
-                    File lib = new File(dir, "lib");
+                    File lib;
+                    String osName = System.getProperty("os.name").toLowerCase();
+                    if (osName.indexOf("win") != -1) {
+                        // Windows systems use DBXML_HOME/jar
+                        lib = new File(dir, "jar");
+                    } else {
+                        // *nix flavors use DBXML_HOME/lib
+                        lib = new File(dir, "lib");
+                    }
                     if (lib.exists()) {
                     	File db_jar = new File(lib, "db.jar");
                     	File dbxml_jar = new File(lib, "dbxml.jar");
