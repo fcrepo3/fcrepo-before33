@@ -25,6 +25,9 @@ FEDORA_HOME=$HOME/fedora-home
 # When installed, what port will non-secure http requests be on?
 HTTP_PORT=9080
 
+# Special test case situation where PEP caching needs to be disabled.
+PEP_NOCACHE=true
+
 #
 # DON'T CHANGE BELOW THIS LINE
 #
