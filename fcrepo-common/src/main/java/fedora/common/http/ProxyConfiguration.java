@@ -155,8 +155,8 @@ public class ProxyConfiguration {
      * @return true if the credentials are valid, false otherwise
      */
     public boolean hasValidCredentials() {
-        return getProxyUser() != null && getProxyUser().equals("")
-                && getProxyPassword() != null && getProxyPassword().equals("");
+        return getProxyUser() != null && !getProxyUser().equals("")
+                && getProxyPassword() != null && !getProxyPassword().equals("");
     }
 
 }
