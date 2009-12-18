@@ -205,7 +205,6 @@ public class TestHTTPStatusCodesConfigC
     // API-M Lite: getNextPID
     //---
 
-/*
     public void testGetNextPID_OK() throws Exception {
         checkOK(GET_NEXT_PID_PATH);
     }
@@ -213,11 +212,10 @@ public class TestHTTPStatusCodesConfigC
     public void testGetNextPID_BadAuthN() throws Exception {
         checkBadAuthN(GET_NEXT_PID_PATH);
     }
-*/
     public void testGetNextPID_BadAuthZ() throws Exception {
         checkBadAuthZ(GET_NEXT_PID_PATH);
     }
-/*
+
     //---
     // API-M Lite: upload
     //---
@@ -367,7 +365,7 @@ public class TestHTTPStatusCodesConfigC
     public void testFindObjects_BadRequest() throws Exception {
         checkBadRequest(FIND_OBJECTS_BADREQ_PATH);
     }
-*/
+
     //---
     // Static helpers
     //---
