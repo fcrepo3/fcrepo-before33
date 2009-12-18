@@ -138,11 +138,7 @@
                   <includes>
 
                     <include>**/AtomAPIMMessageTest.class</include>
-
-                    <!--
-                      Hangs intermittently
-                      <include>**/NotificationInvocationHandlerTest.class</include>
-                    -->
+                    <include>**/NotificationInvocationHandlerTest.class</include>
 
                     <!--
                       Has bug in source-code
@@ -258,16 +254,12 @@
                   <includes>
 
                     <!--
-                      Hangs intermititently
-                      <include>**/NotificationInvocationHandlerTest.class</include>
-                    -->
-
-                    <!--
                       Has bug in source-code
                       <include>**/SimpleDeploymentTests.class</include>
                     -->
 
                     <include>**/AtomAPIMMessageTest.class</include>
+                    <include>**/NotificationInvocationHandlerTest.class</include>
                     <include>**/DOTranslationUtilityTest.class</include>
                     <include>**/TestIngest.class</include>
                     <include>**/TestAPIA.class</include>
@@ -377,10 +369,7 @@
 
                   <includes>
 
-                    <!--
-                      Hangs intermittently
-                      <include>**/NotificationInvocationHandlerTest.class</include>
-                    -->
+                    <include>**/NotificationInvocationHandlerTest.class</include>
 
                     <!--
                       Has bug in source-code
@@ -500,10 +489,7 @@
 
                   <includes>
 
-                    <!--
-                      Hangs intermittently
-                      <include>**/NotificationInvocationHandlerTest.class</include>
-                    -->
+                    <include>**/NotificationInvocationHandlerTest.class</include>
 
                     <!--
                       Has bug in source-code

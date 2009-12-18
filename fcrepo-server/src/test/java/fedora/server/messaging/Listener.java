@@ -6,18 +6,31 @@ package fedora.server.messaging;
 
 import java.util.Properties;
 
-import javax.naming.Context;
-
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import javax.naming.Context;
 
+/**
+ * Test class for listening to a JMS topic.
+ *
+ * @author Edwin Shin
+ * @version $Id$
+ */
 public class Listener
         implements MessageListener {
 
     private final JMSManager jmsMgr;
 
+    /**
+     * Create a Listener object for the specified JMS topic.
+     *
+     * @param topicName the JMS topic to listen to, e.g. "fedora.apim.update"
+     * @param jndiProps Properties file that contains, at a minimum, values for
+     * Context.INITIAL_CONTEXT_FACTORY and Context.PROVIDER_URL
+     * @throws Exception
+     */
     public Listener(String topicName, Properties jndiProps)
             throws Exception {
         jmsMgr = new JMSManager(jndiProps);

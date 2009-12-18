@@ -5,7 +5,6 @@
 package fedora.server.messaging;
 
 import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -14,10 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
@@ -33,6 +28,9 @@ import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 
@@ -60,7 +58,7 @@ public class JMSManager {
     public static final String CONNECTION_FACTORY_NAME = "connection.factory.name";
 
     // Default connection factory name, used if no connection factory name is specified
-    private String defaultConnectionFactoryName = "ConnectionFactory";
+    private final String defaultConnectionFactoryName = "ConnectionFactory";
 
     // JNDI related data
     protected Context jndi = null;
@@ -77,7 +75,7 @@ public class JMSManager {
     protected Map<String, MessageConsumer> durableSubscriptions =
             new HashMap<String, MessageConsumer>();
 
-    private Properties jndiProps;
+    private final Properties jndiProps;
 
     // Destination type determines the method by which messages are transferred
     public static enum DestinationType {
@@ -564,7 +562,7 @@ public class JMSManager {
             // Look for an existing destination for the given destination
             //
             JMSDestination jmsDest =
-                    (JMSDestination) jmsDestinations.get(destName);
+                    jmsDestinations.get(destName);
             if (jmsDest != null) {
                 // Close out all JMS related state
                 //
@@ -825,13 +823,13 @@ public class JMSManager {
             throws MessagingException {
         // Look for an existing Destination for the given name
         //
-        JMSDestination jmsDest = (JMSDestination) jmsDestinations.get(name);
+        JMSDestination jmsDest = jmsDestinations.get(name);
 
         // If not found, create it now
         //
         if (jmsDest == null) {
             this.createDestination(name, defaultDestinationType);
-            jmsDest = (JMSDestination) jmsDestinations.get(name);
+            jmsDest = jmsDestinations.get(name);
         }
 
         return jmsDest;
