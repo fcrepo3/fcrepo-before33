@@ -42,6 +42,11 @@ import fedora.server.types.gen.Property;
  * A simple example of a SOAP client that makes calls to the Fedora SOAP 
  * interfaces (API-A and API-M).
  *
+ * NOTE: 
+ * This class is outdated and uses demo objects that no longer exist.
+ * Future releases will not include this class.
+ * 
+ * @deprecated as of release 3.3
  * @author Sandy Payette
  */
 public class DemoSOAPClient
