@@ -26,7 +26,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
-
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.RecoveryContext;
@@ -104,7 +103,7 @@ public class DefaultDOManager
 
     private DOReaderCache m_readerCache;
 
-    private Set m_lockedPIDs;
+    private final Set m_lockedPIDs;
 
     protected ConnectionPool m_connectionPool;
     protected Connection m_connection;
@@ -138,6 +137,7 @@ public class DefaultDOManager
     /**
      * Gets initial param values.
      */
+    @Override
     public void initModule()
             throws ModuleInitializationException {
         // pidNamespace (required, 1-17 chars, a-z, A-Z, 0-9 '-' '.')
@@ -261,6 +261,7 @@ public class DefaultDOManager
         }
     }
 
+    @Override
     public void postInitModule()
             throws ModuleInitializationException {
 		// get ref to management module
@@ -350,6 +351,7 @@ public class DefaultDOManager
 
     }
 
+    @Override
     public void shutdownModule() {
         if (m_readerCache != null) {
             m_readerCache.close();
@@ -410,6 +412,7 @@ public class DefaultDOManager
         return m_replicator;
     }
 
+    @Override
     public String[] getRequiredModuleRoles() {
         // FIXME add "fedora.server.resourceIndex.ResourceIndex" once
         // we force loading of the module
@@ -595,7 +598,7 @@ public class DefaultDOManager
 				// SET DATASTREAM PROPERTIES...
 				Iterator dsIter=obj.datastreamIdIterator();
 				while (dsIter.hasNext()) {
-					List dsList=(List) obj.datastreams((String) dsIter.next());
+					List dsList=obj.datastreams((String) dsIter.next());
 					for (int i=0; i<dsList.size(); i++) {
 						Datastream ds=(Datastream) dsList.get(i);
 						// Set create date to UTC if not already set
@@ -612,7 +615,7 @@ public class DefaultDOManager
 				// SET DISSEMINATOR PROPERTIES...
 				Iterator dissIter=obj.disseminatorIdIterator();
 				while (dissIter.hasNext()) {
-					List dissList=(List) obj.disseminators((String) dissIter.next());
+					List dissList=obj.disseminators((String) dissIter.next());
 					for (int i=0; i<dissList.size(); i++) {
 						Disseminator diss=(Disseminator) dissList.get(i);
 						// Set create date to UTC if not already set
@@ -728,7 +731,7 @@ public class DefaultDOManager
 				// ensure one of the dc:identifiers is the pid
 				boolean sawPid=false;
 				for (int i=0; i<dcf.identifiers().size(); i++) {
-					if ( ((String) dcf.identifiers().get(i)).equals(obj.getPid()) ) {
+					if ( (dcf.identifiers().get(i)).equals(obj.getPid()) ) {
 						sawPid=true;
 					}
 				}
@@ -757,7 +760,7 @@ public class DefaultDOManager
 				// at this point the object is valid, so make a record
 				// of it in the digital object registry
 				registerObject(obj.getPid(), obj.getFedoraObjectType(),
-					getUserId(context), obj.getLabel(), obj.getContentModelId(),
+					getUserId(context), obj.getContentModelId(),
 					obj.getCreateDate(), obj.getLastModDate());
 				return w;
 			} catch (IOException e) {
@@ -1421,13 +1424,12 @@ public class DefaultDOManager
      * registry before calling this method.
      */
     private void registerObject(String pid, int fedoraObjectType, String userId,
-            String label, String contentModelId, Date createDate, Date lastModDate)
+            String contentModelId, Date createDate, Date lastModDate)
             throws StorageDeviceException {
-        // label or contentModelId may be null...set to blank if so
-        String theLabel=label;
-        if (theLabel==null) {
-            theLabel="";
-        }
+        // label field is not used (FCREPO-789)
+        String theLabel="the label field is no longer used";
+
+        // contentModelId may be null...set to blank if so
         String theContentModelId=contentModelId;
         if (theContentModelId==null) {
             theContentModelId="";
@@ -1446,7 +1448,7 @@ public class DefaultDOManager
                                                    + "ownerId, label, "
                                                    + "contentModelID) "
                        + "VALUES ('" + pid + "', '" + foType +"', '"
-                                     + userId +"', '" + SQLUtility.aposEscape(theLabel) + "', '"
+                                     + userId +"', '" + theLabel + "', '"
                                      + theContentModelId + "')";
             conn=m_connectionPool.getConnection();
             st=conn.createStatement();
