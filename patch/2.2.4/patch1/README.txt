@@ -23,6 +23,7 @@ Applying the patch
   3) Make a backup of the following files:
      %CATALINA_HOME%/webapps/fedora/WEB-INF/classes/fedora/server/storage/DefaultDOManager.class
      %CATALINA_HOME%/webapps/fedora/WEB-INF/classes/fedora/server/utilities/rebuild/SQLRebuilder.class
+     %CATALINA_HOME%/webapps/fedora/WEB-INF/classes/fedora/server/storage/replication/DefaultDOReplicator.class
 
   4) Copy the SQLRebuilder.class from this patch into the directory
      %CATALINA_HOME%/webapps/fedora/WEB-INF/classes/fedora/server/storage/
@@ -32,11 +33,16 @@ Applying the patch
      %CATALINA_HOME%/webapps/fedora/WEB-INF/classes/fedora/server/utilities/rebuild/
      OVER THE EXISTING FILE
 
-  6) Re-start your Fedora server.
+  6) Copy the DefaultDOReplicator.class from this patch into the directory
+     %CATALINA_HOME%/webapps/fedora/WEB-INF/classes/fedora/server/storage/replication/
+     OVER THE EXISTING FILE
 
-  7) (OPTIONAL) If you installed the source code distribution of
+  7) Re-start your Fedora server.
+
+  8) (OPTIONAL) If you installed the source code distribution of
      Fedora, you should also copy the included .java
      files into your copy of the source files:
      /src/java/fedora/server/storage/DefaultDOManager.java
-     /src/java/fedora/server/storage/SQLRebuilder.java
+     /src/java/fedora/server/utilities/rebuild/SQLRebuilder.java
+     /src/java/fedora/server/storage/replication/DefaultDOReplicator.class
      OVER THE EXISTING FILES
