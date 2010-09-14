@@ -658,7 +658,7 @@ public class TestAPIM extends FedoraServerTestCase {
         // test adding M type datastream with unknown checksum type and no altIDs, should fail throwing exception
         try
         {
-            String datastreamId = apim.addDatastream("demo:14", "NEWDS1", null, "A New M-type Datastream", true, "text/xml", "info:myFormatURI/Mtype/stuff#junk", "http://www.fedora.info/junit/datastream1.xml", "M", "A", "MD6", null, "adding new datastream");
+            String datastreamId = apim.addDatastream("demo:14", "NEWDS1", null, "A New M-type Datastream", true, "text/xml", "info:myFormatURI/Mtype/stuff#junk", "http://fedora.info/definitions/1/0/foxml1-1.xsd", "M", "A", "MD6", null, "adding new datastream");
             // fail if datastream was added
             fail();
         }
@@ -669,7 +669,7 @@ public class TestAPIM extends FedoraServerTestCase {
         // test adding M type datastream with unimplemented checksum type and no altIDs, should fail throwing exception
         try
         {
-            String datastreamId = apim.addDatastream("demo:14", "NEWDS1", null, "A New M-type Datastream", true, "text/xml", "info:myFormatURI/Mtype/stuff#junk", "http://www.fedora.info/junit/datastream1.xml", "M", "A", "TIGER", null, "adding new datastream");
+            String datastreamId = apim.addDatastream("demo:14", "NEWDS1", null, "A New M-type Datastream", true, "text/xml", "info:myFormatURI/Mtype/stuff#junk", "http://fedora.info/definitions/1/0/foxml1-1.xsd", "M", "A", "TIGER", null, "adding new datastream");
             // fail if datastream was added
             fail();
         }
@@ -680,7 +680,7 @@ public class TestAPIM extends FedoraServerTestCase {
         // test adding M type datastream
         String[] altIds = new String[1];
         altIds[0] = "Datastream 1 Alternate ID";
-        String datastreamId = apim.addDatastream("demo:14", "NEWDS1", altIds, "A New M-type Datastream", true, "text/xml", "info:myFormatURI/Mtype/stuff#junk", "http://www.fedora.info/junit/datastream1.xml", "M", "A", null, null, "adding new datastream");
+        String datastreamId = apim.addDatastream("demo:14", "NEWDS1", altIds, "A New M-type Datastream", true, "text/xml", "info:myFormatURI/Mtype/stuff#junk", "http://fedora.info/definitions/1/0/foxml1-1.xsd", "M", "A", null, null, "adding new datastream");
 
         // test that datastream was added
         assertEquals(datastreamId, "NEWDS1");
@@ -695,7 +695,7 @@ public class TestAPIM extends FedoraServerTestCase {
 
         //test adding X type datastream
         altIds[0] = "Datastream 2 Alternate ID";
-        datastreamId = apim.addDatastream("demo:14", "NEWDS2", altIds, "A New X-type Datastream", true, "text/xml", "info:myFormatURI/Xtype/stuff#junk", "http://www.fedora.info/junit/datastream2.xml", "X", "A", null, null, "adding new datastream");
+        datastreamId = apim.addDatastream("demo:14", "NEWDS2", altIds, "A New X-type Datastream", true, "text/xml", "info:myFormatURI/Xtype/stuff#junk", "http://fedora.info/definitions/1/0/foxml1-1.xsd", "X", "A", null, null, "adding new datastream");
 
         // test that datastream was added
         objectXML = apim.getObjectXML("demo:14");
@@ -708,7 +708,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("6", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
 
         altIds[0] = "Datastream 3 Alternate ID";
-        datastreamId = apim.addDatastream("demo:14", "NEWDS3", altIds, "A New E-type Datastream", true, "text/xml", "info:myFormatURI/Etype/stuff#junk", "http://www.fedora.info/junit/datastream3.xml", "E", "A", null, null, "adding new datastream");
+        datastreamId = apim.addDatastream("demo:14", "NEWDS3", altIds, "A New E-type Datastream", true, "text/xml", "info:myFormatURI/Etype/stuff#junk", "http://fedora.info/definitions/1/0/foxml1-1.xsd", "E", "A", null, null, "adding new datastream");
 
         // test adding E type datastream
         objectXML = apim.getObjectXML("demo:14");
@@ -724,7 +724,7 @@ public class TestAPIM extends FedoraServerTestCase {
         System.out.println("Running TestAPIM.testModifyDatastreamByReference...");
         altIds = new String[1];
         altIds[0] = "Datastream 1 Modified Alternate ID";
-        datastreamId = apim.modifyDatastreamByReference("demo:14", "NEWDS1", altIds, "Modified M-type Datastream", "text/xml", "info:newMyFormatURI/Mtype/stuff#junk", "http://www.fedora.info/junit/datastream2.xml", null, null, "modified datastream", false);
+        datastreamId = apim.modifyDatastreamByReference("demo:14", "NEWDS1", altIds, "Modified M-type Datastream", "text/xml", "info:newMyFormatURI/Mtype/stuff#junk", "http://fedora.info/definitions/1/0/foxml1-1.xsd", null, null, "modified datastream", false);
 
         // test that datastream was modified
         objectXML = apim.getObjectXML("demo:14");

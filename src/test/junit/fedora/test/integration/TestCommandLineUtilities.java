@@ -85,7 +85,8 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
         purgeFast(batchObjs);
         System.out.println("Build/ingest test succeeded");
     }    
-    
+   
+   /*
     public void testBatchModify() throws Exception 
     {
         System.out.println("Running batch modify of objects");
@@ -104,6 +105,7 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
         purgeFast("demo:32");
         System.out.println("Batch modify test succeeded");
     }
+    */
    
     public void testExport()
     {

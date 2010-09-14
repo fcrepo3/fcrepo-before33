@@ -125,7 +125,7 @@ public class TestManagedDatastreams
     @Test
     public void testModifyDatastreamByReference() throws Exception {
         String pid = "demo:m_ds_test_add";
-        String dsLocation = "http://www.fedora.info/junit/datastream1.xml";
+        String dsLocation = "http://fedora.info/definitions/1/0/foxml1-1.xsd";
         apim.ingest(getObject(pid, dsLocation), "foxml1.0", null);
 
         try {
