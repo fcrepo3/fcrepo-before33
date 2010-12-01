@@ -4,14 +4,15 @@
 
 About this patch
 -----------------
-  This patch fixes a potentially damaging bug* in the Fedora server,
-  version 2.2.4, that can result in errors if a FOXML file with an
-  object label contains the \ escape character.
+  This patch fixes potential Denial-of-Service vulnerabilites in
+  the Fedora server, version 2.2.4.  It updates the Fedora server
+  to version 2.2.5.
 
   * FCREPO-789: https://jira.duraspace.org/browse/FCREPO-789
+  * FCREPO-798: https://jira.duraspace.org/browse/FCREPO-798
 
-Applying the patch
-------------------
+Applying the patch to your repository
+-------------------------------------
   1) Make sure you are running v2.2.4 of the Fedora server software.
      ** DO NOT APPLY THIS PATCH TO ANY OTHER VERSION OF FEDORA! **
      To check your repository's version, check the "describe" page.
@@ -20,29 +21,30 @@ Applying the patch
 
   2) Shut down your Fedora server
 
-  3) Make a backup of the following files:
-     %CATALINA_HOME%/webapps/fedora/WEB-INF/classes/fedora/server/storage/DefaultDOManager.class
-     %CATALINA_HOME%/webapps/fedora/WEB-INF/classes/fedora/server/utilities/rebuild/SQLRebuilder.class
-     %CATALINA_HOME%/webapps/fedora/WEB-INF/classes/fedora/server/storage/replication/DefaultDOReplicator.class
+  3) Make a backup of the following folder:
+     %CATALINA_HOME%/webapps/fedora/WEB-INF/classes
 
-  4) Copy the SQLRebuilder.class from this patch into the directory
-     %CATALINA_HOME%/webapps/fedora/WEB-INF/classes/fedora/server/storage/
-     OVER THE EXISTING FILE
+  4) Copy the file classes.tar.gz to the folder
+     %CATALINA_HOME%/webapps/fedora/WEB-INF/classes
 
-  5) Copy the DefaultDOManager.class from this patch into the directory
-     %CATALINA_HOME%/webapps/fedora/WEB-INF/classes/fedora/server/utilities/rebuild/
-     OVER THE EXISTING FILE
+  5) Extract the files in this archive
+     tar -xzf classes.tar.gz
+     
+     This will replace existing files with the patched versions)
 
-  6) Copy the DefaultDOReplicator.class from this patch into the directory
-     %CATALINA_HOME%/webapps/fedora/WEB-INF/classes/fedora/server/storage/replication/
-     OVER THE EXISTING FILE
+  6) Re-start your Fedora server.
+     
+Applying the patch to your source code
+--------------------------------------
+If you have installed the source code distribution of Fedora, you should also
+update your source with the patched source files.  You can update your source
+to the release-2.2.5 tag in the source repository.  Alternatively you can patch
+your source locally as follows:
 
-  7) Re-start your Fedora server.
-
-  8) (OPTIONAL) If you installed the source code distribution of
-     Fedora, you should also copy the included .java
-     files into your copy of the source files:
-     /src/java/fedora/server/storage/DefaultDOManager.java
-     /src/java/fedora/server/utilities/rebuild/SQLRebuilder.java
-     /src/java/fedora/server/storage/replication/DefaultDOReplicator.class
-     OVER THE EXISTING FILES
+  1) Make a backup of your existing source code
+  
+  2) Copy the file src.tar.gz to the src directory of your source code
+  
+  2) Extract this file:
+     tar -xzf src.tar.gz
+     
